@@ -1,8 +1,9 @@
-header {
+#header {
     position        : fixed;
+    z-index         : 9999;
     inset           : 0 0 auto 0;
-    background-color: rgba(antiquewhite, 0.1);
-    height          : fit-content;
+    background-color: white;
+    height          : 7rem;
     // ==========================Top Header ========================== //
 
     .hidden {
@@ -130,80 +131,8 @@ header {
 
                         &__content {
                             li {
+                                    @include card-product(15rem);
 
-                                .product-detail {
-                                    width        : 15rem;
-                                    height       : fit-content;
-                                    padding      : 1rem 1.5rem;
-                                    border-radius: 0.5rem;
-                                    box-shadow   : 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
-
-                                    .item-status {
-                                        span {
-                                            color      : #78A962;
-                                            text-align : center;
-                                            font-size  : 0.625rem;
-                                            font-style : normal;
-                                            font-weight: 400;
-                                            line-height: 1.3125rem;
-                                            /* 1.3125rem */
-                                        }
-                                    }
-
-                                    .image-container {
-                                        img {
-                                            width : 9.375rem;
-                                            height: 9.375rem;
-                                        }
-                                    }
-
-                                    .evaluation {
-                                        gap: 0.6rem;
-
-                                        .star-review {
-                                            color      : #A2A6B0;
-                                            text-align : center;
-                                            font-family: Poppins;
-                                            font-size  : 0.75rem;
-                                            font-style : normal;
-                                            font-weight: 400;
-                                            line-height: 1.575rem;
-                                        }
-                                    }
-
-                                    .title-container {
-                                        .product-title {
-                                            text-align : start;
-                                            color      : #000;
-                                            font-family: Poppins;
-                                            font-size  : 0.8125rem;
-                                            font-style : normal;
-                                            font-weight: 400;
-                                            line-height: normal;
-                                        }
-                                    }
-
-                                    .price-container {
-                                        .old-price {
-                                            color               : #666;
-                                            font-family         : Poppins;
-                                            font-size           : 0.875rem;
-                                            font-style          : normal;
-                                            font-weight         : 400;
-                                            line-height         : 1.225rem;
-                                            text-decoration-line: strikethrough;
-                                        }
-
-                                        .new-price {
-                                            color      : #000;
-                                            font-family: Poppins;
-                                            font-size  : 1.125rem;
-                                            font-style : normal;
-                                            font-weight: 600;
-                                            line-height: 1.225rem;
-                                        }
-                                    }
-                                }
                             }
                         }
                     }

@@ -14,3 +14,111 @@
     font-weight  : 600;
     line-height  : normal;
 }
+
+@mixin card-product($width: auto) {
+    .card-product-detail {
+        width        : $width;
+        height       : fit-content;
+        padding      : 1rem 1.5rem;
+        border-radius: 0.5rem;
+        box-shadow   : 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+
+        .item-status {
+            span {
+                color      : #78A962;
+                text-align : center;
+                font-size  : 0.625rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: 1.3125rem;
+                /* 1.3125rem */
+            }
+        }
+
+        .image-container {
+            img {
+                width : 9.375rem;
+                height: 9.375rem;
+            }
+        }
+
+        .evaluation {
+            gap: 0.6rem;
+
+            .star-review {
+                color      : #A2A6B0;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 0.75rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: 1.575rem;
+            }
+        }
+
+        .title-container {
+            .product-title {
+                text-align : start;
+                color      : #000;
+                font-family: Poppins;
+                font-size  : 0.8125rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: normal;
+            }
+        }
+
+        .price-container {
+            .old-price {
+                color               : #666;
+                font-family         : Poppins;
+                font-size           : 0.875rem;
+                font-style          : normal;
+                font-weight         : 400;
+                line-height         : 1.225rem;
+                text-decoration-line: strikethrough;
+            }
+
+            .new-price {
+                color      : #000;
+                font-family: Poppins;
+                font-size  : 1.125rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: 1.225rem;
+            }
+        }
+    }
+
+
+}
+
+@mixin control-slide($url_next, $url_prev, $left: 0.3rem, $right: 0.3rem) {
+
+    .slick-next::before,
+    .slick-prev::before {
+        display: none;
+    }
+
+    .slick-next {
+        position         : absolute;
+        z-index          : 100;
+        background-image : url($url_next);
+        right            : $right;
+        width            : 2.875rem;
+        height           : 4.9375rem;
+        background-repeat: no-repeat;
+        background-size  : contain;
+    }
+
+    .slick-prev {
+        position         : absolute;
+        z-index          : 100;
+        background-image : url($url_prev);
+        left             : $left;
+        width            : 2.875rem;
+        height           : 4.9375rem;
+        background-repeat: no-repeat;
+        background-size  : contain;
+    }
+}

@@ -13,10 +13,16 @@
         <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.css" />
         <link rel="stylesheet" href="assets/fontawesome/css/all.min.css" />
         <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="assets/slick/slick.css" />
+        <!-- Add the new slick-theme.css if you want the default styling -->
+        <link rel="stylesheet" type="text/css" href="assets/slick/slick-theme.css" />
+        <script type="text/javascript" src="assets/jquery/jquery.min.js"></script>
+        <script type="text/javascript" src="assets/jquery/jquery-migrate.min.js"></script>
+        <script type="text/javascript" src="assets/slick/slick.min.js"></script>
     </head>
 
     <body>
-        <header>
+        <header id="header">
             <div class="top-header">
                 <div class="container">
                     <div class="row">
@@ -122,7 +128,7 @@
                                                                 <ul
                                                                     class="list-item-detail__content list-unstyled d-flex flex-row gap-2">
                                                                     <li>
-                                                                        <div class="product-detail">
+                                                                        <div class="card-product-detail">
                                                                             <div class="item-status d-flex">
                                                                                 <img
                                                                                     src="assets/img/stock.svg"
@@ -166,7 +172,7 @@
                                                                         </div>
                                                                     </li>
                                                                     <li>
-                                                                        <div class="product-detail">
+                                                                        <div class="card-product-detail">
                                                                             <div class="item-status d-flex">
                                                                                 <img
                                                                                     src="assets/img/stock.svg"
@@ -210,7 +216,7 @@
                                                                         </div>
                                                                     </li>
                                                                     <li>
-                                                                        <div class="product-detail">
+                                                                        <div class="card-product-detail">
                                                                             <div class="item-status d-flex">
                                                                                 <img
                                                                                     src="assets/img/stock.svg"
@@ -254,7 +260,7 @@
                                                                         </div>
                                                                     </li>
                                                                     <li>
-                                                                        <div class="product-detail">
+                                                                        <div class="card-product-detail">
                                                                             <div class="item-status d-flex">
                                                                                 <img
                                                                                     src="assets/img/stock.svg"
@@ -300,40 +306,62 @@
                                                                 </ul>
                                                             </div>
                                                             <div class="list-brand">
-                                                                <ul class="m-0 list-unstyled d-flex justify-content-between align-items-center">
+                                                                <ul
+                                                                    class="m-0 list-unstyled d-flex justify-content-between align-items-center">
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_1.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_1.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_2.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_2.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_3.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_3.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_4.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_4.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_5.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_5.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_6.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_6.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                     <li>
                                                                         <a href="#" class="link-brand">
-                                                                            <img src="assets/img/brand_7.png" class="item-brand object-fit-contain" alt="brand">
+                                                                            <img
+                                                                                src="assets/img/brand_7.png"
+                                                                                class="item-brand object-fit-contain"
+                                                                                alt="brand" />
                                                                         </a>
                                                                     </li>
                                                                 </ul>
@@ -496,7 +524,289 @@
                 </div>
             </div>
         </header>
+        <!-- End Header -->
+        <div id="promotion-slider">
+            <div class="container">
+                <div class="row">
+                    <div class="single-promotion position-relative">
+                        <div class="promotion-container">
+                            <img
+                                class="promotion-img object-fit-contain"
+                                src="assets/img/promotion.png"
+                                alt="promotion" />
+                        </div>
+                        <div class="promotion-container">
+                            <img
+                                class="promotion-img object-fit-contain"
+                                src="assets/img/slider_1.jpg"
+                                alt="promotion" />
+                        </div>
+                        <div class="promotion-container">
+                            <img
+                                class="promotion-img object-fit-contain"
+                                src="assets/img/slider_2.jpg"
+                                alt="promotion" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-slider">
+            <div class="container">
+                <div class="row">
+                    <div class="product-slider__desc d-flex justify-content-between align-items-baseline">
+                        <h2 class="product-slider__desc__title mt-3 mb-1">New Products</h2>
+                        <a class="product-slider__desc__link" href="#">See All New Products</a>
+                    </div>
+                    <div class="multiple-product">
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-card-container">
+                            <div class="card-product-detail">
+                                <div class="item-status d-flex">
+                                    <img src="assets/img/stock.svg" alt="in-stock" />
+                                    <span>&nbsp;in stock</span>
+                                </div>
+                                <div class="image-container">
+                                    <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
+                                </div>
+                                <div class="evaluation d-flex align-items-center">
+                                    <div class="star-check d-flex">
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star checked"></span>
+                                        <span class="fa fa-star"></span>
+                                    </div>
+                                    <div class="star-review">
+                                        <span>Reviews (4)</span>
+                                    </div>
+                                </div>
+                                <div class="title-container">
+                                    <p class="product-title">
+                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
+                                    </p>
+                                </div>
+                                <div class="price-container d-flex flex-column align-items-start">
+                                    <span class="old-price">$499.00</span>
+                                    <span class="new-price">$499.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="outstanding-product"></div>
     </body>
     <script src="js/header/dropdown.js"></script>
     <script src="js/header/searchbar.js"></script>
+    <script>
+        $(".single-promotion").slick({
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000,
+        });
+
+        $(".multiple-product").slick({
+            infinite: true,
+            slidesToShow: 5,
+            slidesToScroll: 1,
+            autoplay: true,
+            autoplaySpeed: 2000,
+            responsive: [
+                {
+                    breakpoint: 1400,
+                    settings: {
+                        slidesToShow: 5,
+                    },
+                },
+                {
+                    breakpoint: 1200,
+                    settings: {
+                        slidesToShow: 4,
+                    },
+                },
+                {
+                    breakpoint: 990,
+                    settings: {
+                        slidesToShow: 3,
+                    },
+                },
+                {
+                    breakpoint: 760,
+                    settings: {
+                        slidesToShow: 2,
+                    },
+                },
+                {
+                    breakpoint: 496,
+                    settings: {
+                        slidesToShow: 1,
+                    },
+                },
+            ],
+        });
+    </script>
 </html>

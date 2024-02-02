@@ -1,0 +1,35 @@
+#product-slider {
+    .multiple-product {
+        margin-right: -0.25rem;
+
+        .product-card-container {
+            margin-left: -0.25rem;
+            padding    : 1rem 0.45rem;
+            @include card-product();
+        }
+
+        @include control-slide($url_button_next_product_slider, $url_button_prev_product_slider, 0.4rem, 0.3rem);
+    }
+
+    .product-slider__desc {
+        &__title {
+            color      : #000;
+            font-family: Poppins;
+            font-size  : 1.375rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        &__link {
+            color               : #0156FF;
+            text-align          : right;
+            font-family         : Poppins;
+            font-size           : 0.8125rem;
+            font-style          : normal;
+            font-weight         : 400;
+            line-height         : .93438rem;
+            text-decoration-line: underline;
+        }
+    }
+}
