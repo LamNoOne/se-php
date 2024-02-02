@@ -1,0 +1,579 @@
+header {
+    position        : fixed;
+    inset           : 0 0 auto 0;
+    background-color: rgba(antiquewhite, 0.1);
+    height          : fit-content;
+    // ==========================Top Header ========================== //
+
+    .hidden {
+        display: none !important;
+    }
+
+    .top-header {
+        height          : 2.75rem;
+        background-color: $top_header;
+        display         : flex;
+        align-items     : center;
+
+        .top-header__content {
+            display        : flex;
+            align-items    : center;
+            justify-content: space-between;
+
+            .top-left-header {
+                .active-time {
+                    display: flex;
+
+                    .active-time__date {
+                        @include top-header-text($color_top_header-blur);
+                    }
+
+                    .active-time__hours {
+                        @include top-header-text($color-top-header-light);
+                    }
+                }
+            }
+
+            .top-middle-header {
+                .top-header-description {
+                    @include top-header-text($color_top_header-blur);
+
+                    a {
+                        @include top-header-text($color-top-header-light);
+                    }
+                }
+            }
+
+            .top-right-header {
+                .header-contact {
+                    display: flex;
+                    gap    : 0.5rem;
+
+                    .header-contact__phone-number {
+
+                        a {
+                            @include top-header-text($color-top-header-light);
+                        }
+                    }
+
+                    .header-contact__social-media {
+                        .social-media-list {
+                            display        : flex;
+                            justify-content: center;
+                            gap            : 0.5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // ==========================Main Header ========================== //
+
+    .main-header {
+        border-bottom: 0.0625rem solid $color_separate_line;
+
+        .main-header__menu {
+
+            .dropdown-menu-mega {
+                width        : fit-content;
+                border-radius: unset;
+                padding      : unset;
+
+                // height: 300px;
+
+                .grid-container {
+                    display: grid;
+                    grid-template-areas:
+                        'main right right right right right'
+                        'footer footer footer footer footer footer';
+                    gap             : 1px;
+                    background-color: rgba(0, 0, 0, 0.2);
+
+                    .list-item {
+                        grid-area: main;
+
+                        &__detail {
+                            min-width     : 200px;
+                            color         : #000;
+                            font-style    : normal;
+                            font-weight   : 600;
+                            line-height   : normal;
+                            padding-bottom: 3rem;
+
+                            li {
+                                padding: 0.6rem 1rem;
+
+                                &:hover {
+                                    cursor          : pointer;
+                                    background-color: #F5F7FF;
+                                }
+                            }
+                        }
+                    }
+
+                    .list-item-detail {
+                        grid-area: right;
+                    }
+
+                    .list-brand {
+                        grid-area: footer;
+
+                        .item-brand {
+                            width : 9.54481rem;
+                            height: 4.96775rem;
+                        }
+                    }
+
+                    .list-item-detail {
+                        padding: 1.6rem 0.4rem;
+
+                        &__content {
+                            li {
+
+                                .product-detail {
+                                    width        : 15rem;
+                                    height       : fit-content;
+                                    padding      : 1rem 1.5rem;
+                                    border-radius: 0.5rem;
+                                    box-shadow   : 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
+
+                                    .item-status {
+                                        span {
+                                            color      : #78A962;
+                                            text-align : center;
+                                            font-size  : 0.625rem;
+                                            font-style : normal;
+                                            font-weight: 400;
+                                            line-height: 1.3125rem;
+                                            /* 1.3125rem */
+                                        }
+                                    }
+
+                                    .image-container {
+                                        img {
+                                            width : 9.375rem;
+                                            height: 9.375rem;
+                                        }
+                                    }
+
+                                    .evaluation {
+                                        gap: 0.6rem;
+
+                                        .star-review {
+                                            color      : #A2A6B0;
+                                            text-align : center;
+                                            font-family: Poppins;
+                                            font-size  : 0.75rem;
+                                            font-style : normal;
+                                            font-weight: 400;
+                                            line-height: 1.575rem;
+                                        }
+                                    }
+
+                                    .title-container {
+                                        .product-title {
+                                            text-align : start;
+                                            color      : #000;
+                                            font-family: Poppins;
+                                            font-size  : 0.8125rem;
+                                            font-style : normal;
+                                            font-weight: 400;
+                                            line-height: normal;
+                                        }
+                                    }
+
+                                    .price-container {
+                                        .old-price {
+                                            color               : #666;
+                                            font-family         : Poppins;
+                                            font-size           : 0.875rem;
+                                            font-style          : normal;
+                                            font-weight         : 400;
+                                            line-height         : 1.225rem;
+                                            text-decoration-line: strikethrough;
+                                        }
+
+                                        .new-price {
+                                            color      : #000;
+                                            font-family: Poppins;
+                                            font-size  : 1.125rem;
+                                            font-style : normal;
+                                            font-weight: 600;
+                                            line-height: 1.225rem;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                .grid-container>div {
+                    background-color: white;
+                    text-align      : center;
+                    padding         : 10px 0;
+                    font-size       : 0.875rem;
+                }
+            }
+
+            .navbar {
+                .nav-item {
+                    a:not(.link-brand) {
+                        @include main-header-text($color_main_header);
+                        border-radius: 6.25rem;
+                        width        : fit-content;
+                        padding      : 0.5rem;
+
+                        &:hover {
+                            background: #0156FF;
+                            color     : white;
+                        }
+                    }
+
+                }
+            }
+        }
+
+        .dropdown-toggle:not(.nav-dropdown-toggle) {
+            &::after {
+                display: none !important;
+            }
+        }
+
+        .main-header__mechanism {
+            .main-header__mechanism--button {
+                .user-component-dropdown {
+                    .dropdown-user-btn {
+                        border-radius: 50%;
+                        height       : 2.5rem;
+                        width        : 2.5rem;
+                        border-color : #000;
+
+                        i {
+                            color: #000;
+                        }
+                    }
+
+                    #dropdown-menu-user {
+                        position     : absolute !important;
+                        inset        : 0.5rem 0 auto auto !important;
+                        border-radius: unset;
+
+                        &::before {
+                            content          : "";
+                            z-index          : 9999;
+                            position         : absolute;
+                            top              : -6px;
+                            right            : 14px;
+                            border           : 1px solid rgba(0, 0, 0, 0.175);
+                            background-color : white;
+                            border-width     : 0 1px 1px 0;
+                            display          : inline-block;
+                            padding          : 5px;
+                            transform        : rotate(-135deg);
+                            -webkit-transform: rotate(-135deg);
+                        }
+
+                        li {
+                            a {
+                                color      : #000;
+                                font-size  : $primary_font_size;
+                                font-style : normal;
+                                font-weight: 500;
+                                line-height: 1.75rem;
+                            }
+                        }
+                    }
+                }
+
+                .cart-component-dropdown {
+                    position: relative;
+
+                    .dropdown-cart-btn {
+                        outline : none;
+                        border  : none;
+                        position: relative;
+
+                        &__count {
+                            position        : absolute;
+                            top             : 0;
+                            right           : 0.5rem;
+                            width           : 1rem;
+                            height          : 1.0625rem;
+                            color           : white;
+                            display         : flex;
+                            text-align      : center;
+                            flex-direction  : column;
+                            justify-content : center;
+                            background-color: $primary_color;
+                            font-size       : 0.625rem;
+                            font-style      : normal;
+                            font-weight     : 700;
+                            line-height     : normal;
+                            border-radius   : 50%;
+                        }
+                    }
+
+                    #dropdown-menu-cart {
+                        position: absolute !important;
+                        width   : 19.375rem;
+                        height  : fit-content;
+                        inset   : 0.2rem 1rem auto auto !important;
+
+                        .cart-intro-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+                            height  : 9.6rem;
+
+                            &::after {
+                                position        : absolute;
+                                content         : "";
+                                width           : 100%;
+                                height          : 0.0625rem;
+                                right           : 0;
+                                bottom          : 0;
+                                background-color: $color_separate_line;
+                            }
+
+
+                            .cart-intro {
+                                &__cart-title {
+                                    color      : black;
+                                    text-align : center;
+                                    font-family: Poppins;
+                                    font-size  : 1.125rem;
+                                    font-style : normal;
+                                    font-weight: 600;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__cart-info {
+                                    color      : $color_cart_info;
+                                    text-align : center;
+                                    font-family: Poppins;
+                                    font-size  : 0.75rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: normal;
+                                }
+
+                                &__cart-view-btn {
+                                    display        : inline-flex;
+                                    padding        : 0.5rem 3.03125rem;
+                                    justify-content: center;
+                                    align-items    : center;
+                                    border-radius  : 3.125rem;
+                                    border         : 2px solid $primary_color;
+
+                                    &__title {
+                                        color      : $primary_color;
+                                        text-align : center;
+                                        font-family: Poppins;
+                                        font-size  : 0.875rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: normal;
+                                    }
+                                }
+                            }
+                        }
+
+                        .cart-product-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+                            height  : 6.39rem;
+
+                            &::after {
+                                position        : absolute;
+                                content         : "";
+                                width           : 100%;
+                                height          : 0.0625rem;
+                                right           : 0;
+                                bottom          : 0;
+                                background-color: $color_separate_line;
+                            }
+
+                            .cart-product {
+                                &__quantity {
+                                    color      : #000;
+                                    text-align : center;
+                                    font-size  : 1.125rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__sign {
+                                    color      : #000;
+                                    font-family: Poppins;
+                                    font-size  : 0.875rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__desc {
+                                    color      : #000;
+                                    font-size  : 0.8125rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: normal;
+                                }
+                            }
+
+                        }
+
+                        .cart-payment-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+
+                            .cart-payment {
+                                .payment__subtotal {
+                                    &__title {
+                                        color      : #A2A6B0;
+                                        text-align : center;
+                                        font-family: Poppins;
+                                        font-size  : 0.875rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: 1.225rem;
+                                    }
+
+                                    &__number {
+                                        color      : #000;
+                                        font-family: Poppins;
+                                        font-size  : 1.125rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: 140%;
+                                    }
+                                }
+
+                                .payment__btn {
+                                    &__checkout {
+                                        display        : inline-flex;
+                                        padding        : 0.5rem 4.375rem;
+                                        border         : none;
+                                        justify-content: center;
+                                        align-items    : center;
+                                        border-radius  : 3.125rem;
+                                        background     : #0156FF;
+
+                                        &__title {
+                                            color      : #FFF;
+                                            text-align : center;
+                                            font-family: Poppins;
+                                            font-size  : 0.875rem;
+                                            font-style : normal;
+                                            font-weight: 600;
+                                            line-height: normal;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // ==========================Search Bar Header ========================== //
+
+        .search-bar-container {
+            position    : relative;
+            height      : 100%;
+            margin-right: -12px;
+            display     : flex;
+            align-items : center;
+
+            .search {
+                align-self      : center;
+                position        : absolute;
+                right           : 0;
+                width           : 50px;
+                height          : 50px;
+                background-color: $search_background;
+                border-radius   : 4rem;
+                padding         : 10px;
+                overflow        : hidden;
+                transition      : width .5s cubic-bezier(.9, 0, .3, .9);
+
+                &__input {
+                    border          : none;
+                    outline         : none;
+                    width           : calc(100% - 64px);
+                    height          : 100%;
+                    color           : $color_search_bar;
+                    background-color: $search_background;
+                    border-radius   : 4rem;
+                    padding-left    : 14px;
+                    font-size       : $primary_font_size;
+                    font-weight     : 500;
+                    opacity         : 0;
+                    pointer-events  : none;
+                    transition      : opacity 1.5s;
+
+                    &:-webkit-autofill {
+                        box-shadow: 0 0 0 100px white inset;
+                    }
+                }
+
+                &__button {
+                    width           : 30px;
+                    height          : 30px;
+                    background-color: rgba($primary_color, 0.3);
+                    border-radius   : 50%;
+                    position        : absolute;
+                    top             : 0;
+                    bottom          : 0;
+                    right           : 10px;
+                    margin          : auto;
+                    display         : grid;
+                    place-items     : center;
+                    cursor          : pointer;
+                    transition      : transform .6s cubic-bezier(.9, 0, .3, .9);
+                }
+
+                &__icon,
+                &__close {
+                    color     : rgba(black, 0.8);
+                    font-size : 1rem;
+                    position  : absolute;
+                    transition: opacity .5s cubic-bezier(.9, 0, .3, .9);
+                }
+
+                &__icon {
+                    opacity: 1;
+                }
+
+                &__close {
+                    opacity: 0;
+                }
+            }
+
+            .show-search {
+                width: 100%;
+
+                & .search__input {
+                    opacity       : 1;
+                    pointer-events: initial;
+                }
+
+                & .search__button {
+                    transform: rotate(90deg);
+                }
+
+                & .search__icon {
+                    opacity: 0;
+                }
+
+                & .search__close {
+                    opacity: 1;
+                }
+            }
+        }
+    }
+
+}
