@@ -1,0 +1,96 @@
+#header {
+    .main-header {
+        .main-header__menu {
+            // ==========================Main Header Menu========================== //
+            .dropdown-menu-mega {
+                width        : fit-content;
+                border-radius: unset;
+                padding      : unset;
+
+                // height: 300px;
+
+                .grid-container {
+                    background-color: white;
+                    width: 1200px;
+                    display: grid;
+                    grid-template-areas:
+                        'main right right right right right'
+                        'footer footer footer footer footer footer';
+                    gap             : 1px;
+                    background-color: rgba(0, 0, 0, 0.2);
+
+                    .list-item {
+                        grid-area: main;
+
+                        &__detail {
+                            min-width     : 200px;
+                            color         : #000;
+                            font-style    : normal;
+                            font-weight   : 600;
+                            line-height   : normal;
+                            padding-bottom: 3rem;
+
+                            li {
+                                padding: 0.6rem 1rem;
+
+                                &:hover {
+                                    cursor          : pointer;
+                                    background-color: #F5F7FF;
+                                }
+                            }
+                        }
+                    }
+
+                    .list-item-detail {
+                        grid-area: right;
+                    }
+
+                    .list-brand {
+                        grid-area: footer;
+
+                        .item-brand {
+                            width : 9.54481rem;
+                            height: 4.96775rem;
+                        }
+                    }
+
+                    .list-item-detail {
+                        padding: 1.6rem 0.4rem;
+
+                        &__content {
+                            li {
+                                    @include card-product(15rem);
+
+                            }
+                        }
+                    }
+                }
+
+
+                .grid-container>div {
+                    background-color: white;
+                    text-align      : center;
+                    padding         : 10px 0;
+                    font-size       : 0.875rem;
+                }
+            }
+
+            .navbar {
+                .nav-item {
+                    a:not(.link-brand) {
+                        @include main-header-text($color_main_header);
+                        border-radius: 6.25rem;
+                        width        : fit-content;
+                        padding      : 0.5rem;
+
+                        &:hover {
+                            background: #0156FF;
+                            color     : white;
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,242 @@
+#header {
+    .main-header {
+        .main-header__mechanism {
+
+            // ============================Main Header Mechanism============================ //
+            .main-header__mechanism--button {
+                .user-component-dropdown {
+                    .dropdown-user-btn {
+                        border-radius: 50%;
+                        height       : 2.5rem;
+                        width        : 2.5rem;
+                        border-color : #000;
+
+                        i {
+                            color: #000;
+                        }
+                    }
+
+                    #dropdown-menu-user {
+                        position     : absolute !important;
+                        inset        : 0.5rem 0 auto auto !important;
+                        border-radius: unset;
+
+                        &::before {
+                            content          : "";
+                            z-index          : 9999;
+                            position         : absolute;
+                            top              : -6px;
+                            right            : 14px;
+                            border           : 1px solid rgba(0, 0, 0, 0.175);
+                            background-color : white;
+                            border-width     : 0 1px 1px 0;
+                            display          : inline-block;
+                            padding          : 5px;
+                            transform        : rotate(-135deg);
+                            -webkit-transform: rotate(-135deg);
+                        }
+
+                        li {
+                            a {
+                                color      : #000;
+                                font-size  : $primary_font_size;
+                                font-style : normal;
+                                font-weight: 500;
+                                line-height: 1.75rem;
+                            }
+                        }
+                    }
+                }
+
+                .cart-component-dropdown {
+                    position: relative;
+
+                    .dropdown-cart-btn {
+                        outline : none;
+                        border  : none;
+                        position: relative;
+
+                        &__count {
+                            position        : absolute;
+                            top             : 0;
+                            right           : 0.5rem;
+                            width           : 1rem;
+                            height          : 1.0625rem;
+                            color           : white;
+                            display         : flex;
+                            text-align      : center;
+                            flex-direction  : column;
+                            justify-content : center;
+                            background-color: $primary_color;
+                            font-size       : 0.625rem;
+                            font-style      : normal;
+                            font-weight     : 700;
+                            line-height     : normal;
+                            border-radius   : 50%;
+                        }
+                    }
+
+                    #dropdown-menu-cart {
+                        position: absolute !important;
+                        width   : 19.375rem;
+                        height  : fit-content;
+                        inset   : 0.2rem 1rem auto auto !important;
+
+                        .cart-intro-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+                            height  : 9.6rem;
+
+                            &::after {
+                                position        : absolute;
+                                content         : "";
+                                width           : 100%;
+                                height          : 0.0625rem;
+                                right           : 0;
+                                bottom          : 0;
+                                background-color: $color_separate_line;
+                            }
+
+
+                            .cart-intro {
+                                &__cart-title {
+                                    color      : black;
+                                    text-align : center;
+                                    font-family: Poppins;
+                                    font-size  : 1.125rem;
+                                    font-style : normal;
+                                    font-weight: 600;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__cart-info {
+                                    color      : $color_cart_info;
+                                    text-align : center;
+                                    font-family: Poppins;
+                                    font-size  : 0.75rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: normal;
+                                }
+
+                                &__cart-view-btn {
+                                    display        : inline-flex;
+                                    padding        : 0.5rem 3.03125rem;
+                                    justify-content: center;
+                                    align-items    : center;
+                                    border-radius  : 3.125rem;
+                                    border         : 2px solid $primary_color;
+
+                                    &__title {
+                                        color      : $primary_color;
+                                        text-align : center;
+                                        font-family: Poppins;
+                                        font-size  : 0.875rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: normal;
+                                    }
+                                }
+                            }
+                        }
+
+                        .cart-product-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+                            height  : 6.39rem;
+
+                            &::after {
+                                position        : absolute;
+                                content         : "";
+                                width           : 100%;
+                                height          : 0.0625rem;
+                                right           : 0;
+                                bottom          : 0;
+                                background-color: $color_separate_line;
+                            }
+
+                            .cart-product {
+                                &__quantity {
+                                    color      : #000;
+                                    text-align : center;
+                                    font-size  : 1.125rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__sign {
+                                    color      : #000;
+                                    font-family: Poppins;
+                                    font-size  : 0.875rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: 1.575rem;
+                                }
+
+                                &__desc {
+                                    color      : #000;
+                                    font-size  : 0.8125rem;
+                                    font-style : normal;
+                                    font-weight: 400;
+                                    line-height: normal;
+                                }
+                            }
+
+                        }
+
+                        .cart-payment-container {
+                            position: relative;
+                            padding : 1rem 1.5rem;
+
+                            .cart-payment {
+                                .payment__subtotal {
+                                    &__title {
+                                        color      : #A2A6B0;
+                                        text-align : center;
+                                        font-family: Poppins;
+                                        font-size  : 0.875rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: 1.225rem;
+                                    }
+
+                                    &__number {
+                                        color      : #000;
+                                        font-family: Poppins;
+                                        font-size  : 1.125rem;
+                                        font-style : normal;
+                                        font-weight: 600;
+                                        line-height: 140%;
+                                    }
+                                }
+
+                                .payment__btn {
+                                    &__checkout {
+                                        display        : inline-flex;
+                                        padding        : 0.5rem 4.375rem;
+                                        border         : none;
+                                        justify-content: center;
+                                        align-items    : center;
+                                        border-radius  : 3.125rem;
+                                        background     : #0156FF;
+
+                                        &__title {
+                                            color      : #FFF;
+                                            text-align : center;
+                                            font-family: Poppins;
+                                            font-size  : 0.875rem;
+                                            font-style : normal;
+                                            font-weight: 600;
+                                            line-height: normal;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

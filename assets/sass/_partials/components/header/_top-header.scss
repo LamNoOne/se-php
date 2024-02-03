@@ -1,0 +1,62 @@
+#header {
+
+    // ==========================Top Header ========================== //
+    .top-header {
+        height          : 2.75rem;
+        background-color: $top_header;
+        display         : flex;
+        align-items     : center;
+
+        .top-header__content {
+            display        : flex;
+            align-items    : center;
+            justify-content: space-between;
+
+            .top-left-header {
+                .active-time {
+                    display: flex;
+
+                    .active-time__date {
+                        @include top-header-text($color_top_header-blur);
+                    }
+
+                    .active-time__hours {
+                        @include top-header-text($color-top-header-light);
+                    }
+                }
+            }
+
+            .top-middle-header {
+                .top-header-description {
+                    @include top-header-text($color_top_header-blur);
+
+                    a {
+                        @include top-header-text($color-top-header-light);
+                    }
+                }
+            }
+
+            .top-right-header {
+                .header-contact {
+                    display: flex;
+                    gap    : 0.5rem;
+
+                    .header-contact__phone-number {
+
+                        a {
+                            @include top-header-text($color-top-header-light);
+                        }
+                    }
+
+                    .header-contact__social-media {
+                        .social-media-list {
+                            display        : flex;
+                            justify-content: center;
+                            gap            : 0.5rem;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
