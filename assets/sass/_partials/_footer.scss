@@ -1,0 +1,39 @@
+#footer {
+    &>div {
+        border-bottom: 1px solid rgba(white, 0.5);
+    }
+
+    .footer__title {
+        color      : rgba(255, 255, 255, 0.50);
+        font-family: Poppins;
+        font-size  : 0.875rem;
+        font-style : normal;
+        font-weight: 700;
+        line-height: 0.875rem;
+    }
+
+    .footer__link {
+        li {
+            a {
+                color          : white;
+                font-family    : Poppins;
+                font-size      : 0.8125rem;
+                font-style     : normal;
+                font-weight    : 400;
+                line-height    : 140%;
+                text-decoration: none;
+            }
+        }
+    }
+
+    #copy-right {
+        color      : rgba(white, 0.5);
+        text-align : center;
+        font-family: Poppins;
+        font-size  : 0.75rem;
+        font-style : normal;
+        font-weight: 500;
+        line-height: 0.99375rem;
+    }
+
+}

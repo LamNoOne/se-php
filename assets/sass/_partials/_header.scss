@@ -75,7 +75,6 @@
         border-bottom: 0.0625rem solid $color_separate_line;
 
         .main-header__menu {
-
             .dropdown-menu-mega {
                 width        : fit-content;
                 border-radius: unset;
@@ -84,6 +83,8 @@
                 // height: 300px;
 
                 .grid-container {
+                    background-color: white;
+                    width: 1200px;
                     display: grid;
                     grid-template-areas:
                         'main right right right right right'

@@ -10,5 +10,5 @@
         }
     }
 
-    @include control-slide($url_button_next_promotion, $url_button_prev_promotion, 0.4rem, 0.3rem);
+    @include control-slide($url_button_next_promotion, $url_button_prev_promotion, 0.3rem, 0.4rem);
 }
