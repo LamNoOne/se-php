@@ -1,0 +1,27 @@
+#checkout-container {
+    margin-top: 7.5rem;
+
+    .checkout__header {
+        font-family: Poppins;
+        font-size  : 1.125rem;
+        font-weight: 600;
+    }
+
+    .checkout__title {
+        font-size  : 0.875rem;
+        font-family: Poppins;
+        font-weight: 600;
+    }
+
+    .checkout-procedure {
+        &__form {
+            &__label {
+                @include form-label();
+            }
+
+            &__input {
+                @include form-input(40rem);
+            }
+        }
+    }
+}

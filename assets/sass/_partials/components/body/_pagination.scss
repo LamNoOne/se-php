@@ -1,0 +1,25 @@
+.pagination {
+    a {
+        color          : black;
+        float          : left;
+        padding        : 0.3rem 0.7rem;
+        text-decoration: none;
+        transition     : background-color .3s;
+        border         : 1px solid #ddd;
+        border-radius  : 0.25rem;
+        margin         : 0 0.25rem;
+        font-size      : 0.875rem;
+        font-family    : Poppins;
+        font-weight    : normal;
+    }
+
+    a.active {
+        background-color: #1a9cb7;
+        color           : white;
+        border          : 1px solid #1a9cb7;
+    }
+
+    a:hover:not(.active) {
+        background-color: #ddd;
+    }
+}

@@ -1,0 +1,138 @@
+#customer-login-register {
+    margin-top: 7rem;
+
+    #login-register-container.slick-dotted.slick-slider {
+        margin-bottom: 0 !important;
+    }
+
+    .customer-login-register__title {
+        color      : #000;
+        font-family: Poppins;
+        font-size  : 2rem;
+        font-style : normal;
+        font-weight: 600;
+        line-height: normal;
+    }
+
+    .login-container {
+        background-color: #F5F7FF;
+        min-height      : 27.75rem;
+        .dots-append {
+            list-style   : none;
+            padding      : 0;
+            margin-bottom: 0;
+
+            li {
+                display       : flex;
+                flex-direction: column-reverse;
+
+                span {
+                    color          : $primary_color;
+                    font-style     : italic;
+                    text-decoration: underline;
+                    font-family    : Poppins;
+                    font-size      : 0.875rem;
+                    font-weight    : 400;
+                    line-height    : 1.25rem;
+                    margin-bottom  : 1rem;
+                }
+
+                button {
+                    display         : flex;
+                    padding         : 0.7rem 2rem;
+                    border-radius   : 3.125rem;
+                    justify-content : center;
+                    align-items     : center;
+                    color           : white;
+                    font-family     : Poppins;
+                    font-size       : 0.875rem;
+                    font-weight     : 600;
+                    line-height     : normal;
+                    border          : none;
+                    background-color: $primary_color;
+                }
+            }
+        }
+
+        .login-question {
+            color          : $primary_color;
+            text-decoration: none;
+            font-family    : Poppins;
+            font-size      : 0.875rem;
+            font-style     : normal;
+            font-weight    : 400;
+            line-height    : 1.25rem;
+        }
+
+        &__create-account {
+            display         : flex;
+            padding         : 0.7rem 2rem;
+            border-radius   : 3.125rem;
+            justify-content : center;
+            align-items     : center;
+            color           : white;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-weight     : 600;
+            line-height     : normal;
+            border          : none;
+            background-color: $primary_color;
+        }
+
+        &__title {
+            color      : #000;
+            font-family: Poppins;
+            font-size  : 1.125rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        &__desc {
+            color      : #000;
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 300;
+            line-height: 1.875rem;
+        }
+
+        .login-form {
+            &__input {
+                @include form-input();
+
+                &__label {
+                    @include form-label();
+                }
+            }
+
+            &__submit-container {
+                &__submit {
+                    display         : flex;
+                    padding         : 0.7rem 2rem;
+                    border-radius   : 3.125rem;
+                    justify-content : center;
+                    align-items     : center;
+                    color           : white;
+                    font-family     : Poppins;
+                    font-size       : 0.875rem;
+                    font-weight     : 600;
+                    line-height     : normal;
+                    border          : none;
+                    background-color: $primary_color;
+                }
+
+                &__forgot-password {
+                    color          : $primary_color;
+                    text-decoration: none;
+                    font-family    : Poppins;
+                    font-size      : 0.875rem;
+                    font-style     : normal;
+                    font-weight    : 400;
+                    line-height    : 1.25rem;
+                }
+            }
+
+        }
+    }
+}

@@ -6,10 +6,20 @@
 
 body {
     font-family     : "Poppins", sans-serif;
+    font-size       : 0.875rem;
+    font-weight     : normal;
     background-color: $main_background;
-    height: fit-content;
+    height          : fit-content;
 }
 
 .checked {
     color: orange;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.blur {
+    filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
 }

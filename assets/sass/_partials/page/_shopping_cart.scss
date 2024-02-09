@@ -1,0 +1,202 @@
+#shopping-cart {
+    margin-top: 7.5rem;
+
+    .shopping-cart__title {
+        color      : rgba(black, 0.85);
+        font-family: Poppins;
+        font-size  : 1.5rem;
+        font-style : normal;
+        font-weight: 600;
+        line-height: normal;
+    }
+
+    .cart-header {
+        color      : rgba(black, 0.85);
+        font-family: Poppins;
+        font-size  : 0.875rem;
+        font-style : normal;
+        font-weight: 600;
+        line-height: normal;
+    }
+
+    .cart-item-container {
+        gap            : 1rem;
+        display        : flex;
+        align-items    : center;
+        justify-content: space-between;
+        padding-right  : 1rem;
+
+        p {
+            text-align: justify;
+        }
+    }
+
+    .cart-item {
+        &__img {
+            width : 7.5rem;
+            height: 7.5rem;
+        }
+
+        &__desc {
+            color      : rgba(black, 0.75);
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+
+        &__price {
+            @include item-price();
+        }
+
+        &__input-quantity {
+            @include input-quantity();
+        }
+
+        &__btn-delete-cart {
+            width           : 1.686rem;
+            height          : 1.686rem;
+            border          : none;
+            outline         : none;
+            background-color: transparent;
+            background-image: url("/assets/img/delete-cart.svg");
+        }
+    }
+
+    .cart-item-control {
+        .continue-shopping {
+            display        : inline-flex;
+            padding        : 0.5rem 2rem 0.5rem 1.875rem;
+            justify-content: center;
+            align-items    : center;
+            border-radius  : 3.125rem;
+            border         : 2px solid #A2A6B0;
+
+            color      : #A2A6B0;
+            text-align : center;
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .clear-cart {
+            display        : inline-flex;
+            padding        : 0.5rem 1.75rem 0.5rem 1.6875rem;
+            justify-content: center;
+            align-items    : center;
+            border-radius  : 3.125rem;
+            background     : rgba(black, 0.85);
+
+            color      : #FFF;
+            text-align : center;
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .update-cart {
+            display        : inline-flex;
+            padding        : 0.5rem 1.75rem 0.5rem 1.6875rem;
+            justify-content: center;
+            align-items    : center;
+            border-radius  : 3.125rem;
+            background     : rgba(black, 0.85);
+
+            color      : #FFF;
+            text-align : center;
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+    }
+
+    .checkout-summary {
+        background-color: #F5F7FF;
+        padding         : 1rem 2rem;
+
+        &__header {
+            color      : rgba(black, 0.85);
+            font-family: Poppins;
+            font-size  : 1.5rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        &__title {
+            color      : rgba(black, 0.85);
+            text-align : right;
+            font-family: Poppins;
+            font-size  : 0.8125rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: 1.70625rem;
+        }
+
+        &__note {
+            color      : var(--Color---5, #A2A6B0);
+            font-family: Poppins;
+            font-size  : 0.625rem;
+            font-style : normal;
+            font-weight: 400;
+            line-height: 1.125rem;
+        }
+
+        &__value {
+            color      : rgba(black, 0.85);
+            text-align : right;
+            font-family: Poppins;
+            font-size  : 0.8125rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: 1.70625rem
+        }
+
+        &__btn-process {
+            display         : flex;
+            width           : 100%;
+            height          : 3.125rem;
+            align-items     : center;
+            justify-content : center;
+            color           : #FFF;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+            border          : none;
+            background-color: $primary_color;
+            border-radius   : 3.125rem;
+        }
+
+        &__zip {
+            display        : flex;
+            justify-content: space-between;
+            align-items    : center;
+
+            &__img {
+                width : 3.6875rem;
+                height: 1.3125rem;
+            }
+
+            &__vector {}
+
+            &__content {
+                color      : #272560;
+                font-family: Poppins;
+                font-size  : 0.75rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: 120.5%;
+            }
+        }
+    }
+
+}

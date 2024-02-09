@@ -1,3 +1,4 @@
+// Start Header Config
 @mixin top-header-text($color) {
     color      : $color;
     font-size  : 0.75rem;
@@ -15,6 +16,71 @@
     line-height  : normal;
 }
 
+// End Header Config
+
+// Start Login Config
+@mixin form-label() {
+    color      : #000;
+    font-family: Poppins;
+    font-size  : 0.8125rem;
+    font-style : normal;
+    font-weight: 600;
+    line-height: 1.70625rem;
+
+    span {
+        color      : #C94D3F;
+        font-family: Poppins;
+        font-size  : 0.8125rem;
+        font-style : normal;
+        font-weight: 600;
+        line-height: 1.70625rem;
+    }
+}
+
+@mixin form-input($width: 28.0625rem, $height: 3.125rem) {
+    width        : $width;
+    height       : $height;
+    border-radius: 0.25rem;
+    font-size    : 0.875rem;
+    font-family  : Poppins;
+    font-weight  : 500;
+    border       : 1px solid #A2A6B0;
+    padding-left : 1rem;
+    background   : white;
+
+    &:focus {
+        border-color: rgba($primary_color, 0.8);
+        box-shadow  : 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba($primary_color, 0.6);
+        outline     : 0 none;
+    }
+}
+
+// End Login Config
+
+// Start Cart Config
+@mixin input-quantity() {
+    width        : 4rem;
+    height       : 2.5rem;
+    outline      : none;
+    border       : none;
+    text-align   : center;
+    border-radius: 0.375rem;
+    background   : #ebefff;
+}
+
+@mixin item-price() {
+    color      : #000;
+    text-align : center;
+    font-family: Poppins;
+    font-size  : 1rem;
+    font-style : normal;
+    font-weight: 600;
+    line-height: normal;
+}
+
+// End Cart Config
+
+// Start Product Card Config
 @mixin card-product($width: auto) {
     .card-product-detail {
         width        : $width;
@@ -22,7 +88,7 @@
         padding      : 1rem 1.5rem;
         border-radius: 0.5rem;
         box-shadow   : 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
-        overflow: hidden;
+        overflow     : hidden;
 
         .item-status {
             span.true {
@@ -104,7 +170,7 @@
 
 }
 
-@mixin control-slide($url_next, $url_prev, $left: 0.3rem, $right: 0.3rem) {
+@mixin control-slide($url_next, $url_prev, $left: 0rem, $right: 0rem) {
 
     .slick-next::before,
     .slick-prev::before {
@@ -133,3 +199,5 @@
         background-size  : contain;
     }
 }
+
+// End Product Card Config

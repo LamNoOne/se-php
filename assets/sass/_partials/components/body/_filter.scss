@@ -1,0 +1,105 @@
+#product-card-container {
+    .product-filter {
+
+        .check-filter {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            .filter-item {
+                &>input[type="checkbox"] {
+                    cursor: pointer;
+                }
+
+                &>label {
+                    cursor     : pointer;
+                    color      : #757575;
+                    font-family: Poppins;
+                    font-size  : 0.8125rem;
+                    font-style : normal;
+                    font-weight: normal;
+                    line-height: normal;
+                }
+            }
+        }
+
+        .filter-title {
+            color      : black;
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .category-filter {
+            .category-list {
+                .category-item {
+                    a {
+                        text-decoration   : none;
+                        color             : #757575;
+                        // color          : $primary_color;
+                        font-family       : Poppins;
+                        font-size         : 0.8125rem;
+                        font-style        : normal;
+                        font-weight       : 500;
+                        line-height       : normal;
+
+                    }
+
+                    .active {
+                        color: $primary_color !important;
+                    }
+                }
+            }
+        }
+
+        .price-filter {
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            &--min {
+                display      : flex;
+                width        : 4.375rem;
+                height       : 1.875rem;
+                font-family  : Poppins;
+                font-size    : 0.7rem;
+                font-weight  : normal;
+                border       : 1px solid rgba(0, 0, 0, 0.4);
+                border-radius: 0.25rem;
+                padding      : 0 0.5rem;
+                outline      : none;
+                color        : rgba(0, 0, 0, 0.85);
+            }
+
+            &--max {
+                display      : flex;
+                width        : 4.375rem;
+                height       : 1.875rem;
+                font-family  : Poppins;
+                font-size    : 0.7rem;
+                font-weight  : normal;
+                border       : 1px solid rgba(0, 0, 0, 0.4);
+                border-radius: 0.25rem;
+                padding      : 0 0.5rem;
+                outline      : none;
+                color        : rgba(0, 0, 0, 0.85);
+            }
+
+            &__btn-price {
+                width              : 2rem;
+                height             : 1.875rem;
+                display            : flex;
+                justify-content    : center;
+                align-items        : center;
+                border             : none;
+                background-color   : #f79458;
+                border-radius      : 0.25rem;
+                &:hover {
+                    transition: all 0.3s ease-in-out;
+                    background-color: #40a9ff;
+                }
+
+                i {
+                    font-size: 0.7rem;
+                    color: white;
+                }
+            }
+        }
+    }
+}

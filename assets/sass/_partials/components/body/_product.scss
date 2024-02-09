@@ -1,3 +1,5 @@
+// Home Start
+
 #product-slider {
     .multiple-product-slider {
 
@@ -78,4 +80,8 @@
         max-width: 9rem;
     }
 
+}
+
+#product-card-container {
+    @include card-product();
 }
