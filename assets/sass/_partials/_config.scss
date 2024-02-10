@@ -84,6 +84,8 @@
 @mixin card-product($width: auto) {
     .card-product-detail {
         width        : $width;
+        height       : -webkit-fit-content;
+        height       : -moz-fit-content;
         height       : fit-content;
         padding      : 1rem 1.5rem;
         border-radius: 0.5rem;
@@ -153,7 +155,8 @@
                 font-style          : normal;
                 font-weight         : 400;
                 line-height         : 1.225rem;
-                text-decoration-line: strikethrough;
+                -webkit-text-decoration-line: strikethrough;
+                        text-decoration-line: strikethrough;
             }
 
             .new-price {

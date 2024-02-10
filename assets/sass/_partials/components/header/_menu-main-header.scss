@@ -3,6 +3,8 @@
         .main-header__menu {
             // ==========================Main Header Menu========================== //
             .dropdown-menu-mega {
+                width        : -webkit-fit-content;
+                width        : -moz-fit-content;
                 width        : fit-content;
                 border-radius: unset;
                 padding      : unset;
@@ -80,6 +82,8 @@
                     a:not(.link-brand) {
                         @include main-header-text($color_main_header);
                         border-radius: 6.25rem;
+                        width        : -webkit-fit-content;
+                        width        : -moz-fit-content;
                         width        : fit-content;
                         padding      : 0.5rem;
 

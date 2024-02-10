@@ -89,13 +89,17 @@
             img:first-child {
                 width     : 4.8125rem;
                 height    : 1.6875rem;
-                object-fit: contain;
+                -o-object-fit: contain;
+                   object-fit: contain;
             }
 
             img:last-child {
+                width     : -webkit-fit-content;
+                width     : -moz-fit-content;
                 width     : fit-content;
                 height    : 1.4375rem;
-                object-fit: contain;
+                -o-object-fit: contain;
+                   object-fit: contain;
             }
 
             p {
@@ -199,8 +203,6 @@
             border-radius  : 3.125rem;
             background     : #FFB800;
             cursor         : pointer;
-
-            &__img {}
         }
     }
 }

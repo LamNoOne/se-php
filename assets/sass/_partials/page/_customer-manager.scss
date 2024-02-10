@@ -1,0 +1,82 @@
+#customer-manager {
+    margin-top: 8rem;
+
+    .customer-manager__btn-list {
+        border-radius   : 0.5rem;
+        background-color: #f6fbfc;
+        padding         : 0.5rem;
+
+        &__item {
+            display         : flex;
+            justify-content : start;
+            align-items     : center;
+            gap             : 0.5rem;
+            border          : 1px solid transparent;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
+            font-weight     : 500;
+            background-color: transparent;
+            width           : 100%;
+            text-align      : start;
+            padding         : 0.25rem 0.5rem;
+            border-radius   : 0.5rem;
+            margin          : 0.25rem 0;
+
+            img {
+                width: 1.2rem;
+            }
+        }
+
+        &__item:hover {
+            background-color: rgba($primary_color, 0.2);
+            color           : $primary_color;
+            border          : 1px solid $primary_color;
+
+            img {
+                filter: invert(16%) sepia(94%) saturate(4747%) hue-rotate(222deg) brightness(105%) contrast(101%);
+            }
+        }
+    }
+
+    .order-item {
+        background-color: #f6fbfc;
+        border-radius   : 0.5rem;
+        padding         : 1rem;
+
+        img {
+            width : 7.5rem;
+            height: 7.5rem;
+        }
+
+        &__desc {
+            font-size  : 0.875rem;
+            font-family: Poppins;
+        }
+
+        &__price {
+            font-size  : 0.875rem;
+            font-family: Poppins;
+            font-weight: 600;
+            color      : red;
+        }
+
+        &__time {
+            span {
+                font-size  : 0.8125rem;
+                font-family: Poppins;
+                font-weight: normal;
+                color      : #999;
+            }
+
+            .btn-order-detail {
+                border          : none;
+                padding         : 0.5rem 1rem;
+                border-radius   : 0.25rem;
+                background-color: $primary_color;
+                color           : white;
+                font-size       : 0.875rem;
+                font-family     : Poppins;
+            }
+        }
+    }
+}

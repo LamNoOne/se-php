@@ -35,7 +35,8 @@
             font-style          : normal;
             font-weight         : 400;
             line-height         : .93438rem;
-            text-decoration-line: underline;
+            -webkit-text-decoration-line: underline;
+                    text-decoration-line: underline;
         }
     }
 }
@@ -70,7 +71,8 @@
             font-style          : normal;
             font-weight         : 400;
             line-height         : 0.93438rem;
-            text-decoration-line: underline;
+            -webkit-text-decoration-line: underline;
+                    text-decoration-line: underline;
         }
     }
 }

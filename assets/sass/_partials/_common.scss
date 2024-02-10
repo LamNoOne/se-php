@@ -9,6 +9,8 @@ body {
     font-size       : 0.875rem;
     font-weight     : normal;
     background-color: $main_background;
+    height          : -webkit-fit-content;
+    height          : -moz-fit-content;
     height          : fit-content;
 }
 
@@ -21,5 +23,6 @@ body {
 }
 
 .blur {
-    filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
+    -webkit-filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
+            filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
 }

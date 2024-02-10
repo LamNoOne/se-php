@@ -79,6 +79,8 @@
                     #dropdown-menu-cart {
                         position: absolute !important;
                         width   : 19.375rem;
+                        height  : -webkit-fit-content;
+                        height  : -moz-fit-content;
                         height  : fit-content;
                         inset   : 0.2rem 1rem auto auto !important;
 
