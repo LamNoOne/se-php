@@ -457,7 +457,7 @@ body {
   #promotion-slider .slick-next {
     position: absolute;
     z-index: 100;
-    background-image: url("/assets/img/button_next_promotion.svg");
+    background-image: url("../img/button_next_promotion.svg");
     right: 0.4rem;
     width: 2.875rem;
     height: 4.9375rem;
@@ -466,7 +466,7 @@ body {
   #promotion-slider .slick-prev {
     position: absolute;
     z-index: 100;
-    background-image: url("/assets/img/button_prev_promotion.svg");
+    background-image: url("../img/button_prev_promotion.svg");
     left: 0.3rem;
     width: 2.875rem;
     height: 4.9375rem;
@@ -557,7 +557,7 @@ body {
 #product-slider .multiple-product-slider .slick-next {
   position: absolute;
   z-index: 100;
-  background-image: url("/assets/img/button_next_product_slider.svg");
+  background-image: url("../img/button_next_product_slider.svg");
   right: 0rem;
   width: 2.875rem;
   height: 4.9375rem;
@@ -567,7 +567,7 @@ body {
 #product-slider .multiple-product-slider .slick-prev {
   position: absolute;
   z-index: 100;
-  background-image: url("/assets/img/button_prev_product_slider.svg");
+  background-image: url("../img/button_prev_product_slider.svg");
   left: 0rem;
   width: 2.875rem;
   height: 4.9375rem;
