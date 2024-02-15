@@ -4,7 +4,7 @@
     .multiple-product-slider {
 
         .product-card-container {
-            padding: 0.3125rem;
+            padding   : 0.3125rem;
             @include card-product();
         }
 
@@ -28,21 +28,22 @@
         }
 
         &__link {
-            color               : #0156FF;
-            text-align          : right;
-            font-family         : Poppins;
-            font-size           : 0.8125rem;
-            font-style          : normal;
-            font-weight         : 400;
-            line-height         : .93438rem;
+            color                       : #0156FF;
+            text-align                  : right;
+            font-family                 : Poppins;
+            font-size                   : 0.8125rem;
+            font-style                  : normal;
+            font-weight                 : 400;
+            line-height                 : .93438rem;
             -webkit-text-decoration-line: underline;
-                    text-decoration-line: underline;
+            text-decoration-line        : underline;
         }
     }
 }
 
 #outstanding-product {
     margin-top: 1rem;
+
     .multiple-product-outstanding {
         @include card-product();
     }
@@ -65,14 +66,14 @@
         }
 
         a {
-            color               : white;
-            font-family         : Poppins;
-            font-size           : 0.8125rem;
-            font-style          : normal;
-            font-weight         : 400;
-            line-height         : 0.93438rem;
+            color                       : white;
+            font-family                 : Poppins;
+            font-size                   : 0.8125rem;
+            font-style                  : normal;
+            font-weight                 : 400;
+            line-height                 : 0.93438rem;
             -webkit-text-decoration-line: underline;
-                    text-decoration-line: underline;
+            text-decoration-line        : underline;
         }
     }
 }

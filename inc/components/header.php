@@ -1,4 +1,5 @@
 <?php
+require_once dirname(__DIR__) . "/init.php";
 define("APP_URL", "http://localhost/se-php");
 ?>
 <html lang="en">
