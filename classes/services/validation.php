@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 class Validation
 {
@@ -7,9 +8,16 @@ class Validation
     {
     }
 
+    /**
+     * @param mixed $options
+     * Validator options
+     */
     protected function validateQueryOptions($options)
     {
-        // Set default values
+        /**
+         * @param $defaults
+         * Default values for options query
+         */
         $defaults = [
             'fields' => '*',
             'filters' => [],
@@ -18,7 +26,12 @@ class Validation
             'offset' => 0,
         ];
 
-        // Validate and sanitize each option
+        if(!self::validateKeys($defaults, $options))
+            throw new InvalidArgumentException("Invalid options");
+
+        /**
+         * Validate and sanitize each option
+         */
         $options = array_merge($defaults, $options);
         $options['fields'] = self::validateFields($options['fields']);
         $options['filters'] = self::validateFilters($options['filters']);
@@ -29,38 +42,69 @@ class Validation
         return $options;
     }
 
-    // Validate and sanitize fields
+    /**
+     * @param string $fields
+     * Validate and sanitize fields
+     */
     private static function validateFields($fields)
     {
         // Add your validation logic here
         return $fields;
     }
 
-    // Validate and sanitize filters
+    /**
+     * @param mixed $filters
+     * Validate and sanitize filters
+     */
     private static function validateFilters($filters)
     {
         // Add your validation logic here
         return $filters;
     }
 
-    // Validate and sanitize order by clause
+    /**
+     * @param string $orderBy
+     * Validate and sanitize order by clause
+     */
     private static function validateOrderBy($orderBy)
     {
         // Add your validation logic here
         return $orderBy;
     }
 
-    // Validate and sanitize limit
+    /**
+     * @param int $limit
+     * Validate and sanitize limit
+     */
     private static function validateLimit($limit)
     {
         // Add your validation logic here
         return (int)$limit;
     }
 
-    // Validate and sanitize offset
+    /**
+     * @param int $offset
+     * Validate and sanitize offset
+     */
     private static function validateOffset($offset)
     {
         // Add your validation logic here
         return (int)$offset;
+    }
+
+    /**
+     * @param mixed $defaults
+     * @param mixed $options
+     * @return boolean
+     */
+    private static function validateKeys($defaults, $options) {
+        // Add your validation logic here
+        if(empty($options)) return false;
+        
+        foreach (array_keys($options) as $key) {
+            if(!array_key_exists($key, $defaults)) return false;
+        }
+
+        return true;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require_once "validation.php";
 class QueryBuilder extends Validation
 {
@@ -11,14 +12,25 @@ class QueryBuilder extends Validation
         $this->validation = new Validation();
     }
 
+    /**
+     * @param mixed $options
+     * Validate options is an array, merge with default options if it's valid
+     */
     protected function validateQueryOptions($options)
     {
+        // Validate the query options
         return $this->validation->validateQueryOptions($options);
     }
 
+    /**
+     * @param string $tableName
+     * @param mixed $options
+     * Build the string query
+     */
     protected function buildSqlQuery($tableName, $options)
     {
         // SQL query construction logic...
+        // Create a base query
         $sql = "SELECT {$options['fields']} FROM $tableName";
 
         if (!empty($options['filters'])) {
@@ -36,6 +48,12 @@ class QueryBuilder extends Validation
         return $sql;
     }
 
+    /**
+     * @param mixed $conn
+     * @param string $sql
+     * @param mixed $options
+     * @return PDOStatement
+     */
     protected function executeQuery($conn, $sql, $options)
     {
         // Query preparation and execution logic...

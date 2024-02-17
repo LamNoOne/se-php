@@ -1,5 +1,7 @@
 <?php
 // Add Interface
+// Use SingleTon and Factory Pattern
+declare(strict_types=1);
 require_once "querybuilder.php";
 class DataFetcher extends QueryBuilder
 {
@@ -13,6 +15,10 @@ class DataFetcher extends QueryBuilder
         $this->queryBuilder = new QueryBuilder($conn);
     }
 
+    /**
+     * @param mixed $conn
+     * @return object
+    */
     public static function getInstance($conn): DataFetcher
     {
         if (!self::$instance) {
@@ -27,6 +33,12 @@ class DataFetcher extends QueryBuilder
         // Disable cloning
     }
 
+    /**
+     * @param string $tableName
+     * @param mixed $options
+     * @param string $fetchType
+     * @return array
+     */
     protected function fetchData($tableName, $options = [], $fetchType)
     {
         try {
