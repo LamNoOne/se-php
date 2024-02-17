@@ -1,4 +1,15 @@
-<?php require_once "inc/components/header.php"; ?>
+<?php require_once "../inc/components/header.php"; ?>
+<?php require_once "../inc/utils.php" ?>
+<?php
+if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
+    redirect(APP_URL);
+}
+
+$conn = require_once "../inc/db.php";
+$product_id = $_GET["product_id"];
+$productDetail = Product::getProductById($conn, $product_id);
+print_r($productDetail);
+?>
 <div id="main-content" class="main-content">
     <div id="product-detail">
         <div class="container">
@@ -19,7 +30,7 @@
                             <span class="add-to-cart__text"> Add to Cart </span>
                         </button>
                         <button class="payment-paypal">
-                            <img class="payment-paypal__img" src="assets/img/payment.svg" alt="pay-with-paypal" />
+                            <img class="payment-paypal__img" src="<?php echo APP_URL; ?>/assets/img/payment.svg" alt="pay-with-paypal" />
                         </button>
                     </div>
                 </div>
@@ -28,9 +39,9 @@
                 <div class="col-8">
                     <div class="product-desc-container">
                         <div class="product-desc d-flex flex-column gap-3">
-                            <h3 class="product-desc__title mt">MSI MPG Trident 3</h3>
+                            <h3 class="product-desc__title mt"><?php echo $productDetail->name; ?></h3>
                             <p class="product-desc__desc m-0">
-                                MSI MPG Trident 3 is a high-performance, high-definition, high-quality, high-speed,
+                                <?php echo $productDetail->description; ?> is a high-performance, high-definition, high-quality, high-speed,
                                 high-definition, high-performance and high-definition graphics card that delivers a
                                 performance boost to games and applications.MSI MPG Trident 3 is a high-performance,
                                 high-definition, high-quality, high-speed, high-definition, high-performance and
@@ -40,62 +51,41 @@
                         </div>
 
                         <div class="product-desc d-flex flex-column gap-3">
-                            <h3 class="product-desc__title mt">MSI MPG Trident 3</h3>
+                            <h3 class="product-desc__title mt"><?php echo $productDetail->name; ?></h3>
                             <ul>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">Intel Core i7-10700F</p>
+                                    <p class="product-desc__detail m-0">Screen: <?php echo $productDetail->screen; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">Intel H410</p>
+                                    <p class="product-desc__detail m-0">Operating system: <?php echo $productDetail->operatingSystem; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">WHITE</p>
+                                    <p class="product-desc__detail m-0">Processor: <?php echo $productDetail->processor; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">
-                                        NVIDIA MSI GeForce RTX 2060 SUPER 8GB AERO ITX GDDR6
-                                    </p>
+                                    <p class="product-desc__detail m-0">Ram: <?php echo $productDetail->ram; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">SO-DIMM 16GB (16GB x 1) DDR4 2666MHz</p>
+                                    <p class="product-desc__detail m-0">Storage capacity: <?php echo $productDetail->storageCapacity; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">2 total slots (64GB Max)</p>
+                                    <p class="product-desc__detail m-0">Weight: <?php echo $productDetail->weight; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">
-                                        512GB (1 x 512GB) M.2 NVMe PCIe GEN3x4 SSD 2TB (2.5) 5400RPM
-                                    </p>
+                                    <p class="product-desc__detail m-0">Battery Capacity: <?php echo $productDetail->batteryCapacity; ?></p>
                                 </li>
                                 <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">Gaming Keyboard GK30 + Gaming Mouse GM11</p>
-                                </li>
-                                <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">
-                                        3.5 HDD (0/0), 2.5 HDD/SSD(1/0), M.2 (1/0)
-                                    </p>
-                                </li>
-                                <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">Intel WGI219Vethernet (10/100/1000M)</p>
-                                </li>
-                                <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">AX200 (WIFI 6)+BT5.1</p>
-                                </li>
-                                <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">PSU 330W</p>
-                                </li>
-                                <li class="product-desc__list-item">
-                                    <p class="product-desc__detail m-0">Fan Cooler</p>
+                                    <p class="product-desc__detail m-0">Color: <?php echo $productDetail->color; ?></p>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="product-desc d-flex flex-column gap-3">
-                            <h3 class="product-desc__title mt">MSI MPG Trident 3</h3>
+                            <h3 class="product-desc__title mt"><?php echo $productDetail->name ?></h3>
                             <div class="product-desc__specs">
                                 <div class="product-desc__specs__detail d-flex align-items-center">
                                     <p class="product-desc__specs__detail__title m-0 py-1 ps-1">CPU</p>
-                                    <p class="product-desc__specs__detail__value m-0">N/A</p>
+                                    <p class="product-desc__specs__detail__value m-0"><?php echo $productDetail->processor ?></p>
                                 </div>
                                 <div class="product-desc__specs__detail d-flex align-items-center">
                                     <p class="product-desc__specs__detail__title m-0 py-1 ps-1">Features</p>
@@ -111,10 +101,10 @@
                 </div>
                 <div class="col-4">
                     <div class="product-img-container">
-                        <img src="assets/img/product-detail.webp" class="object-fit-cover product-img" alt="product" />
+                        <img src="<?php echo $productDetail->imageUrl; ?>" class="object-fit-contain product-img" alt="product" />
                         <div class="add-on d-flex justify-content-center align-items-center gap-3">
-                            <img src="assets/img/zip.svg" alt="zip" />
-                            <img src="assets/img/vector.svg" alt="" />
+                            <img src="<?php echo APP_URL; ?>/assets/img/zip.svg" alt="zip" />
+                            <img src="<?php echo APP_URL; ?>/assets/img/vector.svg" alt="vector" />
                             <p class="add-on__desc m-0">
                                 own it now, up to 6 months<br />
                                 interest free learn more
@@ -126,7 +116,7 @@
         </div>
     </div>
 </div>
-<?php require_once "inc/components/footer.php"; ?>
+<?php require_once "../inc/components/footer.php"; ?>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/product-detail.js"></script>

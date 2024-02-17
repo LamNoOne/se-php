@@ -1,7 +1,7 @@
-<?php require_once "inc/components/header.php"; ?>
+<?php require_once "../inc/components/header.php"; ?>
 
 <?php
-$conn = require_once "inc/db.php";
+$conn = require_once "../inc/db.php";
 $allProducts = Product::getAllProducts($conn, 30);
 // print_r($allProducts);
 ?>
@@ -12,16 +12,16 @@ $allProducts = Product::getAllProducts($conn, 30);
             <div class="row">
                 <div class="single-promotion position-relative">
                     <div class="promotion-container">
-                        <img class="promotion-img object-fit-fill" src="assets/img/promotion.png" alt="promotion" />
+                        <img class="promotion-img object-fit-fill" src="<?php echo APP_URL; ?>/assets/img/promotion.png" alt="promotion" />
                     </div>
                     <div class="promotion-container">
-                        <img class="promotion-img object-fit-fill" src="assets/img/promotion_2.jpg" alt="promotion" />
+                        <img class="promotion-img object-fit-fill" src="<?php echo APP_URL; ?>/assets/img/promotion_2.jpg" alt="promotion" />
                     </div>
                     <div class="promotion-container">
-                        <img class="promotion-img object-fit-fill" src="assets/img/promotion_3.jpg" alt="promotion" />
+                        <img class="promotion-img object-fit-fill" src="<?php echo APP_URL; ?>/assets/img/promotion_3.jpg" alt="promotion" />
                     </div>
                     <div class="promotion-container">
-                        <img class="promotion-img object-fit-fill" src="assets/img/promotion_4.jpg" alt="promotion" />
+                        <img class="promotion-img object-fit-fill" src="<?php echo APP_URL; ?>/assets/img/promotion_4.jpg" alt="promotion" />
                     </div>
                 </div>
             </div>
@@ -172,9 +172,9 @@ $allProducts = Product::getAllProducts($conn, 30);
                     <div class="row">
                         <?php foreach ($allProducts as $product) : ?>
                             <div class="mb-2 col col-sm-6 col-lg-4 col-xl-3">
-                                <div class="card-product-detail">
+                                <div class="card-product-detail" data-index="<?php echo $product->id; ?>">
                                     <div class="item-status d-flex">
-                                        <img src="assets/img/stock.svg" alt="in-stock" />
+                                        <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
                                         <span class="true">&nbsp;in stock</span>
                                     </div>
                                     <div class="image-container">
@@ -226,38 +226,38 @@ $allProducts = Product::getAllProducts($conn, 30);
         <div class="container">
             <div class="d-flex justify-content-between overflow-hidden">
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_1.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_1.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_2.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_2.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_3.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_3.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_4.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_4.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_5.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_5.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_6.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_6.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
 
                 <a href="#" class="d-inline-flex">
-                    <img src="/assets/img/brand_7.png" alt="brand" class="item-brand object-fit-contain" />
+                    <img src="<?php echo APP_URL; ?>/assets/img/brand_7.png" alt="brand" class="item-brand object-fit-contain" />
                 </a>
             </div>
         </div>
     </div>
 </div>
 
-<?php require_once "inc/components/footer.php"; ?>
+<?php require_once "../inc/components/footer.php"; ?>
 <script>
     // onClick => fetch url => response => innerHtml => change url.
     // read url => take effect on checkbox
@@ -280,3 +280,11 @@ $allProducts = Product::getAllProducts($conn, 30);
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/promotion.js"></script>
+<script>
+    const productCards = document.querySelectorAll('.card-product-detail');
+    productCards.forEach(productCard => {
+        productCard.addEventListener('click', () => {
+            window.location.href = `<?php echo APP_URL; ?>/product/product-detail.php?product_id=${productCard.dataset.index}`;
+        })
+    })
+</script>

@@ -115,6 +115,8 @@ body {
         border-radius: 0.5rem;
         box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
         overflow: hidden; }
+        #header .main-header .main-header__menu .dropdown-menu-mega .grid-container .list-item-detail__content li .card-product-detail:hover {
+          cursor: pointer; }
         #header .main-header .main-header__menu .dropdown-menu-mega .grid-container .list-item-detail__content li .card-product-detail .item-status span.true {
           color: #78A962;
           text-align: center;
@@ -487,6 +489,8 @@ body {
     border-radius: 0.5rem;
     box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
     overflow: hidden; }
+    #product-slider .multiple-product-slider .product-card-container .card-product-detail:hover {
+      cursor: pointer; }
     #product-slider .multiple-product-slider .product-card-container .card-product-detail .item-status span.true {
       color: #78A962;
       text-align: center;
@@ -598,6 +602,8 @@ body {
     border-radius: 0.5rem;
     box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
     overflow: hidden; }
+    #outstanding-product .multiple-product-outstanding .card-product-detail:hover {
+      cursor: pointer; }
     #outstanding-product .multiple-product-outstanding .card-product-detail .item-status span.true {
       color: #78A962;
       text-align: center;
@@ -685,6 +691,8 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
   overflow: hidden; }
+  #product-card-container .card-product-detail:hover {
+    cursor: pointer; }
   #product-card-container .card-product-detail .item-status span.true {
     color: #78A962;
     text-align: center;
@@ -1108,8 +1116,8 @@ body {
   #product-detail .product-img-container {
     padding: 3rem 5rem; }
     #product-detail .product-img-container .product-img {
-      width: 15.9375rem;
-      height: 27.75rem; }
+      width: 24rem;
+      height: fit-content; }
     #product-detail .product-img-container .add-on {
       margin-top: 1rem; }
       #product-detail .product-img-container .add-on img:first-child {

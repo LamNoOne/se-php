@@ -83,6 +83,10 @@
 // Start Product Card Config
 @mixin card-product($width: auto) {
     .card-product-detail {
+        &:hover {
+            cursor: pointer;
+        }
+
         width        : $width;
         min-height   : 21.5rem;
         padding      : 1rem 1.5rem;

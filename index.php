@@ -64,7 +64,7 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams);
                 <div class="multiple-product-slider">
                     <?php foreach ($newProducts as $newProduct) : ?>
                         <div class="product-card-container">
-                            <div class="card-product-detail">
+                            <div class="card-product-detail" data-index="<?php echo $newProduct->id; ?>">
                                 <div class="item-status d-flex">
                                     <?php if ($newProduct->stockQuantity > 0) : ?>
                                         <img src="assets/img/stock.svg" alt="status-product" />
@@ -271,7 +271,7 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams);
                 <div class="multiple-product-slider">
                     <?php foreach ($laptops as $laptop) : ?>
                         <div class="product-card-container">
-                            <div class="card-product-detail">
+                            <div class="card-product-detail" data-index="<?php echo $laptop->id; ?>">
                                 <div class="item-status d-flex">
                                     <?php if ($laptop->stockQuantity > 0) : ?>
                                         <img src="assets/img/stock.svg" alt="status-product" />
@@ -323,7 +323,7 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams);
                 <div class="multiple-product-slider">
                     <?php foreach ($computers as $computer) : ?>
                         <div class="product-card-container">
-                            <div class="card-product-detail">
+                            <div class="card-product-detail" data-index="<?php echo $computer->id; ?>">
                                 <div class="item-status d-flex">
                                     <?php if ($computer->stockQuantity > 0) : ?>
                                         <img src="assets/img/stock.svg" alt="status-product" />
@@ -375,7 +375,7 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams);
                 <div class="multiple-product-slider">
                     <?php foreach ($monitors as $monitor) : ?>
                         <div class="product-card-container">
-                            <div class="card-product-detail">
+                            <div class="card-product-detail" data-index="<?php echo $monitor->id; ?>">
                                 <div class="item-status d-flex">
                                     <?php if ($monitor->stockQuantity > 0) : ?>
                                         <img src="assets/img/stock.svg" alt="status-product" />
@@ -456,3 +456,12 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams);
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/promotion.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/product.js"></script>
+<script>
+    const productCards = document.querySelectorAll('.card-product-detail');
+    console.log(productCards)
+    productCards.forEach(productCard => {
+        productCard.addEventListener('click', () => {
+            window.location.href = `<?php echo APP_URL; ?>/product/product-detail.php?product_id=${productCard.dataset.index}`;
+        })
+    })
+</script>

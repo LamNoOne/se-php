@@ -93,11 +93,24 @@ class Product extends DataFetcher
         }
     }
 
-    public static function getProductById($conn)
+    public static function getProductById($conn, $productId)
     {
         /**
          * Write your code here
          */
+
+        try {
+            $query = "SELECT * FROM product WHERE id = :productId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+            if (!$stmt->execute()) {
+                throw new PDOException($stmt->errorInfo());
+            }
+            return $stmt->fetch();
+        } catch (PDOException $e) {
+            return Message::message(false, "Can not get products by id: " . $e->getMessage());
+        }
     }
 
     /**
