@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require_once "validation.php";
 class QueryBuilder extends Validation
@@ -24,26 +25,44 @@ class QueryBuilder extends Validation
 
     /**
      * @param string $tableName
-     * @param mixed $options
-     * Build the string query
+     * @param array $options [string $fields | array filters | string orderBy | int limit | int offset]
+     * Build the string query:
+     * SELECT fields FROM table WHERE condition ORDER BY condition LIMIT number OFFSET number
      */
-    protected function buildSqlQuery($tableName, $options)
+    protected function buildSqlQuery($tableName, $options, $limit = true)
     {
         // SQL query construction logic...
         // Create a base query
         $sql = "SELECT {$options['fields']} FROM $tableName";
-
         if (!empty($options['filters'])) {
-            $sql .= " WHERE " . implode(' AND ', array_map(function ($column) {
-                return "$column = :$column";
-            }, array_keys($options['filters'])));
+            $sql .= " WHERE " . implode(
+                ' AND ',
+                array_map(
+                    function ($key, $column) {
+                        // Handle more logic
+                        // If field of each filter is an array and not empty
+                        if (is_array($column) && !empty($column)) {
+                            // If values of field is a string
+                            if (getType($column[0]) === "string")
+                                return "$key IN ('" . implode("','", $column) . "')";
+                            // Return original value if not string
+                            return "$key IN (" . implode(",", $column) . ")";
+                        }
+                        // If field of each filter is not an array
+                        return "$key = :$key";
+                    },
+                    array_keys($options['filters']),
+                    array_values($options['filters'])
+                )
+            );
         }
 
         if (!empty($options['orderBy'])) {
             $sql .= " ORDER BY {$options['orderBy']}";
         }
-
-        $sql .= " LIMIT :limit OFFSET :offset";
+        if ($limit) {
+            $sql .= " LIMIT :limit OFFSET :offset";
+        }
 
         return $sql;
     }
@@ -65,11 +84,17 @@ class QueryBuilder extends Validation
             $offset = $options['offset'];
 
             foreach ($filters as $column => $value) {
-                $stmt->bindParam(":$column", $value);
+                // Handle $value is an array...
+                if (!is_array($value))
+                    $stmt->bindValue(":$column", $value, PDO::PARAM_INPUT_OUTPUT);
             }
 
-            $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
-            $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+            // Query with limit and offset is optional
+            // Check if queryString contains a limit and offset parameters
+            if (str_contains(strval($stmt->queryString), ':limit') && str_contains(strval($stmt->queryString), ':offset')) {
+                $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+                $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            }
 
             if (!$stmt->execute())
                 throw new PDOException("Can not execute query");

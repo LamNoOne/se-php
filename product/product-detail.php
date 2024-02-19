@@ -8,7 +8,6 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
 $conn = require_once "../inc/db.php";
 $product_id = $_GET["product_id"];
 $productDetail = Product::getProductById($conn, $product_id);
-print_r($productDetail);
 ?>
 <div id="main-content" class="main-content">
     <div id="product-detail">

@@ -1,9 +1,56 @@
 <?php require_once "../inc/components/header.php"; ?>
+<?php $conn = require_once "../inc/db.php"; ?>
+<?php
+// Initialize an array to store the parsed parameters
+$parsedParams = array();
+
+// Check if there are query parameters in the URL
+if (!empty($_GET)) {
+    // Loop through each parameter
+    foreach ($_GET as $key => $value) {
+        // Check if the value contains commas
+        if (strpos($value, ',') !== false) {
+            // If it does, split the value into an array using commas as separators
+            $parsedParams[$key] = explode(',', $value);
+            // Trim each value to remove leading/trailing spaces
+            $parsedParams[$key] = array_map('trim', $parsedParams[$key]);
+        } else {
+            // If it doesn't contain commas, use the value as is
+            $parsedParams[$key] = $value;
+        }
+    }
+}
+
+// Output the parsed parameters
+print_r($parsedParams);
+
+$selectors = [
+    'fields' => '*',
+    'filters' => [],
+    'orderBy' => '',
+    'limit' => 20,
+    'offset' => 0,
+];
+
+if (!empty($parsedParams)) {
+    $selectors['filters'] = $parsedParams;
+    print_r($selectors);
+    $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+    print_r($selectedProducts);
+}
+?>
 
 <?php
-$conn = require_once "../inc/db.php";
-$allProducts = Product::getAllProducts($conn, 30);
-// print_r($allProducts);
+// Get product by category
+$queryData = [
+    'fields' => '*',
+    'filters' => ['categoryId' => 1],
+    'orderBy' => '',
+    'limit' => 40,
+    'offset' => 0,
+];
+$allProducts = Product::getProductsByCategory($conn, $queryData);
+// End get product by category
 ?>
 
 <div id="main-content" class="main-content">
@@ -37,14 +84,14 @@ $allProducts = Product::getAllProducts($conn, 30);
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <li class="category-item"><a class="active" href="#smartphone">Smartphone</a></li>
-                                <li class="category-item"><a class="" href="#laptop">Laptop</a></li>
-                                <li class="category-item"><a class="" href="#accessory">Accessory</a></li>
-                                <li class="category-item"><a class="" href="#studio">Studio</a></li>
-                                <li class="category-item"><a class="" href="#camera">Camera</a></li>
-                                <li class="category-item"><a class="" href="#pc">PC</a></li>
-                                <li class="category-item"><a class="" href="#tv">TV</a></li>
-                                <li class="category-item"><a class="" href="#product">Product</a></li>
+                                <li class="category-item"><a class="active" href="<?php echo APP_URL; ?>/product?categoryId=1">Smartphone</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=2">Laptop</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=3">Accessory</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=4">Studio</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
+                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=8">Product</a></li>
                             </ul>
                         </div>
 
@@ -62,53 +109,50 @@ $allProducts = Product::getAllProducts($conn, 30);
 
                         <div class="check-filter py-3">
                             <h6 class="filter-title">Operating System</h6>
-                            <ul class="input-container list-unstyled d-flex flex-column gap-2 m-0">
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="android" name="android" id="android" /><label for="android">Android</label>
+                            <ul class="list-unstyled d-flex flex-column gap-2 m-0">
+                                <li class=" input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Android" name="operatingSystem" id="android" /><label for="android">Android</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="ios" name="ios" id="ios" /><label for="ios">iOS</label>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="MacOS" name="operatingSystem" id="macOS" /><label for="macOS">MacOS</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="macos" name="macos" id="macos" /><label for="macos">MacOS</label>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Logitech" name="operatingSystem" id="logitech" /><label for="logitech">Logitech</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="windows" name="windows" id="windows" /><label for="windows">Windows</label>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Apple" name="operatingSystem" id="apple" /><label for="apple">Apple</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="others" name="others" id="others" /><label for="others">Others</label>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Windows" name="operatingSystem" id="windows" /><label for="windows">Windows</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Cisco" name="operatingSystem" id="cisco" /><label for="cisco">Cisco</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Samsung" name="operatingSystem" id="samsung" /><label for="samsung">Samsung</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Asus" name="operatingSystem" id="asus" /><label for="asus">Asus</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="JBL" name="operatingSystem" id="jbl" /><label for="jbl">JBL</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="Camera" name="operatingSystem" id="camera" /><label for="camera">Camera</label>
                                 </li>
                             </ul>
                         </div>
 
                         <div class="check-filter py-3">
                             <h6 class="filter-title">RAM memory</h6>
-                            <ul class="input-container list-unstyled d-flex flex-column gap-2 m-0">
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="16" name="ram" id="ram_16" /><label for="ram_16">16GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="8" name="ram" id="ram_8" /><label for="ram_8">8GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="4" name="ram" id="ram_4" /><label for="ram_4">4GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="6" name="ram" id="ram_6" /><label for="ram_6">6GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="3" name="ram" id="ram_3" /><label for="ram_3">3GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="2" name="ram" id="ram_2" /><label for="ram_2">2GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="128" name="ram" id="ram_128" /><label for="ram_128">128GB</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
+                            <ul class="list-unstyled d-flex flex-column gap-2 m-0">
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
                                     <input type="checkbox" value="1" name="ram" id="ram_1" /><label for="ram_1">1GB</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="4" name="ram" id="ram_4" /><label for="ram_4">4GB</label>
+                                </li>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
                                     <input type="checkbox" value="32" name="ram" id="ram_32" /><label for="ram_32">32GB</label>
                                 </li>
                             </ul>
@@ -116,24 +160,12 @@ $allProducts = Product::getAllProducts($conn, 30);
 
                         <div class="check-filter py-3">
                             <h6 class="filter-title">Video Resolution</h6>
-                            <ul class="input-container list-unstyled d-flex flex-column gap-2 m-0">
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="1080p" name="resolution" id="resolution_1080p" /><label for="resolution_1080p">1080p</label>
+                            <ul class="list-unstyled d-flex flex-column gap-2 m-0">
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="FullHD | IPS" name="screen" id="resolution_1080p" /><label for="resolution_1080p">FullHD | IPS</label>
                                 </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="720p" name="resolution" id="resolution_720p" /><label for="resolution_720p">720p</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="2160p" name="resolution" id="resolution_2160p" /><label for="resolution_2160p">2160p</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="4k" name="resolution" id="resolution_4k" /><label for="resolution_4k">4k</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="480p" name="resolution" id="resolution_480p" /><label for="resolution_480p">480p</label>
-                                </li>
-                                <li class="d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="8k" name="resolution" id="resolution_8k" /><label for="resolution_8k">8k</label>
+                                <li class="input-container d-flex align-items-center gap-2 filter-item">
+                                    <input type="checkbox" value="4K | IPS" name="screen" id="resolution_720p" /><label for="resolution_720p">4K | IPS</label>
                                 </li>
                             </ul>
                         </div>
@@ -259,19 +291,86 @@ $allProducts = Product::getAllProducts($conn, 30);
 
 <?php require_once "../inc/components/footer.php"; ?>
 <script>
-    // onClick => fetch url => response => innerHtml => change url.
-    // read url => take effect on checkbox
+    // Select all elements with class "input-container"
     const inputContainers = document.querySelectorAll(".input-container");
+    // Select all input with type checkbox
+    const inputChecks = document.querySelectorAll("input[type=checkbox]");
+
+    // Initialize new object container selectors
+    const selector = {};
+
+    // Check if there are query parameters in the URL
+    if (window.location.href.split("?")[1]) {
+        // Get the query string part of the URL
+        const strSelector = window.location.href.split("?")[1];
+
+        // Split the query string by "&" to get individual key-value pairs
+        const pairs = strSelector.split("&");
+
+        // Iterate over each key-value pair
+        pairs.forEach((pair) => {
+            // Split each pair by "=" to separate key and value
+            const [key, value] = pair.split("=");
+
+            // Decode URI component to handle special characters properly
+            // Initialize an array for each key and store the value in it
+            selector[key] = new Array(decodeURIComponent(value))[0].split(",");
+        });
+
+        console.log(selector)
+
+        // Output the selector object after initializing it with query parameters
+        inputChecks.forEach(inputCheck => {
+            Object.keys(selector).forEach(key => {
+                if (selector[key].includes(inputCheck.value)) {
+                    inputCheck.checked = true;
+                }
+            })
+        })
+    }
+
+    /** FIX REFRESH PAGE  */
+
+    // Add click event listener to each input container
     inputContainers.forEach((inputContainer) => {
         inputContainer.addEventListener("click", (event) => {
-            if (event.target.attributes?.type?.value === "checkbox" && event.target.checked) {
-                const key = event.target.name;
-                const value = event.target.value;
-                console.log({
-                    key: value,
-                });
+            // Check if the clicked element is a checkbox
+            if (event.target.attributes?.type?.value === "checkbox") {
+                event.stopPropagation();
+                const key = event.target.name; // Get the name attribute of the checkbox
+                const value = event.target.value; // Get the value attribute of the checkbox
+
+                // Check if the key already exists in the selector object
+                if (selector[key]) {
+                    // If key exists, push the value to the array associated with that key
+                    if (selector[key].includes(value)) {
+                        selector[key].splice(selector[key].indexOf(value), 1);
+                    } else {
+                        selector[key].push(value);
+                    }
+                } else {
+                    // If key doesn't exist, initialize a new array with the value
+                    selector[key] = new Array(value);
+                }
+
+                // Construct the base URL
+                const baseUrl = "http://localhost/se-php/product/";
+
+                // Function to convert object to query string
+                function objectToQueryString(obj) {
+                    const queryString = Object.keys(obj)
+                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+                        .join("&");
+                    return queryString;
+                }
+
+                // Construct the full URL with query parameters
+                const fullUrl = baseUrl + "?" + objectToQueryString(selector);
+
+                // Output the full URL
+                // console.log(fullUrl);
+                window.location.href = fullUrl;
             }
-            // console.dir(event.target)
         });
     });
 </script>

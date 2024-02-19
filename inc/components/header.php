@@ -292,7 +292,7 @@ define("APP_URL", "http://localhost/se-php");
                                                 <a class="nav-link" href="#">Printers & Scanners</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">All Other Products</a>
+                                                <a class="nav-link" href="<?php echo APP_URL; ?>/product/">All Other Products</a>
                                             </li>
                                         </ul>
                                     </div>
