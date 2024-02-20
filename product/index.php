@@ -1,5 +1,6 @@
 <?php require_once "../inc/components/header.php"; ?>
 <?php $conn = require_once "../inc/db.php"; ?>
+<?php require_once "../inc/utils.php"; ?>
 <?php
 // Initialize an array to store the parsed parameters
 $parsedParams = array();
@@ -19,38 +20,24 @@ if (!empty($_GET)) {
             $parsedParams[$key] = $value;
         }
     }
+
+    $selectors = [
+        'fields' => '*',
+        'filters' => [],
+        'orderBy' => '',
+        'limit' => 20,
+        'offset' => 0,
+    ];
+
+    if (!empty($parsedParams)) {
+        $selectors['filters'] = $parsedParams;
+        $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+        $allProducts = $selectedProducts['data'];
+        $allPages = $selectedProducts['totalPage'];
+    }
+} else {
+    redirect(APP_URL);
 }
-
-// Output the parsed parameters
-print_r($parsedParams);
-
-$selectors = [
-    'fields' => '*',
-    'filters' => [],
-    'orderBy' => '',
-    'limit' => 20,
-    'offset' => 0,
-];
-
-if (!empty($parsedParams)) {
-    $selectors['filters'] = $parsedParams;
-    print_r($selectors);
-    $selectedProducts = Product::getProductsByCategory($conn, $selectors);
-    print_r($selectedProducts);
-}
-?>
-
-<?php
-// Get product by category
-$queryData = [
-    'fields' => '*',
-    'filters' => ['categoryId' => 1],
-    'orderBy' => '',
-    'limit' => 40,
-    'offset' => 0,
-];
-$allProducts = Product::getProductsByCategory($conn, $queryData);
-// End get product by category
 ?>
 
 <div id="main-content" class="main-content">
@@ -84,14 +71,14 @@ $allProducts = Product::getProductsByCategory($conn, $queryData);
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <li class="category-item"><a class="active" href="<?php echo APP_URL; ?>/product?categoryId=1">Smartphone</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=2">Laptop</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=3">Accessory</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=4">Studio</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
-                                <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=8">Product</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '1') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=1">Smartphone</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '2') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=2">Laptop</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '3') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=3">Accessory</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '4') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=4">Studio</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '5') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '6') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '7') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
+                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '8') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=8">Product</a></li>
                             </ul>
                         </div>
 
@@ -239,14 +226,14 @@ $allProducts = Product::getProductsByCategory($conn, $queryData);
                     </div>
                     <div class="row">
                         <div class="pagination justify-content-end py-3">
-                            <a href="#">&laquo;</a>
-                            <a href="#">1</a>
-                            <a href="#" class="active">2</a>
-                            <a href="#">3</a>
-                            <a href="#">4</a>
-                            <a href="#">5</a>
-                            <a href="#">6</a>
-                            <a href="#">&raquo;</a>
+                            <button type="button">&laquo;</button>
+                            <button type="button">1</button>
+                            <button type="button" class="active">2</button>
+                            <button type="button">3</button>
+                            <button type="button">4</button>
+                            <button type="button">5</button>
+                            <button type="button">6</button>
+                            <button type="button">&raquo;</button>
                         </div>
                     </div>
                 </div>
@@ -339,12 +326,13 @@ $allProducts = Product::getProductsByCategory($conn, $queryData);
                 event.stopPropagation();
                 const key = event.target.name; // Get the name attribute of the checkbox
                 const value = event.target.value; // Get the value attribute of the checkbox
+                console.log(key, value)
 
                 // Check if the key already exists in the selector object
                 if (selector[key]) {
                     // If key exists, push the value to the array associated with that key
                     if (selector[key].includes(value)) {
-                        selector[key].splice(selector[key].indexOf(value), 1);
+                        delete selector[key];
                     } else {
                         selector[key].push(value);
                     }

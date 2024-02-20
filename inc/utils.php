@@ -8,3 +8,8 @@ function redirect($url = "")
         window.location.href='" . $url . "';
     </script>";
 }
+
+function verifyCategory($getCategoryId, $categoryId)
+{
+    return $getCategoryId === $categoryId;
+}

@@ -9,7 +9,7 @@ $laptopParams =
         'limit' => 20,
     ];
 
-$laptops = Product::getProductsByCategory($conn, $laptopParams);
+$laptops = Product::getProductsByCategory($conn, $laptopParams)['data'];
 // End Query Laptops
 
 // Query PCs
@@ -19,7 +19,7 @@ $computerParams =
         'limit' => 20,
     ];
 
-$computers = Product::getProductsByCategory($conn, $computerParams);
+$computers = Product::getProductsByCategory($conn, $computerParams)['data'];
 // End Query PCs
 
 // Query Monitors
@@ -29,7 +29,7 @@ $monitorParams =
         'limit' => 20,
     ];
 
-$monitors = Product::getProductsByCategory($conn, $monitorParams);
+$monitors = Product::getProductsByCategory($conn, $monitorParams)['data'];
 // End Query Monitors
 ?>
 <div id="main-content" class="main-content">

@@ -911,7 +911,7 @@ body {
       font-size: 0.7rem;
       color: white; }
 
-.pagination a {
+.pagination button {
   color: black;
   float: left;
   padding: 0.3rem 0.7rem;
@@ -924,12 +924,12 @@ body {
   font-family: Poppins;
   font-weight: normal; }
 
-.pagination a.active {
+.pagination button.active {
   background-color: #1a9cb7;
   color: white;
   border: 1px solid #1a9cb7; }
 
-.pagination a:hover:not(.active) {
+.pagination button:hover:not(.active) {
   background-color: #ddd; }
 
 #customer-login-register {

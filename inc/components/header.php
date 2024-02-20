@@ -75,7 +75,7 @@ define("APP_URL", "http://localhost/se-php");
         <div class="main-header">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-2 col-lg-5 col-xl-7" id="main-header-menu">
+                    <div class="col-sm-2 col-lg-5 col-xl-6" id="main-header-menu">
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
                             <nav class="navbar navbar-expand-lg navbar-light bg-transparent w-100">
                                 <div class="container-fluid p-0">
@@ -89,19 +89,33 @@ define("APP_URL", "http://localhost/se-php");
                                         <ul class="navbar-nav d-flex w-100 justify-content-between mb-2 mb-lg-0">
                                             <li class="nav-item dropdown">
                                                 <a class="nav-link nav-dropdown-toggle dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    Laptops
+                                                    Categories
                                                 </a>
                                                 <section class="dropdown-menu dropdown-menu-mega" aria-labelledby="navbarDropdown">
                                                     <div class="grid-container">
                                                         <div class="list-item">
                                                             <ul class="list-item__detail list-unstyled text-start">
-                                                                <li>Everyday Use Notebooks</li>
-                                                                <li>MSI Workstation Series</li>
-                                                                <li>MSI Prestige Series</li>
-                                                                <li>Gaming Notebooks</li>
-                                                                <li>Tablets And Pads</li>
-                                                                <li>Netbooks</li>
-                                                                <li>Infinity Gaming Notebooks</li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=3">Accessories</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=4">Studio</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=5">Camera</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=">Television</a>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                         <div class="list-item-detail">
@@ -283,16 +297,16 @@ define("APP_URL", "http://localhost/se-php");
                                                 </section>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link active" aria-current="page" href="#">Desktop PCs</a>
+                                                <a class="nav-link active" aria-current="page" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Networking Devices</a>
+                                                <a class="nav-link" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="#">Printers & Scanners</a>
+                                                <a class="nav-link" href="<?php echo APP_URL; ?>/product/?categoryId=6">Desktop PCs</a>
                                             </li>
                                             <li class="nav-item">
-                                                <a class="nav-link" href="<?php echo APP_URL; ?>/product/">All Other Products</a>
+                                                <a class="nav-link" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -301,7 +315,7 @@ define("APP_URL", "http://localhost/se-php");
                         </div>
                     </div>
                     <div class="col" id="main-header-mechanism">
-                        <div class="main-header__mechanism h-100 d-flex align-items-center justify-content-end">
+                        <div class="main-header__mechanism h-100 d-flex gap-3 align-items-center justify-content-end">
                             <div class="search-bar-container flex-grow-1">
                                 <form action="" class="search" id="search-bar">
                                     <input type="text" placeholder="Type something..." name="search" class="search__input" />
@@ -313,7 +327,7 @@ define("APP_URL", "http://localhost/se-php");
                                 </form>
                             </div>
 
-                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0">
+                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-3">
                                 <li class="cart-component-dropdown">
                                     <div class="dropdown dropdown-cart">
                                         <button class="btn dropdown-toggle dropdown-cart-btn" id="dropdown-cart-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">

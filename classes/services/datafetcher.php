@@ -18,7 +18,7 @@ class DataFetcher extends QueryBuilder
     /**
      * @param mixed $conn
      * @return object
-    */
+     */
     public static function getInstance($conn): DataFetcher
     {
         if (!self::$instance) {
@@ -43,9 +43,26 @@ class DataFetcher extends QueryBuilder
     {
         try {
             $options = $this->queryBuilder->validateQueryOptions($options);
+            // Build and execute the fetch data with limit and offset
             $sql = $this->queryBuilder->buildSqlQuery($tableName, $options);
             $stmt = $this->queryBuilder->executeQuery($this->conn, $sql, $options);
-            return $stmt->fetchAll(PDO::FETCH_CLASS, $fetchType);
+            $data = $stmt->fetchAll(PDO::FETCH_CLASS, $fetchType);
+            $currentRows = count((array)$data);
+            // print_r("CURRENT ROWS: " . $currentRows . "<br />");
+
+            // Get a number of rows
+            $options['fields'] = 'COUNT(*)';
+            $sqlGetRows = $this->queryBuilder->buildSqlQuery($tableName, $options, false);
+            $stmtGetRows = $this->queryBuilder->executeQuery($this->conn, $sqlGetRows, $options);
+            $dataRows = $stmtGetRows->fetchColumn();
+            // print_r("DATA ROWS: " . $dataRows . "<br />");
+
+            $totalPage = ceil($dataRows / $currentRows);
+
+            return [
+                'totalPage' => $totalPage,
+                'data' => $data,
+            ];
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }

@@ -26,8 +26,9 @@ class QueryBuilder extends Validation
     /**
      * @param string $tableName
      * @param array $options [string $fields | array filters | string orderBy | int limit | int offset]
+     * @param boolean $limit
      * Build the string query:
-     * SELECT fields FROM table WHERE condition ORDER BY condition LIMIT number OFFSET number
+     * SELECT fields FROM table WHERE condition ORDER BY condition [Optional:LIMIT number OFFSET number]
      */
     protected function buildSqlQuery($tableName, $options, $limit = true)
     {
