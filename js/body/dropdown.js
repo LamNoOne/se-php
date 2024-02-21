@@ -16,6 +16,13 @@ document.body.addEventListener("click", (e) => {
     options.classList.add("hidden");
 });
 
+Array.from(options.children).forEach((option) => {
+    if (option.classList.contains("selected")) option.classList.remove("selected");
+    if (orderBy.includes(option.dataset.value)) {
+        option.classList.add("selected");
+    }
+});
+
 options.addEventListener("click", (e) => {
     if (e.target.tagName === "DIV") {
         e.stopPropagation();
@@ -31,7 +38,11 @@ options.addEventListener("click", (e) => {
 
         // use it to fetch data
         // console.log(e.target.dataset.value);
-        selector['orderby'] = 'price ' + e.target.dataset.value;
+        if (e.target.dataset.value === "default") {
+            if (selector["orderby"]) delete selector["orderby"];
+        } else {
+            selector["orderby"] = "price " + e.target.dataset.value;
+        }
         navigateTo(baseUrl, selector);
     }
 });

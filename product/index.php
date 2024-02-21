@@ -30,7 +30,7 @@ if (!empty($_GET)) {
         $offset = ($_GET['page'] - 1) * $limit;
     }
 
-    if($_GET['orderby']) {
+    if ($_GET['orderby']) {
         $orderBy = $_GET['orderby'];
     }
 
@@ -276,6 +276,9 @@ if (!empty($_GET)) {
 </div>
 
 <?php require_once "../inc/components/footer.php"; ?>
+<script>
+    let orderBy = "<?php echo $orderBy; ?>" === "" ? "default" : "<?php echo $orderBy; ?>"
+</script>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/dropdown.js"></script>
