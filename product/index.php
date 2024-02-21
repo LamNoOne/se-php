@@ -10,7 +10,7 @@ if (!empty($_GET)) {
     // Loop through each parameter
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
-        if ($key !== 'page') {
+        if ($key !== 'page' && $key !== 'orderby') {
             if (strpos($value, ',') !== false) {
                 // If it does, split the value into an array using commas as separators
                 $parsedParams[$key] = explode(',', $value);
@@ -25,15 +25,19 @@ if (!empty($_GET)) {
 
     $offset = 0;
     $limit = 20;
+    $orderBy = '';
     if ($_GET['page']) {
         $offset = ($_GET['page'] - 1) * $limit;
-        echo "OFFSET: " . $offset;
+    }
+
+    if($_GET['orderby']) {
+        $orderBy = $_GET['orderby'];
     }
 
     $selectors = [
         'fields' => '*',
         'filters' => [],
-        'orderBy' => '',
+        'orderBy' => $orderBy,
         'limit' => 20,
         'offset' => $offset,
     ];
@@ -181,7 +185,7 @@ if (!empty($_GET)) {
                                     <div class="title">Sort by:&nbsp;</div>
                                     <div class="sel">
                                         <div class="label"></div>
-                                        <div class="options">
+                                        <div class="options" id="sort-product">
                                             <div data-value="default" class="selected">Best Match</div>
                                             <div data-value="asc">Price Low to High</div>
                                             <div data-value="desc">Price High to Low</div>
@@ -389,6 +393,7 @@ if (!empty($_GET)) {
 
     document.addEventListener("DOMContentLoaded", init, false);
     const pagination = document.getElementById("pagination");
+
     let currentPage = <?php echo isset($_GET['page']) ? $_GET['page'] : 1; ?>;
     Pagination.Bind = function() {
         var a = Pagination.e.getElementsByTagName('a');

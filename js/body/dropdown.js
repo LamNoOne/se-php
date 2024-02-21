@@ -30,7 +30,9 @@ options.addEventListener("click", (e) => {
         options.classList.add("hidden");
 
         // use it to fetch data
-        console.log(e.target.dataset.value);
+        // console.log(e.target.dataset.value);
+        selector['orderby'] = 'price ' + e.target.dataset.value;
+        navigateTo(baseUrl, selector);
     }
 });
 
