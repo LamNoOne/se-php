@@ -47,7 +47,7 @@ class DataFetcher extends QueryBuilder
             $sql = $this->queryBuilder->buildSqlQuery($tableName, $options);
             $stmt = $this->queryBuilder->executeQuery($this->conn, $sql, $options);
             $data = $stmt->fetchAll(PDO::FETCH_CLASS, $fetchType);
-            $currentRows = count((array)$data);
+            $currentRows = intval($options['limit']);
             // print_r("CURRENT ROWS: " . $currentRows . "<br />");
 
             // Get a number of rows
@@ -57,6 +57,8 @@ class DataFetcher extends QueryBuilder
             $dataRows = $stmtGetRows->fetchColumn();
             // print_r("DATA ROWS: " . $dataRows . "<br />");
 
+            // In case of no results of current rows
+            // TotalPage will be assigned to zero
             $totalPage = ceil($dataRows / $currentRows);
 
             return [

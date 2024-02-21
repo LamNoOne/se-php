@@ -86,43 +86,5 @@
                 }
             }
         }
-
-        .btn-grid-control {
-
-            .grid-control-title {
-                color      : rgba(0, 0, 0, 0.85);
-                font-family: Poppins;
-                font-size  : 0.8125rem;
-                font-style : normal;
-                font-weight: 400;
-                line-height: normal;
-            }
-
-            .grid-system {
-                width            : 1.5rem;
-                height           : 1.5rem;
-                outline          : none;
-                border           : none;
-                background-size  : cover;
-                background-repeat: no-repeat;
-                // filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
-
-                // filter: invert(41%) sepia(4%) saturate(18%) hue-rotate(99deg) brightness(92%) contrast(87%);
-                background-image: url("/assets/img/grid_system.svg");
-            }
-
-            .grid-horizontal {
-                width            : 1.5rem;
-                height           : 2rem;
-                outline          : none;
-                border           : none;
-                background-size  : cover;
-                background-repeat: no-repeat;
-                transform        : rotate(180deg);
-                // filter: invert(41%) sepia(4%) saturate(18%) hue-rotate(99deg) brightness(92%) contrast(87%);
-
-                background-image: url("/assets/img/grid_horizontal.svg");
-            }
-        }
     }
 }

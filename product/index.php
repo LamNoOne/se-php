@@ -10,15 +10,24 @@ if (!empty($_GET)) {
     // Loop through each parameter
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
-        if (strpos($value, ',') !== false) {
-            // If it does, split the value into an array using commas as separators
-            $parsedParams[$key] = explode(',', $value);
-            // Trim each value to remove leading/trailing spaces
-            $parsedParams[$key] = array_map('trim', $parsedParams[$key]);
-        } else {
-            // If it doesn't contain commas, use the value as is
-            $parsedParams[$key] = $value;
+        if ($key !== 'page') {
+            if (strpos($value, ',') !== false) {
+                // If it does, split the value into an array using commas as separators
+                $parsedParams[$key] = explode(',', $value);
+                // Trim each value to remove leading/trailing spaces
+                $parsedParams[$key] = array_map('trim', $parsedParams[$key]);
+            } else {
+                // If it doesn't contain commas, use the value as is
+                $parsedParams[$key] = $value;
+            }
         }
+    }
+
+    $offset = 0;
+    $limit = 20;
+    if ($_GET['page']) {
+        $offset = ($_GET['page'] - 1) * $limit;
+        echo "OFFSET: " . $offset;
     }
 
     $selectors = [
@@ -26,7 +35,7 @@ if (!empty($_GET)) {
         'filters' => [],
         'orderBy' => '',
         'limit' => 20,
-        'offset' => 0,
+        'offset' => $offset,
     ];
 
     if (!empty($parsedParams)) {
@@ -34,6 +43,7 @@ if (!empty($_GET)) {
         $selectedProducts = Product::getProductsByCategory($conn, $selectors);
         $allProducts = $selectedProducts['data'];
         $allPages = $selectedProducts['totalPage'];
+        print_r("ALL: " . $allPages);
     }
 } else {
     redirect(APP_URL);
@@ -178,13 +188,6 @@ if (!empty($_GET)) {
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="btn-grid-control d-flex align-items-center gap-3">
-                                    <h6 class="grid-control-title m-0">View:</h6>
-                                    <button class="grid-system bg-transparent"></button>
-
-                                    <button class="grid-horizontal bg-transparent blur"></button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -225,66 +228,95 @@ if (!empty($_GET)) {
                         <?php endforeach; ?>
                     </div>
                     <div class="row">
-                        <div class="pagination justify-content-end py-3">
-                            <button type="button">&laquo;</button>
-                            <button type="button">1</button>
-                            <button type="button" class="active">2</button>
-                            <button type="button">3</button>
-                            <button type="button">4</button>
-                            <button type="button">5</button>
-                            <button type="button">6</button>
-                            <button type="button">&raquo;</button>
-                        </div>
+                        <div id="pagination" class="py-3"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <div id="brand">
-        <div class="container">
-            <div class="d-flex justify-content-between overflow-hidden">
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_1.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+<div id="brand">
+    <div class="container">
+        <div class="d-flex justify-content-between overflow-hidden">
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_1.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_2.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_2.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_3.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_3.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_4.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_4.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_5.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_5.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_6.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_6.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
 
-                <a href="#" class="d-inline-flex">
-                    <img src="<?php echo APP_URL; ?>/assets/img/brand_7.png" alt="brand" class="item-brand object-fit-contain" />
-                </a>
-            </div>
+            <a href="#" class="d-inline-flex">
+                <img src="<?php echo APP_URL; ?>/assets/img/brand_7.png" alt="brand" class="item-brand object-fit-contain" />
+            </a>
         </div>
     </div>
 </div>
+</div>
 
 <?php require_once "../inc/components/footer.php"; ?>
+<script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
+<script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
+<script src="<?php echo APP_URL; ?>/js/body/dropdown.js"></script>
+<script src="<?php echo APP_URL; ?>/js/body/promotion.js"></script>
+<script src="<?php echo APP_URL; ?>/assets/pagination/pagination.js"></script>
 <script>
+    const productCards = document.querySelectorAll('.card-product-detail');
+    productCards.forEach(productCard => {
+        productCard.addEventListener('click', () => {
+            window.location.href = `<?php echo APP_URL; ?>/product/product-detail.php?product_id=${productCard.dataset.index}`;
+        })
+    })
+</script>
+<script>
+    // Initialize new object container selectors
+    const selector = {};
+
+    // Define default selectors params
+    const checkParams = ['operatingSystem', 'ram', 'screen'];
+
     // Select all elements with class "input-container"
     const inputContainers = document.querySelectorAll(".input-container");
+
     // Select all input with type checkbox
     const inputChecks = document.querySelectorAll("input[type=checkbox]");
 
-    // Initialize new object container selectors
-    const selector = {};
+    // Construct the base URL
+    const baseUrl = "http://localhost/se-php/product/";
+
+    // Function to convert object to query string
+    function objectToQueryString(obj) {
+        const queryString = Object.keys(obj)
+            .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
+            .join("&");
+        return queryString;
+    }
+
+    function navigateTo(baseUrl, selector) {
+        // Construct the full URL with query parameters
+        const fullUrl = baseUrl + "?" + objectToQueryString(selector);
+
+        // Navigate to url
+        window.location.href = fullUrl;
+    }
+
 
     // Check if there are query parameters in the URL
     if (window.location.href.split("?")[1]) {
@@ -309,7 +341,7 @@ if (!empty($_GET)) {
         // Output the selector object after initializing it with query parameters
         inputChecks.forEach(inputCheck => {
             Object.keys(selector).forEach(key => {
-                if (selector[key].includes(inputCheck.value)) {
+                if (checkParams.includes(String(key)) && selector[key].includes(inputCheck.value)) {
                     inputCheck.checked = true;
                 }
             })
@@ -322,56 +354,52 @@ if (!empty($_GET)) {
     inputContainers.forEach((inputContainer) => {
         inputContainer.addEventListener("click", (event) => {
             // Check if the clicked element is a checkbox
-            if (event.target.attributes?.type?.value === "checkbox") {
+            if (event.target.attributes.type.value === "checkbox") {
                 event.stopPropagation();
                 const key = event.target.name; // Get the name attribute of the checkbox
                 const value = event.target.value; // Get the value attribute of the checkbox
-                console.log(key, value)
-
-                // Check if the key already exists in the selector object
-                if (selector[key]) {
-                    // If key exists, push the value to the array associated with that key
+                // Check if the key already exists in the selector object and selector[key] is already array
+                if (Array.isArray(selector[key])) {
+                    // If value already exists, mean user click ready checkbox
                     if (selector[key].includes(value)) {
-                        delete selector[key];
+                        // If selector has one value, delete all info from selector
+                        // otherwise, remove one element from selector
+                        selector[key].length === 1 ? delete selector[key] : selector[key].splice(selector[key].indexOf(value), 1);
                     } else {
+                        // If value doesn't exist, add it to selector
                         selector[key].push(value);
                     }
                 } else {
                     // If key doesn't exist, initialize a new array with the value
                     selector[key] = new Array(value);
                 }
-
-                // Construct the base URL
-                const baseUrl = "http://localhost/se-php/product/";
-
-                // Function to convert object to query string
-                function objectToQueryString(obj) {
-                    const queryString = Object.keys(obj)
-                        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
-                        .join("&");
-                    return queryString;
-                }
-
-                // Construct the full URL with query parameters
-                const fullUrl = baseUrl + "?" + objectToQueryString(selector);
-
-                // Output the full URL
-                // console.log(fullUrl);
-                window.location.href = fullUrl;
+                navigateTo(baseUrl, selector);
             }
         });
     });
-</script>
 
-<script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
-<script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
-<script src="<?php echo APP_URL; ?>/js/body/dropdown.js"></script>
-<script src="<?php echo APP_URL; ?>/js/body/promotion.js"></script>
-<script>
-    const productCards = document.querySelectorAll('.card-product-detail');
-    productCards.forEach(productCard => {
-        productCard.addEventListener('click', () => {
-            window.location.href = `<?php echo APP_URL; ?>/product/product-detail.php?product_id=${productCard.dataset.index}`;
-        })
+    const allPages = parseInt(<?php echo $allPages; ?>);
+    var init = function() {
+        Pagination.Init(document.getElementById("pagination"), {
+            size: allPages, // pages size
+            page: 1, // selected page
+            step: 1, // pages before and after current
+        });
+    };
+
+    document.addEventListener("DOMContentLoaded", init, false);
+    const pagination = document.getElementById("pagination");
+    let currentPage = <?php echo isset($_GET['page']) ? $_GET['page'] : 1; ?>;
+    Pagination.Bind = function() {
+        var a = Pagination.e.getElementsByTagName('a');
+        for (var i = 0; i < a.length; i++) {
+            if (+a[i].innerHTML == currentPage) a[i].className = 'current';
+            a[i].addEventListener('click', Pagination.Click, false);
+        }
+    }
+
+    pagination.addEventListener("click", () => {
+        selector['page'] = Pagination.page;
+        navigateTo(baseUrl, selector);
     })
 </script>
