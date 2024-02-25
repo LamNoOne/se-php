@@ -6,13 +6,22 @@
             .main-header__mechanism--button {
                 .user-component-dropdown {
                     .dropdown-user-btn {
-                        border-radius: 50%;
-                        height       : 2.5rem;
-                        width        : 2.5rem;
-                        border-color : #000;
+                        display        : flex;
+                        justify-content: center;
+                        align-items    : center;
+                        border-radius  : 50%;
+                        height         : 2.5rem;
+                        width          : 2.5rem;
+                        border-color   : #000;
 
                         i {
                             color: #000;
+                        }
+
+                        .user__dropdown__image {
+                            height       : 2.5rem;
+                            width        : 2.5rem;
+                            border-radius: 50%;
                         }
                     }
 

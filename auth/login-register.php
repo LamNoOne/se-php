@@ -1,4 +1,48 @@
-<?php require_once "inc/components/header.php"; ?>
+<?php require_once "../inc/components/header.php"; ?>
+<?php require_once "../inc/utils.php"; ?>
+
+<?php
+if (isset($_SESSION['username'])) {
+    redirect(APP_URL);
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (empty($_POST['email']) || empty($_POST['password'])) {
+        // Display toast message warning
+    } else {
+        $conn = require_once "../inc/db.php";
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+
+        $data = User::authenticate($conn, $email, $password);
+
+        if ($data['status']) {
+            $message = $data['message'];
+            $user = $data['data'];
+            $_SESSION['username'] = $user->username;
+            $_SESSION['firstname'] = $user->firstName;
+            $_SESSION['lastname'] = $user->lastName;
+            $_SESSION['email'] = $user->email;
+            $_SESSION['userId'] = $user->id;
+            $_SESSION['image'] = $user->imageUrl;
+            if ($user->phoneNumber !== NULL) {
+                $_SESSION['phonenumber'] = $user->phoneNumber;
+            }
+            if ($user->address !== NULL) {
+                $_SESSION['address'] = $user->address;
+            }
+            Auth::login();
+            redirect(APP_URL);
+        } else {
+            // Display toast message warning
+            $status = $data['status'];
+            $message = $data['message'];
+        }
+    }
+}
+?>
 
 <div id="customer-login-register">
     <div class="container">
@@ -17,7 +61,7 @@
                         <p class="login-container__desc m-0">
                             If you have an account, sign in with your email address.
                         </p>
-                        <form action="" method="post" class="login-form">
+                        <form action="login-register.php" method="post" class="login-form">
                             <fieldset>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="email" class="login-form__input__label">Email<span>&nbsp;*</span></label>
@@ -36,7 +80,6 @@
                             </fieldset>
                         </form>
                     </div>
-
                     <div class="login-container p-5">
                         <h3 class="login-container__title mb-2">Customers Register</h3>
                         <p class="login-container__desc m-0">Please sign up to access our services:</p>
@@ -71,7 +114,7 @@
                 </div>
             </div>
             <div class="col-5">
-                <div class="login-container p-5">
+                <div class="login-container p-5 login-container__right">
                     <h3 class="login-container__title mb-2">New Customer?</h3>
                     <p class="login-container__desc m-0">Creating an account has many benefits:</p>
                     <ul>
@@ -97,7 +140,7 @@
     </div>
 </div>
 
-<?php require_once "inc/components/footer.php"; ?>
+<?php require_once "../inc/components/footer.php"; ?>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script>

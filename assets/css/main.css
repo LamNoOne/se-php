@@ -192,12 +192,19 @@ body {
     color: white; }
 
 #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown .dropdown-user-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
   height: 2.5rem;
   width: 2.5rem;
   border-color: #000; }
   #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown .dropdown-user-btn i {
     color: #000; }
+  #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown .dropdown-user-btn .user__dropdown__image {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%; }
 
 #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown #dropdown-menu-user {
   position: absolute !important;
@@ -924,9 +931,11 @@ body {
     font-style: normal;
     font-weight: 600;
     line-height: normal; }
+  #customer-login-register .login-container__right {
+    padding-bottom: 9.3rem !important; }
   #customer-login-register .login-container {
     background-color: #F5F7FF;
-    min-height: 27.75rem; }
+    height: fit-content; }
     #customer-login-register .login-container .dots-append {
       list-style: none;
       padding: 0;

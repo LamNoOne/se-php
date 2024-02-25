@@ -114,7 +114,7 @@ define("APP_URL", "http://localhost/se-php");
                                                                     <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=">Television</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
                                                                 </li>
                                                             </ul>
                                                         </div>
@@ -397,7 +397,11 @@ define("APP_URL", "http://localhost/se-php");
                                 <li class="user-component-dropdown">
                                     <div class="dropdown dropdown-user">
                                         <button class="btn dropdown-toggle dropdown-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa-sharp fa-solid fa-user-secret"></i>
+                                            <?php if (isset($_SESSION['image'])) : ?>
+                                                <img src="<?php echo $_SESSION['image']; ?>" alt="user" class="user__dropdown__image object-fit-contain" />
+                                            <?php else : ?>
+                                                <i class="fa-sharp fa-solid fa-user-secret"></i>
+                                            <?php endif; ?>
                                         </button>
                                         <ul class="dropdown-menu" id="dropdown-menu-user">
                                             <li>

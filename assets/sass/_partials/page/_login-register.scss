@@ -14,9 +14,14 @@
         line-height: normal;
     }
 
+    .login-container__right {
+        padding-bottom: 9.3rem !important;
+    }
+
     .login-container {
         background-color: #F5F7FF;
-        min-height      : 27.75rem;
+        height          : fit-content;
+
         .dots-append {
             list-style   : none;
             padding      : 0;

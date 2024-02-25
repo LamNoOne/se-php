@@ -1,5 +1,4 @@
 <?php require_once "../inc/components/header.php"; ?>
-<?php $conn = require_once "../inc/db.php"; ?>
 <?php require_once "../inc/utils.php"; ?>
 <?php
 // Initialize an array to store the parsed parameters
@@ -7,6 +6,8 @@ $parsedParams = array();
 
 // Check if there are query parameters in the URL
 if (!empty($_GET)) {
+    // Get connection
+    $conn = require_once "../inc/db.php";
     // Loop through each parameter
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
@@ -23,14 +24,16 @@ if (!empty($_GET)) {
         }
     }
 
+    // Set default values
     $offset = 0;
     $limit = 20;
     $orderBy = '';
-    if ($_GET['page']) {
+
+    if (isset($_GET['page'])) {
         $offset = ($_GET['page'] - 1) * $limit;
     }
 
-    if ($_GET['orderby']) {
+    if (isset($_GET['orderby'])) {
         $orderBy = $_GET['orderby'];
     }
 
@@ -43,13 +46,17 @@ if (!empty($_GET)) {
     ];
 
     if (!empty($parsedParams)) {
+        // Apply filters
         $selectors['filters'] = $parsedParams;
+        // Get product object
         $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+        // Get all products
         $allProducts = $selectedProducts['data'];
+        // Get total pages
         $allPages = $selectedProducts['totalPage'];
-        print_r("ALL: " . $allPages);
     }
 } else {
+    // If url is not valid
     redirect(APP_URL);
 }
 ?>
@@ -285,6 +292,9 @@ if (!empty($_GET)) {
 <script src="<?php echo APP_URL; ?>/js/body/promotion.js"></script>
 <script src="<?php echo APP_URL; ?>/assets/pagination/pagination.js"></script>
 <script>
+    /**
+     * Handle click events on card product
+     */
     const productCards = document.querySelectorAll('.card-product-detail');
     productCards.forEach(productCard => {
         productCard.addEventListener('click', () => {
@@ -343,8 +353,6 @@ if (!empty($_GET)) {
             selector[key] = new Array(decodeURIComponent(value))[0].split(",");
         });
 
-        console.log(selector)
-
         // Output the selector object after initializing it with query parameters
         inputChecks.forEach(inputCheck => {
             Object.keys(selector).forEach(key => {
@@ -355,7 +363,7 @@ if (!empty($_GET)) {
         })
     }
 
-    /** FIX REFRESH PAGE  */
+    /** Fix refresh page  */
 
     // Add click event listener to each input container
     inputContainers.forEach((inputContainer) => {
@@ -385,6 +393,10 @@ if (!empty($_GET)) {
         });
     });
 
+    /**
+     * Pagination Handler
+     */
+
     const allPages = parseInt(<?php echo $allPages; ?>);
     var init = function() {
         Pagination.Init(document.getElementById("pagination"), {
@@ -394,10 +406,14 @@ if (!empty($_GET)) {
         });
     };
 
+    // Bind pagination when page is mounted
     document.addEventListener("DOMContentLoaded", init, false);
+    // Get pagination HTML element
     const pagination = document.getElementById("pagination");
 
+    // If current page is not specified, set default page equal to '1'
     let currentPage = <?php echo isset($_GET['page']) ? $_GET['page'] : 1; ?>;
+    // Override default method, follow to url parameters
     Pagination.Bind = function() {
         var a = Pagination.e.getElementsByTagName('a');
         for (var i = 0; i < a.length; i++) {
@@ -406,8 +422,11 @@ if (!empty($_GET)) {
         }
     }
 
+    // Handle pagination click event
     pagination.addEventListener("click", () => {
+        // Set page = clicked value
         selector['page'] = Pagination.page;
+        // Navigate with clicked page
         navigateTo(baseUrl, selector);
     })
 </script>

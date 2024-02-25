@@ -8,6 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
 $conn = require_once "../inc/db.php";
 $product_id = $_GET["product_id"];
 $productDetail = Product::getProductById($conn, $product_id);
+print_r($productDetail);
 ?>
 <div id="main-content" class="main-content">
     <div id="product-detail">
@@ -22,7 +23,9 @@ $productDetail = Product::getProductById($conn, $product_id);
                     <div class="checkout-container py-4 d-flex align-items-center justify-content-end gap-3">
                         <div class="product-detail__quantity d-flex align-items-center">
                             <p class="product-detail__quantity__des m-0">On Sale from&nbsp;</p>
-                            <span class="product-detail__quantity__price"> $3,299.00 </span>
+                            <span class="product-detail__quantity__price">$
+                                <span id="product-detail__quantity__price"><?php echo $productDetail->price; ?></span>
+                            </span>
                             <input class="product-detail__quantity__input ms-2" id="product-detail__quantity__input" type="number" name="quantity" value="1" min="1" pattern="[1-9]*" />
                         </div>
                         <button class="add-to-cart">
@@ -119,3 +122,6 @@ $productDetail = Product::getProductById($conn, $product_id);
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/product-detail.js"></script>
+<script>
+
+</script>
