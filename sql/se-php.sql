@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: new_schema
+-- Host: 127.0.0.1    Database: se-php
 -- ------------------------------------------------------
 -- Server version	5.7.44
 
@@ -30,7 +30,7 @@ CREATE TABLE `cart` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `Cart_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +39,7 @@ CREATE TABLE `cart` (
 
 LOCK TABLES `cart` WRITE;
 /*!40000 ALTER TABLE `cart` DISABLE KEYS */;
+INSERT INTO `cart` VALUES (1,1,'2024-02-26 05:52:42','2024-02-26 05:52:42'),(2,2,'2024-02-26 05:52:49','2024-02-26 05:52:49');
 /*!40000 ALTER TABLE `cart` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -52,7 +53,7 @@ DROP TABLE IF EXISTS `cartdetail`;
 CREATE TABLE `cartdetail` (
   `cartId` int(10) unsigned NOT NULL,
   `productId` int(10) unsigned NOT NULL,
-  `quantity` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL DEFAULT '1',
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`cartId`,`productId`),
@@ -68,6 +69,7 @@ CREATE TABLE `cartdetail` (
 
 LOCK TABLES `cartdetail` WRITE;
 /*!40000 ALTER TABLE `cartdetail` DISABLE KEYS */;
+INSERT INTO `cartdetail` VALUES (1,1,1,'2024-02-26 06:07:39','2024-02-26 06:07:39'),(1,3,1,'2024-02-26 06:58:35','2024-02-26 06:58:35'),(2,8,1,'2024-02-26 07:05:58','2024-02-26 07:05:58'),(2,9,1,'2024-02-26 07:04:54','2024-02-26 07:04:54');
 /*!40000 ALTER TABLE `cartdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -293,9 +295,30 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,1,'Kiet','Doan Anh','https://res.cloudinary.com/dtnpgltl4/image/upload/v1701524065/se-shop/avatars/fosl7a4zqb3uaha814iu.webp','0834480241','doananhkiet886@gmail.com','Q. Tân Bình, TP. Hồ Chí Minh','adminadmin','$2b$10$6UKuiCE/5yoLBZ..sWCatuDaNdT.JEoj1FOBpJ3OviOvCIQja9fUa','2023-11-28 11:18:46','2023-12-02 13:34:25',1),(2,1,'Dac','Lam','https://res.cloudinary.com/dtnpgltl4/image/upload/v1701524440/se-shop/avatars/tmbob39bin7iivytya7x.webp','0832038769','daclamtrannguyen@gmail.com','ABC Tower','daclam','$2b$10$Ii7Y2okSqsofGA6rTAwYcu0P7UDthB7CLb6IeCeOeQUhFBeS3.81y','2023-12-02 13:37:21','2023-12-02 13:40:40',1);
+INSERT INTO `user` VALUES (1,1,'Kiet','Doan Anh','https://res.cloudinary.com/dtnpgltl4/image/upload/v1701524065/se-shop/avatars/fosl7a4zqb3uaha814iu.webp','0834480241','user@gmail.com','Q. Tân Bình, TP. Hồ Chí Minh','adminadmin','$2y$10$qIgrAx3YW0dYj54RBhiRXOXV7KG.SCo4RzZ/R3wu5Q/CXamY6vBSq','2023-11-28 11:18:46','2023-12-02 13:34:25',1),(2,1,'Dac','Lam','https://res.cloudinary.com/dtnpgltl4/image/upload/v1701524440/se-shop/avatars/tmbob39bin7iivytya7x.webp','0832038769','admin@gmail.com','ABC Tower','daclam','$2y$10$jwCY2Pmefpi1CrGIKChn6Ofj/34EJWQBtvlUTBszG6F0NaGtuRrVu','2023-12-02 13:37:21','2023-12-02 13:40:40',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`%`*/ /*!50003 TRIGGER `autoCreateCart` AFTER INSERT ON `user` FOR EACH ROW BEGIN
+    INSERT INTO cart (userId) VALUES (NEW.id);
+END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+
+--
+-- Dumping routines for database 'se-php'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -306,4 +329,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-15 14:21:59
+-- Dump completed on 2024-02-26 18:49:48
