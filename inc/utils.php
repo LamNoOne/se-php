@@ -13,3 +13,10 @@ function verifyCategory($getCategoryId, $categoryId)
 {
     return $getCategoryId === $categoryId;
 }
+
+#Handle status to return it to javascript fetch
+function throwStatusMessage($status)
+{
+    $jsonStatus = json_encode($status);
+    echo $jsonStatus;
+}

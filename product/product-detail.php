@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
 $conn = require_once "../inc/db.php";
 $product_id = $_GET["product_id"];
 $productDetail = Product::getProductById($conn, $product_id);
-print_r($productDetail);
+// print_r($productDetail);
 ?>
 <div id="main-content" class="main-content">
     <div id="product-detail">
@@ -28,9 +28,11 @@ print_r($productDetail);
                             </span>
                             <input class="product-detail__quantity__input ms-2" id="product-detail__quantity__input" type="number" name="quantity" value="1" min="1" pattern="[1-9]*" />
                         </div>
-                        <button class="add-to-cart">
+
+                        <button class="add-to-cart" id="btn-add-to-cart" value="<?php echo $productDetail->id; ?>">
                             <span class="add-to-cart__text"> Add to Cart </span>
                         </button>
+
                         <button class="payment-paypal">
                             <img class="payment-paypal__img" src="<?php echo APP_URL; ?>/assets/img/payment.svg" alt="pay-with-paypal" />
                         </button>
@@ -123,5 +125,21 @@ print_r($productDetail);
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script src="<?php echo APP_URL; ?>/js/body/product-detail.js"></script>
 <script>
-
+    $(document).ready(function() {
+        $("#btn-add-to-cart").on("click", function(e) {
+            e.preventDefault();
+            const productId = $(this).val();
+            $.ajax({
+                url: "actions/add-cart.php",
+                method: "POST",
+                data: {
+                    productId
+                },
+                success: function(data) {
+                    $status = JSON.parse(data);
+                    console.log($status)
+                }
+            }); 
+        });
+    });
 </script>

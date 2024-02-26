@@ -12,7 +12,7 @@ class Message
      * @param boolean $status
      * @param string $message
      */
-    public static function message($status = null, string $message = "")
+    public static function message($status = null, mixed $message = "")
     {
         return [
             "status" => $status,
