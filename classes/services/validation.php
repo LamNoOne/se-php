@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 class Validation
@@ -26,7 +27,7 @@ class Validation
             'offset' => 0,
         ];
 
-        if(!self::validateKeys($defaults, $options))
+        if (!self::validateKeys($defaults, $options))
             throw new InvalidArgumentException("Invalid options");
 
         /**
@@ -97,14 +98,26 @@ class Validation
      * @param mixed $options
      * @return boolean
      */
-    private static function validateKeys($defaults, $options) {
+    private static function validateKeys($defaults, $options)
+    {
         // Add your validation logic here
-        if(empty($options)) return false;
-        
+        if (empty($options)) return false;
+
         foreach (array_keys($options) as $key) {
-            if(!array_key_exists($key, $defaults)) return false;
+            if (!array_key_exists($key, $defaults)) return false;
         }
 
+        return true;
+    }
+
+    public static function validateData($dataPattern, $data)
+    {
+        // check if params is not array or empty
+        if (!is_array($data) || !is_array($dataPattern) || empty($data) || empty($dataPattern)) return false;
+        // loop through array which contains data, check if key exists in pattern and value is not empty
+        foreach (array_keys($data) as $key) {
+            if (!in_array($key, $dataPattern) || !isset($data[$key])) return false;
+        }
         return true;
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 require_once dirname(__DIR__) . "/services/message.php";
+require_once dirname(__DIR__). "/services/validation.php";
 
 class Cart
 {
@@ -75,27 +76,45 @@ class Cart
          */
     }
 
-    public static function addProductToCart($conn, $userId, $productId)
+    public static function addProductToCart($conn, $cartData)
     {
         try {
 
+            // define pattern for cartData, contains key
+            $cartDataPattern = ['userId', 'productId','quantity'];
+            // validate data, array is not empty and contains defined keys
+            if(!Validation::validateData($cartDataPattern, $cartData))
+                throw new InvalidArgumentException('Invalid cart data');
+
+            // get value from cartData
+            $userId = $cartData['userId'];
+            $productId = $cartData['productId'];
+            $quantity = $cartData['quantity'];
+
+            // get cartId using userId
             $cartData = static::getCartByUserId($conn, $userId);
 
+            // check the returned value
             if(!$cartData['status'] || !is_object($cartData['data']))
                 throw new Exception('Cart not found');
             
             $cartId = $cartData['data']->id;
 
             // Use cartId from static function getCartByUserId()
-            $insert = "INSERT INTO cartdetail (cartId, productId) VALUES (:cartId, :productId)";
+            // define the query statement
+            $insert = "INSERT INTO cartdetail (cartId, productId, quantity) VALUES (:cartId, :productId, :quantity)";
             $stmt = $conn->prepare($insert);
+            // insert the value into cart db
             $status = $stmt->execute(
                 [
                     ":cartId" => $cartId,
-                    ":productId" => $productId
+                    ":productId" => $productId,
+                    ":quantity" => $quantity
                 ]
             );
+            // if not status, throw exception
             if (!$status) throw new InvalidArgumentException('Invalid arguments');
+            // return message to display in toast
             return Message::message(true, 'Add product to cart successfully');
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());

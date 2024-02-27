@@ -5,6 +5,9 @@ if (!defined('DB_NAME')) define('DB_NAME', 'se-php');
 if (!defined('DB_USER')) define('DB_USER', "root");
 if (!defined('DB_PASS')) define('DB_PASS', "");
 
+// Debug mode
+if(!defined('DB_DEBUG')) define('DB_DEBUG', true);
+
 /* PayPal REST API configuration 
  * You can generate API credentials from the PayPal developer panel. 
  * See your keys here: https://developer.paypal.com/dashboard/ 

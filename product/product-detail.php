@@ -129,17 +129,19 @@ $productDetail = Product::getProductById($conn, $product_id);
         $("#btn-add-to-cart").on("click", function(e) {
             e.preventDefault();
             const productId = $(this).val();
+            const quantity = $('#product-detail__quantity__input').val();
             $.ajax({
                 url: "actions/add-cart.php",
                 method: "POST",
                 data: {
-                    productId
+                    productId,
+                    quantity
                 },
                 success: function(data) {
-                    $status = JSON.parse(data);
-                    console.log($status)
+                    // $status = JSON.parse(data);
+                    console.log(data)
                 }
-            }); 
+            });
         });
     });
 </script>
