@@ -1,7 +1,7 @@
 <?php
 
 require_once dirname(__DIR__) . "/services/message.php";
-require_once dirname(__DIR__). "/services/validation.php";
+require_once dirname(__DIR__) . "/services/validation.php";
 
 class Cart
 {
@@ -34,14 +34,7 @@ class Cart
          */
     }
 
-    public static function deleteProductFromCart($conn, $cartId)
-    {
-        /**
-         * Write your code here
-         */
-    }
-
-    public static function getCartByUserId($conn, $userId) : array | object
+    public static function getCartByUserId($conn, $userId): array | object
     {
         /**
          * Write your code here
@@ -53,7 +46,7 @@ class Cart
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
             $stmt->setFetchMode(PDO::FETCH_OBJ);
-            if(!$stmt->execute())
+            if (!$stmt->execute())
                 throw new Exception('Can not execute query');
             $cart = $stmt->fetch();
             return Message::messageData(true, 'Get cart successfully', $cart);
@@ -81,9 +74,9 @@ class Cart
         try {
 
             // define pattern for cartData, contains key
-            $cartDataPattern = ['userId', 'productId','quantity'];
+            $cartDataPattern = ['userId', 'productId', 'quantity'];
             // validate data, array is not empty and contains defined keys
-            if(!Validation::validateData($cartDataPattern, $cartData))
+            if (!Validation::validateData($cartDataPattern, $cartData))
                 throw new InvalidArgumentException('Invalid cart data');
 
             // get value from cartData
@@ -95,9 +88,9 @@ class Cart
             $cartData = static::getCartByUserId($conn, $userId);
 
             // check the returned value
-            if(!$cartData['status'] || !is_object($cartData['data']))
+            if (!$cartData['status'] || !is_object($cartData['data']))
                 throw new Exception('Cart not found');
-            
+
             $cartId = $cartData['data']->id;
 
             // Use cartId from static function getCartByUserId()
@@ -116,6 +109,38 @@ class Cart
             if (!$status) throw new InvalidArgumentException('Invalid arguments');
             // return message to display in toast
             return Message::message(true, 'Add product to cart successfully');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+
+    // remove product from cart
+
+    public static function deleteProductFromCart($conn, $userId, $productId)
+    {
+
+        $deleteStmt = "DELETE FROM cartdetail WHERE cartId=:cartId AND productId=:productId";
+
+        try {
+            // get cartId using userId
+            $cartData = static::getCartByUserId($conn, $userId);
+
+            // check the returned value
+            if (!$cartData['status'] || !is_object($cartData['data']))
+                throw new Exception('Cart not found');
+
+            $cartId = $cartData['data']->id;
+
+            $stmt = $conn->prepare($deleteStmt);
+            $status = $stmt->execute(
+                [
+                    ":cartId" => $cartId,
+                    ":productId" => $productId
+                ]
+            );
+            if (!$status) throw new PDOException('Can not delete product from cart');
+            return Message::message(true, 'Delete product from cart successfully');
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
