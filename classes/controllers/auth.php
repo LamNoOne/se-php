@@ -12,7 +12,7 @@ class Auth
     public static function requireLogin()
     {
         if (!static::isLoggedIn()) {
-            die('Please login to continue');
+            echo "<script>window.location.href='http://localhost/se-php/auth/login-register.php'</script>";
         }
     }
     #Handle login

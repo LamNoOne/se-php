@@ -141,6 +141,45 @@
     </div>
     <span class="d-block py-3" id="copy-right">Copyright © 2024 SE.</span>
 </footer>
+<script type="text/javascript" src="<?php echo APP_URL; ?>/js/header/logout.js"></script>
+<script>
+    $(document).ready(async function() {
+        $(".btn-logout-confirm").on("click", async function(e) {
+            e.preventDefault();
+
+            try {
+                // send request to logout php
+                // at logout.php => call auth::logout() to destroy session
+                const statusLogout = await $.ajax({
+                    method: "POST",
+                    url: "<?php echo APP_URL; ?>/auth/logout.php"
+                })
+                // after successfully logged out, navigate back to home page
+                window.location.href = "<?php echo APP_URL; ?>";
+            } catch (error) {
+                // use toast to show error
+                console.log(error);
+            }
+        });
+
+        const logoutBtn = document.querySelector("#logout-btn");
+
+        if (logoutBtn)
+            logoutBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                const logoutPrimary = document.querySelector(".btn-logout-primary");
+                logoutPrimary.click();
+            });
+    });
+</script>
+<script>
+    const cartBtn =document.querySelector('#cart-btn');
+
+    cartBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = "<?php echo APP_URL;?>/cart.php";
+    })
+</script>
 </body>
 
 </html>

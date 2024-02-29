@@ -12,7 +12,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_POST['email']) || empty($_POST['password'])) {
         // Display toast message warning
     } else {
-        $conn = require_once "../inc/db.php";
+        if (!isset($conn))
+            $conn = require_once "../inc/db.php";
         $email = $_POST['email'];
         $password = $_POST['password'];
 
@@ -22,18 +23,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = $data['message'];
             $user = $data['data'];
             $_SESSION['username'] = $user->username;
-            $_SESSION['firstname'] = $user->firstName;
-            $_SESSION['lastname'] = $user->lastName;
+            $_SESSION['firstName'] = $user->firstName;
+            $_SESSION['lastName'] = $user->lastName;
             $_SESSION['email'] = $user->email;
             $_SESSION['userId'] = $user->id;
             $_SESSION['image'] = $user->imageUrl;
             if ($user->phoneNumber !== NULL) {
-                $_SESSION['phonenumber'] = $user->phoneNumber;
+                $_SESSION['phoneNumber'] = $user->phoneNumber;
             }
             if ($user->address !== NULL) {
                 $_SESSION['address'] = $user->address;
             }
-            Auth::login();
+            if (isset($_SESSION['userId']))
+                Auth::login();
             redirect(APP_URL);
         } else {
             // Display toast message warning
@@ -64,12 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <form action="login-register.php" method="post" class="login-form">
                             <fieldset>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
-                                    <label for="email" class="login-form__input__label">Email<span>&nbsp;*</span></label>
-                                    <input type="email" placeholder="Your Email" name="email" id="email" class="login-form__input" />
+                                    <label for="email-login" class="login-form__input__label">Email<span>&nbsp;*</span></label>
+                                    <input type="email" placeholder="Your Email" name="email" id="email-login" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
-                                    <label for="password" class="login-form__input__label">Password<span>&nbsp;*</span></label>
-                                    <input type="password" placeholder="Your Password" name="password" id="password" class="login-form__input" />
+                                    <label for="password-login" class="login-form__input__label">Password<span>&nbsp;*</span></label>
+                                    <input type="password" placeholder="Your Password" name="password" id="password-login" class="login-form__input" />
                                 </div>
                                 <div class="login-form__submit-container d-flex align-items-center justify-content-between my-4">
                                     <button type="submit" class="login-form__submit-container__submit">
@@ -94,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <input type="text" placeholder="Ex: William" name="name" id="lastname" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
-                                    <label for="email" class="login-form__input__label">Email<span>&nbsp;*</span></label>
-                                    <input type="email" placeholder="example@gmail.com" name="email" id="email" class="login-form__input" />
+                                    <label for="email-register" class="login-form__input__label">Email<span>&nbsp;*</span></label>
+                                    <input type="email" placeholder="example@gmail.com" name="email" id="email-register" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
-                                    <label for="password" class="login-form__input__label">Password<span>&nbsp;*</span></label>
-                                    <input type="password" placeholder="Your Password" name="password" id="password" class="login-form__input" />
+                                    <label for="password-register" class="login-form__input__label">Password<span>&nbsp;*</span></label>
+                                    <input type="password" placeholder="Your Password" name="password" id="password-register" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="confirm_password" class="login-form__input__label">Confirm Password<span>&nbsp;*</span></label>
@@ -141,8 +143,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php require_once "../inc/components/footer.php"; ?>
-<script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
-<script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
+<!-- <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script> -->
+<!-- <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script> -->
 <script>
     $("#login-register-container").slick({
         slidesToShow: 1,
@@ -175,17 +177,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // check if button is clicked, hide and display another one
-    signInBtn.addEventListener("click", () => {
-        signInContainer.classList.add("d-none");
-        if (registerContainer.classList.contains("d-none")) {
-            registerContainer.classList.remove("d-none");
-        }
-    });
+    if (signInBtn)
+        signInBtn.addEventListener("click", () => {
+            signInContainer.classList.add("d-none");
+            if (registerContainer.classList.contains("d-none")) {
+                registerContainer.classList.remove("d-none");
+            }
+        });
     // check if button is clicked, hide and display another one
-    registerBtn.addEventListener("click", () => {
-        registerContainer.classList.add("d-none");
-        if (signInContainer.classList.contains("d-none")) {
-            signInContainer.classList.remove("d-none");
-        }
-    });
+    if (registerBtn)
+        registerBtn.addEventListener("click", () => {
+            registerContainer.classList.add("d-none");
+            if (signInContainer.classList.contains("d-none")) {
+                signInContainer.classList.remove("d-none");
+            }
+        });
 </script>

@@ -25,6 +25,21 @@
                         }
                     }
 
+                    .login-btn {
+                        display        : flex;
+                        justify-content: center;
+                        align-items    : center;
+                        border-radius  : 50%;
+                        height         : 2.5rem;
+                        width          : 2.5rem;
+                        border: 1px solid #000;
+                        border-color   : #000;
+
+                        i {
+                            color: #000;
+                        }
+                    }
+
                     #dropdown-menu-user {
                         position     : absolute !important;
                         inset        : 0.5rem 0 auto auto !important;
@@ -57,10 +72,10 @@
                     }
                 }
 
-                .cart-component-dropdown {
+                .cart-component {
                     position: relative;
 
-                    .dropdown-cart-btn {
+                    .cart-btn {
                         outline : none;
                         border  : none;
                         position: relative;

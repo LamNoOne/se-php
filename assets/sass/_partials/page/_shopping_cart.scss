@@ -60,7 +60,14 @@
             border          : none;
             outline         : none;
             background-color: transparent;
-            background-image: url("/assets/img/delete-cart.svg");
+
+            i {
+                font-size: 1.2rem;
+
+                &:hover {
+                    color: red;
+                }
+            }
         }
     }
 

@@ -1,5 +1,8 @@
 <?php require_once "inc/components/header.php"; ?>
-<?php $conn = require_once "inc/db.php";
+<?php
+if (!isset($conn))
+    $conn = require_once "inc/db.php";
+
 $newProducts = Product::getAllProducts($conn, 20);
 
 // Query Laptops
@@ -117,149 +120,6 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams)['data'];
             </div>
         </div>
     </div>
-
-    <!-- <div id="outstanding-product">
-        <div class="container">
-            <div class="multiple-product-outstanding">
-                <div class="row">
-                    <div class="mb-2 col col-sm-6 col-md-4 col-lg-3 col-xl-2-4">
-                        <div class="custom-build d-flex flex-column justify-content-center align-items-center">
-                            <h3 class="m-auto text-center">Custom<br />Builds</h3>
-                            <a class="mb-4" href="#">See All Products</a>
-                        </div>
-                    </div>
-                    <div class="mb-2 col col-sm-6 col-md-4 col-lg-3 col-xl-2-4">
-                        <div class="card-product-detail">
-                            <div class="item-status d-flex">
-                                <img src="assets/img/stock.svg" alt="in-stock" />
-                                <span class="true">&nbsp;in stock</span>
-                            </div>
-                            <div class="image-container">
-                                <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
-                            </div>
-                            <div class="evaluation d-flex align-items-center">
-                                <div class="star-check d-flex">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star"></span>
-                                </div>
-                                <div class="star-review">
-                                    <span>Reviews (4)</span>
-                                </div>
-                            </div>
-                            <div class="title-container">
-                                <p class="product-title">
-                                    EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
-                                </p>
-                            </div>
-                            <div class="price-container d-flex flex-column align-items-start">
-                                <span class="old-price">$499.00</span>
-                                <span class="new-price">$499.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2 col col-sm-6 col-md-4 col-lg-3 col-xl-2-4">
-                        <div class="card-product-detail">
-                            <div class="item-status d-flex">
-                                <img src="assets/img/stock.svg" alt="in-stock" />
-                                <span class="true">&nbsp;in stock</span>
-                            </div>
-                            <div class="image-container">
-                                <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
-                            </div>
-                            <div class="evaluation d-flex align-items-center">
-                                <div class="star-check d-flex">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star"></span>
-                                </div>
-                                <div class="star-review">
-                                    <span>Reviews (4)</span>
-                                </div>
-                            </div>
-                            <div class="title-container">
-                                <p class="product-title">
-                                    EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
-                                </p>
-                            </div>
-                            <div class="price-container d-flex flex-column align-items-start">
-                                <span class="old-price">$499.00</span>
-                                <span class="new-price">$499.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2 col col-sm-6 col-md-4 col-lg-3 col-xl-2-4">
-                        <div class="card-product-detail">
-                            <div class="item-status d-flex">
-                                <img src="assets/img/stock.svg" alt="in-stock" />
-                                <span class="true">&nbsp;in stock</span>
-                            </div>
-                            <div class="image-container">
-                                <img class="object-fit-contain" src="assets/img/cpu_1.png" alt="cpu" />
-                            </div>
-                            <div class="evaluation d-flex align-items-center">
-                                <div class="star-check d-flex">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star"></span>
-                                </div>
-                                <div class="star-review">
-                                    <span>Reviews (4)</span>
-                                </div>
-                            </div>
-                            <div class="title-container">
-                                <p class="product-title">
-                                    EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
-                                </p>
-                            </div>
-                            <div class="price-container d-flex flex-column align-items-start">
-                                <span class="old-price">$499.00</span>
-                                <span class="new-price">$499.00</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mb-2 col col-sm-6 col-md-4 col-lg-3 col-xl-2-4">
-                        <div class="card-product-detail">
-                            <div class="item-status d-flex">
-                                <img src="assets/img/stock.svg" alt="in-stock" />
-                                <span class="true">&nbsp;in stock</span>
-                            </div>
-                            <div class="image-container">
-                                <img class="object-fit-contain" src="assets/img/custom-build_4.jpg" alt="cpu" />
-                            </div>
-                            <div class="evaluation d-flex align-items-center">
-                                <div class="star-check d-flex">
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star checked"></span>
-                                    <span class="fa fa-star"></span>
-                                </div>
-                                <div class="star-review">
-                                    <span>Reviews (4)</span>
-                                </div>
-                            </div>
-                            <div class="title-container">
-                                <p class="product-title">
-                                    EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH All-In-On...
-                                </p>
-                            </div>
-                            <div class="price-container d-flex flex-column align-items-start">
-                                <span class="old-price">$499.00</span>
-                                <span class="new-price">$499.00</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div> -->
 
     <div id="product-slider">
         <div class="container">
@@ -458,7 +318,6 @@ $monitors = Product::getProductsByCategory($conn, $monitorParams)['data'];
 <script src="<?php echo APP_URL; ?>/js/body/product.js"></script>
 <script>
     const productCards = document.querySelectorAll('.card-product-detail');
-    console.log(productCards)
     productCards.forEach(productCard => {
         productCard.addEventListener('click', () => {
             window.location.href = `<?php echo APP_URL; ?>/product/product-detail.php?product_id=${productCard.dataset.index}`;

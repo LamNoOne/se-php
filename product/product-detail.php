@@ -4,11 +4,11 @@
 if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
     redirect(APP_URL);
 }
-
-$conn = require_once "../inc/db.php";
+if (!isset($conn))
+    $conn = require_once "../inc/db.php";
 $product_id = $_GET["product_id"];
 $productDetail = Product::getProductById($conn, $product_id);
-// print_r($productDetail);
+
 ?>
 <div id="main-content" class="main-content">
     <div id="product-detail">
@@ -126,22 +126,46 @@ $productDetail = Product::getProductById($conn, $product_id);
 <script src="<?php echo APP_URL; ?>/js/body/product-detail.js"></script>
 <script>
     $(document).ready(function() {
-        $("#btn-add-to-cart").on("click", function(e) {
+        $("#btn-add-to-cart").on("click", async function(e) {
+
             e.preventDefault();
-            const productId = $(this).val();
-            const quantity = $('#product-detail__quantity__input').val();
-            $.ajax({
-                url: "actions/add-cart.php",
-                method: "POST",
-                data: {
-                    productId,
-                    quantity
-                },
-                success: function(data) {
-                    // $status = JSON.parse(data);
-                    console.log(data)
+
+            // get userId from session
+            let userId = "<?php echo isset($_SESSION['userId']) ? $_SESSION['userId'] : '' ?>";
+
+            // if userId is not exist, require login => navigate to login
+            if (userId === '')
+                window.location.href = "<?php echo APP_URL; ?>/auth/login-register.php";
+
+            // parse params to integer
+            userId = parseInt(userId)
+            const productId = parseInt($(this).val());
+            const quantity = parseInt($('#product-detail__quantity__input').val());
+
+            // use async await to handle success and error messages
+            try {
+                const addCart = await $.ajax({
+                    url: "actions/add-cart.php",
+                    method: "POST",
+                    data: {
+                        userId,
+                        productId,
+                        quantity
+                    }
+                });
+                console.log(addCart)
+                const addCartInfo = JSON.parse(addCart)
+                console.log(addCartInfo);
+                if (addCartInfo.status) {
+                    toastr.success(addCartInfo.message, "Add cart");
+                    const productCartQuantity = $(".cart-btn__count").html();
+                    $(".cart-btn__count").html(parseInt(productCartQuantity) + 1);
+                } else {
+                    toastr.warning(addCartInfo.message, "Warning");
                 }
-            });
+            } catch (error) {
+                toastr.warning(error, "Error");
+            }
         });
     });
 </script>

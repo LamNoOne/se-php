@@ -206,6 +206,18 @@ body {
     width: 2.5rem;
     border-radius: 50%; }
 
+#header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown .login-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  height: 2.5rem;
+  width: 2.5rem;
+  border: 1px solid #000;
+  border-color: #000; }
+  #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown .login-btn i {
+    color: #000; }
+
 #header .main-header .main-header__mechanism .main-header__mechanism--button .user-component-dropdown #dropdown-menu-user {
   position: absolute !important;
   inset: 0.5rem 0 auto auto !important;
@@ -230,13 +242,13 @@ body {
     font-weight: 500;
     line-height: 1.75rem; }
 
-#header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown {
+#header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component {
   position: relative; }
-  #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown .dropdown-cart-btn {
+  #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component .cart-btn {
     outline: none;
     border: none;
     position: relative; }
-    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown .dropdown-cart-btn__count {
+    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component .cart-btn__count {
       position: absolute;
       top: 0;
       right: 0.5rem;
@@ -253,18 +265,18 @@ body {
       font-weight: 700;
       line-height: normal;
       border-radius: 50%; }
-  #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart {
+  #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart {
     position: absolute !important;
     width: 19.375rem;
     height: -webkit-fit-content;
     height: -moz-fit-content;
     height: fit-content;
     inset: 0.2rem 1rem auto auto !important; }
-    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container {
+    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container {
       position: relative;
       padding: 1rem 1.5rem;
       height: 9.6rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container::after {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container::after {
         position: absolute;
         content: "";
         width: 100%;
@@ -272,7 +284,7 @@ body {
         right: 0;
         bottom: 0;
         background-color: #cacdd8; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container .cart-intro__cart-title {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container .cart-intro__cart-title {
         color: black;
         text-align: center;
         font-family: Poppins;
@@ -280,7 +292,7 @@ body {
         font-style: normal;
         font-weight: 600;
         line-height: 1.575rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container .cart-intro__cart-info {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container .cart-intro__cart-info {
         color: #a1a5af;
         text-align: center;
         font-family: Poppins;
@@ -288,14 +300,14 @@ body {
         font-style: normal;
         font-weight: 400;
         line-height: normal; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container .cart-intro__cart-view-btn {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container .cart-intro__cart-view-btn {
         display: inline-flex;
         padding: 0.5rem 3.03125rem;
         justify-content: center;
         align-items: center;
         border-radius: 3.125rem;
         border: 2px solid #0055ff; }
-        #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-intro-container .cart-intro__cart-view-btn__title {
+        #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-intro-container .cart-intro__cart-view-btn__title {
           color: #0055ff;
           text-align: center;
           font-family: Poppins;
@@ -303,11 +315,11 @@ body {
           font-style: normal;
           font-weight: 600;
           line-height: normal; }
-    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-product-container {
+    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-product-container {
       position: relative;
       padding: 1rem 1.5rem;
       height: 6.39rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-product-container::after {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-product-container::after {
         position: absolute;
         content: "";
         width: 100%;
@@ -315,30 +327,30 @@ body {
         right: 0;
         bottom: 0;
         background-color: #cacdd8; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-product-container .cart-product__quantity {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-product-container .cart-product__quantity {
         color: #000;
         text-align: center;
         font-size: 1.125rem;
         font-style: normal;
         font-weight: 400;
         line-height: 1.575rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-product-container .cart-product__sign {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-product-container .cart-product__sign {
         color: #000;
         font-family: Poppins;
         font-size: 0.875rem;
         font-style: normal;
         font-weight: 400;
         line-height: 1.575rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-product-container .cart-product__desc {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-product-container .cart-product__desc {
         color: #000;
         font-size: 0.8125rem;
         font-style: normal;
         font-weight: 400;
         line-height: normal; }
-    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-payment-container {
+    #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-payment-container {
       position: relative;
       padding: 1rem 1.5rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-payment-container .cart-payment .payment__subtotal__title {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-payment-container .cart-payment .payment__subtotal__title {
         color: #A2A6B0;
         text-align: center;
         font-family: Poppins;
@@ -346,14 +358,14 @@ body {
         font-style: normal;
         font-weight: 600;
         line-height: 1.225rem; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-payment-container .cart-payment .payment__subtotal__number {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-payment-container .cart-payment .payment__subtotal__number {
         color: #000;
         font-family: Poppins;
         font-size: 1.125rem;
         font-style: normal;
         font-weight: 600;
         line-height: 140%; }
-      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-payment-container .cart-payment .payment__btn__checkout {
+      #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-payment-container .cart-payment .payment__btn__checkout {
         display: inline-flex;
         padding: 0.5rem 4.375rem;
         border: none;
@@ -361,7 +373,7 @@ body {
         align-items: center;
         border-radius: 3.125rem;
         background: #0156FF; }
-        #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component-dropdown #dropdown-menu-cart .cart-payment-container .cart-payment .payment__btn__checkout__title {
+        #header .main-header .main-header__mechanism .main-header__mechanism--button .cart-component #dropdown-menu-cart .cart-payment-container .cart-payment .payment__btn__checkout__title {
           color: #FFF;
           text-align: center;
           font-family: Poppins;
@@ -450,6 +462,9 @@ body {
     border-bottom: 0.0625rem solid #cacdd8; }
     #header .main-header .dropdown-toggle:not(.nav-dropdown-toggle)::after {
       display: none !important; }
+  #header .logout-form .btn-logout-control {
+    display: inline-block;
+    width: 100%; }
 
 #promotion-slider {
   position: relative;
@@ -1257,8 +1272,11 @@ body {
     height: 1.686rem;
     border: none;
     outline: none;
-    background-color: transparent;
-    background-image: url("/assets/img/delete-cart.svg"); }
+    background-color: transparent; }
+    #shopping-cart .cart-item__btn-delete-cart i {
+      font-size: 1.2rem; }
+      #shopping-cart .cart-item__btn-delete-cart i:hover {
+        color: red; }
   #shopping-cart .cart-item-control .continue-shopping {
     display: inline-flex;
     padding: 0.5rem 2rem 0.5rem 1.875rem;

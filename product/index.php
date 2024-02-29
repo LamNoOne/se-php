@@ -7,7 +7,8 @@ $parsedParams = array();
 // Check if there are query parameters in the URL
 if (!empty($_GET)) {
     // Get connection
-    $conn = require_once "../inc/db.php";
+    if (!isset($conn))
+        $conn = require_once "../inc/db.php";
     // Loop through each parameter
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
