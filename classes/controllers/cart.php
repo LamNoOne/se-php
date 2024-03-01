@@ -73,10 +73,6 @@ class Cart
 
     public static function getCartByUserId($conn, $userId): array | object
     {
-        /**
-         * Write your code here
-         */
-
         try {
             $query = 'SELECT * FROM cart WHERE userId=:userId';
 
@@ -93,7 +89,7 @@ class Cart
         }
     }
 
-    public static function getProductCartById($conn, $cartId, $productId)
+    public static function getProductCartById($conn, $cartId, $productId): array | object
     {
         try {
             //code...
@@ -155,6 +151,28 @@ class Cart
         }
     }
 
+    public static function getProductDetailFromCart($conn, $userId, $productId) : array | object
+    {
+        try {
+            $cartId = static::getCartId($conn, $userId);
+
+            // define query string
+            $query = "SELECT CD.productId, P.name, P.price, P.imageUrl, P.description, CD.quantity FROM cartdetail AS CD JOIN product AS P ON CD.productId = P.id WHERE cartId = :cartId AND productId = :productId";
+
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':cartId', $cartId, PDO::PARAM_INT);
+            $stmt->bindValue(':productId', $productId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $cartDetail = $stmt->fetch();
+            return Message::messageData(true, 'Get a product cart detail successfully', $cartDetail);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function addProductToCart($conn, $userId, $cartData)
     {
 
@@ -204,7 +222,6 @@ class Cart
         }
     }
 
-    // remove product from cart
     public static function deleteProductFromCart($conn, $userId, $productId)
     {
         try {

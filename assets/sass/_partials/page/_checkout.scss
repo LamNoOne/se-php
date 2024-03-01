@@ -21,7 +21,32 @@
 #checkout-container {
     margin-top: 7.5rem;
 
+    .nav-append-container {
+        display: none;
+    }
+
     #checkout-progress {
+        height: fit-content;
+
+        .previous-checkout {
+            display         : flex;
+            padding         : 0.5rem 2rem 0.5rem 1.875rem;
+            width           : 12.625rem;
+            border          : 2px solid $primary_color;
+            border-radius   : 3.125rem;
+            justify-content : center;
+            align-items     : center;
+            background-color: $primary_color;
+            cursor          : pointer;
+            color           : #FFF;
+            text-align      : center;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+        }
+
         .cart-header {
             color      : rgba(black, 0.85);
             font-family: Poppins;
@@ -131,7 +156,7 @@
 
         .checkout-summary {
             background-color: #F5F7FF;
-            margin-top: 2.4rem;
+            margin-top      : 2.4rem;
             padding         : 1rem 2rem;
 
             &__header {
@@ -356,7 +381,30 @@
     .order-summary {
         background-color: #F5F7FF;
         margin-top      : 2.4rem;
+        margin-right    : 10px;
         padding         : 1rem 2rem;
+        position        : relative;
+
+        .btn-checkout-payment {
+            position        : absolute;
+            left            : 0;
+            right           : 0;
+            display         : flex;
+            width           : 100%;
+            padding         : 0.5rem;
+            border          : none;
+            justify-content : center;
+            align-items     : center;
+            background-color: $primary_color;
+            cursor          : pointer;
+            color           : #FFF;
+            text-align      : center;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+        }
 
         &__title {
             color      : #000;

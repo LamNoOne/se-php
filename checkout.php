@@ -1,5 +1,25 @@
 <?php require_once "inc/components/header.php"; ?>
+<?php require_once "inc/utils.php"; ?>
+<?php
+if (!Auth::isLoggedIn())
+    Auth::requireLogin();
 
+if (!isset($conn))
+    $conn = require_once "inc/db.php";
+
+// $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data'];
+
+// receive product id from cart, after that, get product info depends on productId and cartId
+$selectedProductsCart = array();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_cart']))
+    $_SESSION['selected_products'] = $_POST['product_cart'];
+
+if (!isset($_SESSION['selected_products'])) redirect(APP_URL);
+
+$selectedProductsCart = [...$_SESSION['selected_products']];
+
+?>
 <div id="main-content" class="main-content">
     <div id="checkout-container">
         <div class="container">
@@ -46,28 +66,45 @@
                         <form action="" method="post" class="checkout-procedure">
                             <fieldset>
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="email" class="checkout-procedure__form__label">Email<span>&nbsp;*</span></label>
-                                    <input type="email" placeholder="Your Email" name="email" id="email" value="daclamtrannguyen@gmail.com" class="checkout-procedure__form__input" disabled />
+                                    <label for="email" class="checkout-procedure__form__label">
+                                        Email
+                                        <span>&nbsp;*</span>
+                                    </label>
+                                    <input type="email" placeholder="Your Email" name="email" id="email" value="<?php echo $_SESSION['email']; ?>" class="checkout-procedure__form__input" disabled />
                                 </div>
+
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="firstname" class="checkout-procedure__form__label">First Name<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Your First Name" name="firstname" id="firstname" value="Dac" class="checkout-procedure__form__input" disabled />
+                                    <label for="firstname" class="checkout-procedure__form__label">
+                                        First Name
+                                        <span>&nbsp;*</span>
+                                    </label>
+                                    <input type="text" placeholder="Your First Name" name="firstname" id="firstname" value="<?php echo $_SESSION['firstName']; ?>" class="checkout-procedure__form__input" disabled />
                                 </div>
+
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="lastname" class="checkout-procedure__form__label">Last Name<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Your Last Name" name="lastname" id="lastname" value="Lam" class="checkout-procedure__form__input" disabled />
+                                    <label for="lastname" class="checkout-procedure__form__label">
+                                        Last Name
+                                        <span>&nbsp;*</span>
+                                    </label>
+                                    <input type="text" placeholder="Your Last Name" name="lastname" id="lastname" value="<?php echo $_SESSION['lastName'] ?>" class="checkout-procedure__form__input" disabled />
                                 </div>
+
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="phone" class="checkout-procedure__form__label">Phone Number<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Your Phone Number" name="phone" id="phone" class="checkout-procedure__form__input" />
+                                    <label for="phone" class="checkout-procedure__form__label">
+                                        Phone Number
+                                        <span>&nbsp;*</span>
+                                    </label>
+                                    <input type="text" placeholder="Your Phone Number" name="phone" id="phone" <?php if (isset($_SESSION['phoneNumber'])) : ?> value="<?php echo $_SESSION['phoneNumber']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
                                 </div>
+
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="street" class="checkout-procedure__form__label">Street Address<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Your Address" name="street" id="street" class="checkout-procedure__form__input" />
+                                    <label for="street" class="checkout-procedure__form__label">
+                                        Street Address
+                                        <span>&nbsp;*</span>
+                                    </label>
+                                    <input type="text" placeholder="Your Address" name="street" id="street" <?php if (isset($_SESSION['address'])) : ?> value="<?php echo $_SESSION['address']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
                                 </div>
-                                <button type="button" class="checkout-procedure__btn-next" id="checkout-procedure__btn-next">
-                                    Next
-                                </button>
+
                             </fieldset>
                         </form>
                     </div>
@@ -77,51 +114,32 @@
                             <div class="order-summary__border border-bottom border-black border-opacity-25"></div>
                             <div class="order-summary__items">
                                 <div class="order-summary__items__info d-flex py-3">
-                                    <span class="order-summary__items__quantity"> 2 </span>
-                                    <p class="order-summary__items__desc m-0">&nbsp;Items in Cart</p>
+                                    <span class="order-summary__items__quantity" 3</span>
+                                        <p class="order-summary__items__desc m-0">&nbsp;Items in Cart</p>
                                 </div>
                                 <ul class="order-summary__items__list list-unstyled m-0 d-flex flex-column gap-3">
-                                    <li class="order-summary__items__list__product d-flex justify-content-between align-items-start gap-3">
-                                        <img src="assets/img/custom-build_4.jpg" alt="product" class="object-fit-contain" />
-                                        <div class="order-summary__items__list__info d-flex flex-column">
-                                            <p class="order-summary__items__list__desc m-0">
-                                                MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER...
-                                            </p>
-                                            <div class="order-summary__items__list__specs d-flex">
-                                                <span class="order-summary__items__list__quantity">
-                                                    <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span>1</span>
-                                                <span class="order-summary__items__list__price">&nbsp;&nbsp;$3,799.00</span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="order-summary__items__list__product d-flex justify-content-between align-items-start gap-3">
-                                        <img src="assets/img/custom-build_4.jpg" alt="product" class="object-fit-contain" />
-                                        <div class="order-summary__items__list__info d-flex flex-column">
-                                            <p class="order-summary__items__list__desc m-0">
-                                                MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER...
-                                            </p>
-                                            <div class="order-summary__items__list__specs d-flex">
-                                                <span class="order-summary__items__list__quantity">
-                                                    <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span>1</span>
-                                                <span class="order-summary__items__list__price">&nbsp;&nbsp;$3,799.00</span>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li class="order-summary__items__list__product d-flex justify-content-between align-items-start gap-3">
-                                        <img src="assets/img/custom-build_4.jpg" alt="product" class="object-fit-contain" />
-                                        <div class="order-summary__items__list__info d-flex flex-column">
-                                            <p class="order-summary__items__list__desc m-0">
-                                                MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER...
-                                            </p>
-                                            <div class="order-summary__items__list__specs d-flex">
-                                                <span class="order-summary__items__list__quantity">
-                                                    <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span>1</span>
-                                                <span class="order-summary__items__list__price">&nbsp;&nbsp;$3,799.00</span>
-                                            </div>
-                                        </div>
-                                    </li>
+                                    <?php foreach ($selectedProductsCart as $productId) :
+                                        $productCartDetail = Cart::getProductDetailFromCart($conn, $_SESSION['userId'], $productId)['data'];
+                                        if (isset($productCartDetail)) :
+                                    ?>
+                                            <li class="order-summary__items__list__product d-flex justify-content-start align-items-start gap-3">
+                                                <img src="<?php echo $productCartDetail->imageUrl; ?>" alt="product" class="object-fit-contain" />
+                                                <div class="order-summary__items__list__info d-flex flex-column">
+                                                    <p class="order-summary__items__list__desc m-0">
+                                                        <?php echo $productCartDetail->name; ?>
+                                                    </p>
+                                                    <div class="order-summary__items__list__specs d-flex">
+                                                        <span class="order-summary__items__list__quantity">
+                                                            <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span><?php $productCartDetail->quantity; ?></span>
+                                                        <span class="order-summary__items__list__price">&nbsp;&nbsp;$<?php echo $productCartDetail->price ?></span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                 </ul>
                             </div>
+                            <button type="button" class="btn-checkout-payment" id="btn-checkout-payment">Go to Payment</button>
                         </div>
                     </div>
                 </div>
@@ -141,87 +159,38 @@
                                 <span class="cart-header">Subtotal</span>
                             </div>
                         </div>
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="cart-item-container d-flex align-items-center">
-                                        <img class="cart-item__img" src="assets/img/custom-build_3.jpg" alt="item" />
-                                        <p class="cart-item__desc m-0">
-                                            MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER, 32GB RAM, 1TB
-                                            SSD, Windows 10 Home, Gaming Keyboard and Mouse 3 Years Warranty
-                                        </p>
+                        <?php foreach ($selectedProductsCart as $productId) :
+                            $productCartDetail = Cart::getProductDetailFromCart($conn, $_SESSION['userId'], $productId)['data'];
+                            if (isset($productCartDetail)) :
+                        ?>
+                                <div class="cart-item">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="cart-item-container d-flex align-items-center">
+                                                <img class="cart-item__img" src="<?php echo $productCartDetail->imageUrl; ?>" alt="item" />
+                                                <p class="cart-item__desc m-0">
+                                                    <?php echo $productCartDetail->name; ?>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center">
+                                            <span class="cart-item__price">$<?php echo $productCartDetail->price; ?></span>
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center">
+                                            <input type="number" name="quantity" id="cart-quantity" min="1" value="<?php echo $productCartDetail->quantity; ?>" class="cart-item__input-quantity" />
+                                        </div>
+                                        <div class="col-2 d-flex align-items-center">
+                                            <span class="cart-item__price">$<?php echo $productCartDetail->quantity * $productCartDetail->price; ?></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$4,349.00</span>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <input type="number" name="quantity" id="cart-quantity" min="1" value="1" class="cart-item__input-quantity" />
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$13,047.00</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="cart-item-container d-flex align-items-center">
-                                        <img class="cart-item__img" src="assets/img/custom-build_3.jpg" alt="item" />
-                                        <p class="cart-item__desc m-0">
-                                            MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER, 32GB RAM, 1TB
-                                            SSD, Windows 10 Home, Gaming Keyboard and Mouse 3 Years Warranty
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$4,349.00</span>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <input type="number" name="quantity" id="cart-quantity" min="1" value="1" class="cart-item__input-quantity" />
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$13,047.00</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="cart-item">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="cart-item-container d-flex align-items-center">
-                                        <img class="cart-item__img" src="assets/img/custom-build_3.jpg" alt="item" />
-                                        <p class="cart-item__desc m-0">
-                                            MSI MEG Trident X 10SD-1012AU Intel i7 10700K, 2070 SUPER, 32GB RAM, 1TB
-                                            SSD, Windows 10 Home, Gaming Keyboard and Mouse 3 Years Warranty
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$4,349.00</span>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <input type="number" name="quantity" id="cart-quantity" min="1" value="1" class="cart-item__input-quantity" />
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$13,047.00</span>
-                                </div>
-                            </div>
-                        </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                         <div class="cart-item-control">
                             <div class="row">
                                 <div class="col-12">
@@ -230,13 +199,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-12 d-flex justify-content-between">
-                                    <div class="btn-control-first">
-                                        <button class="continue-shopping">Continue Shopping</button>
-                                        <button class="clear-cart">Clear Shopping Cart</button>
-                                    </div>
-                                    <div class="btn-control-second">
-                                        <button class="update-cart">Update Shopping Cart</button>
-                                    </div>
+                                    <button type="button" class="previous-checkout" id="previous-checkout">Back</button>
                                 </div>
                             </div>
                         </div>
@@ -280,6 +243,9 @@
                     </div>
                 </div>
             </div>
+            <div class="nav-append-container">
+
+            </div>
         </div>
     </div>
 </div>
@@ -291,20 +257,57 @@
     $("#checkout-progress").slick({
         slidesToShow: 1,
         slidesToScroll: 1,
+        appendDots: $(".nav-append-container"),
+        dots: true,
+        dotsClass: "nav-append",
     });
 
-    const btnNext = document.querySelector("#checkout-procedure__btn-next");
+    const btnPrevControl = document.querySelector(".nav-append  li:nth-child(1) button");
+    const btnNextControl = document.querySelector(".nav-append li:nth-child(2) button");
+    const btnPrevCheckout = document.getElementById("previous-checkout");
+    const btnCheckoutPayment = document.getElementById("btn-checkout-payment");
+
+    btnPrevCheckout.addEventListener("click", (e) => {
+        e.preventDefault();
+        btnPrevControl.click();
+    })
+
+    btnCheckoutPayment.addEventListener("click", (e) => {
+        e.preventDefault();
+        btnNextControl.click();
+    })
+
+    btnNextControl.textContent = "";
+    const spanNext = document.createElement("span");
+    spanNext.textContent = "Next";
+    btnNextControl.appendChild(spanNext);
+    btnNextControl.classList.add("d-none")
+
+    btnPrevControl.textContent = "";
+    const spanPrev = document.createElement("span");
+    spanPrev.textContent = "Previous";
+    btnPrevControl.appendChild(spanPrev);
+    btnPrevControl.classList.add("d-none")
+
     const progressCheckout = document.querySelector(".progress-container");
     const progress_first = progressCheckout.querySelector(".progress-bar-container:nth-child(1)");
     const progress_second = progressCheckout.querySelector(".progress-bar-container:nth-child(2)");
 
-    btnNext.addEventListener("click", (e) => {
-        // e.preventDefault();
+    btnNextControl.addEventListener("click", (e) => {
         if (progress_first.classList.contains("loader")) {
             progress_first.classList.remove("loader");
             progress_first.classList.add("completed");
             progress_second.classList.add("active");
             progress_second.classList.add("loader");
+        }
+    });
+
+    btnPrevControl.addEventListener("click", (e) => {
+        if (progress_first.classList.contains("completed")) {
+            progress_first.classList.remove("completed");
+            progress_first.classList.add("loader");
+            progress_second.classList.remove("active");
+            progress_second.classList.remove("loader");
         }
     });
 </script>

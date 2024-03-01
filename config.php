@@ -8,6 +8,7 @@ if (!defined('DB_PASS')) define('DB_PASS', "");
 // Define action methods
 if(!defined("DELETE")) define("DELETE", "DELETE");
 if(!defined("DELETE_ALL")) define("DELETE_ALL", "DELETE_ALL");
+if(!defined("CHECKOUT")) define("CHECKOUT", "CHECKOUT");
 
 // Debug mode
 if(!defined('DB_DEBUG')) define('DB_DEBUG', true);

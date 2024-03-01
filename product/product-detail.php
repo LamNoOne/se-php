@@ -153,8 +153,8 @@ $productDetail = Product::getProductById($conn, $product_id);
                         quantity
                     }
                 });
-                console.log(addCart)
                 const addCartInfo = JSON.parse(addCart)
+                // ra console xem, sẽ trẻ về object javascript
                 console.log(addCartInfo);
                 if (addCartInfo.status) {
                     toastr.success(addCartInfo.message, "Add cart");

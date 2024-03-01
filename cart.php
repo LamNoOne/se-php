@@ -17,7 +17,11 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             <div class="row">
                 <div class="col-9">
                     <div class="row">
-                        <div class="col-5">
+                        <div class="col-5 d-flex align-items-start gap-4">
+                            <div class="round">
+                                <input type="checkbox" class="checkbox-cart checkbox-cart--all" id="checkbox-cart--all">
+                                <label for="checkbox-cart--all"></label>
+                            </div>
                             <span class="cart-header">Item</span>
                         </div>
                         <div class="col-2">
@@ -38,6 +42,10 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                             <div class="row">
                                 <div class="col-12">
                                     <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
+                                    <div class="round">
+                                        <input type="checkbox" name="productId" id="checkbox-cart--<?php echo $product->productId; ?>" class="checkbox-cart checkbox-cart__item">
+                                        <label for="checkbox-cart--<?php echo $product->productId; ?>"></label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row">
@@ -110,7 +118,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                                     <span class="checkout-summary__total"></span>
                                 </span>
                             </div>
-                            <button class="checkout-summary__btn-process my-4">Proceed to Checkout</button>
+                            <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
                             <div class="checkout-summary__zip">
                                 <img src="assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
                                 <img src="assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
@@ -138,7 +146,14 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
 
         function handleTotalPrice() {
             setInterval(function() {
-                const sum = $(".cart-item__subtotal__value").get().reduce((acc, el) => acc + parseFloat(el.textContent), 0);
+                const allCheckedBoxes = $(".checkbox-cart__item").get().filter(el => el.checked);
+
+                const sum = allCheckedBoxes.reduce((acc, el) =>
+                    acc + parseFloat($(el)
+                        .closest(".cart-item")
+                        .find(".cart-item__subtotal__value")
+                        .html()), 0);
+
                 totalPrice.html(sum);
             }, 500);
         }
@@ -234,6 +249,39 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             } catch (error) {
                 toastr.error(error, "Error");
             }
+        })
+
+        // handle send selected products to checkout
+        $(".checkout-summary__btn-process").click(async function() {
+            // get all selected products
+            const allCheckedBoxes = $(".checkbox-cart__item").get().filter(el => el.checked);
+
+            // repeat and get product id to array of product ids using map
+            const product_cart = allCheckedBoxes.map(el => parseInt($(el).closest(".cart-item").data("index")))
+            // console.log(product_cart);
+
+            try {
+                const goCheckout = await $.ajax({
+                    method: "POST",
+                    url: "checkout.php",
+                    data: {
+                        product_cart: product_cart,
+                    }
+                })
+                // console.log(goCheckout);
+                window.location.href = "checkout.php";
+            } catch (error) {
+                toastr.error(error, "Connection error");
+            }
+        })
+
+        // handle check all products in cart
+        const checkAllProduct = document.querySelector("#checkbox-cart--all");
+        checkAllProduct.addEventListener("click", function(event) {
+            const checkboxes = document.querySelectorAll(".checkbox-cart__item");
+            checkboxes.forEach(function(checkbox) {
+                checkbox.checked = checkAllProduct.checked;
+            })
         })
     })
 </script>
