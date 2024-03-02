@@ -31,6 +31,8 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/bootstrap/css/bootstrap.css" />
     <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery-migrate.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/additional-methods.min.js"></script>
     <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/fontawesome/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="<?php echo APP_URL; ?>/assets/slick/slick.css" />
@@ -42,6 +44,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
     <link href="<?php echo APP_URL; ?>/assets/toastr/toastr.min.css" rel="stylesheet" />
     <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.min.js"></script>
     <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.config.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=<?php echo PAYPAL_SANDBOX ? PAYPAL_SANDBOX_CLIENT_ID : PAYPAL_PROD_CLIENT_ID; ?>&currency=<?php echo CURRENCY; ?>"></script>
 </head>
 
 <body>

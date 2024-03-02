@@ -177,7 +177,7 @@
 
     cartBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        window.location.href = "<?php echo APP_URL;?>/cart.php";
+        window.location.href = "<?php echo APP_URL;?>/cart";
     })
 </script>
 </body>

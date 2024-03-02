@@ -194,7 +194,12 @@ class Cart
             if ($productCartData['status'] && isset($productCartData['data']) && !empty($productCartData['data'])) {
                 // increase product cart quantity and call update cart
                 $cartUpdate = [...$cartData, 'quantity' => $productCartData['data']->quantity + $quantity];
-                return static::updateCart($conn, $userId, $cartUpdate);
+                $status = static::updateCart($conn, $userId, $cartUpdate)['status'];
+                if ($status) {
+                    return Message::messageData(true, 'Product exists in cart, update quantity successfully', ['modified' => true]);
+                } else {
+                    return Message::message(false, 'Product exist in cart, update failed');
+                }
             }
 
 

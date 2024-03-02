@@ -1,10 +1,10 @@
-<?php require_once "inc/components/header.php"; ?>
+<?php require_once dirname(__DIR__) . "/inc/components/header.php"; ?>
 <?php
 if (!Auth::isLoggedIn() || !isset($_SESSION['userId']))
     Auth::requireLogin();
 
 if (!isset($conn))
-    $conn = require_once "inc/db.php";
+    $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
 $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data'];
 ?>
@@ -120,8 +120,8 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                             </div>
                             <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
                             <div class="checkout-summary__zip">
-                                <img src="assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
-                                <img src="assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
+                                <img src="<?php echo APP_URL;?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
+                                <img src="<?php echo APP_URL;?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
                                 <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
                             </div>
                         </div>
@@ -131,7 +131,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
         </div>
     </div>
 </div>
-<?php require_once "inc/components/footer.php"; ?>
+<?php require_once dirname(__DIR__) . "/inc/components/footer.php"; ?>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script>
@@ -178,7 +178,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             try {
                 const updateCart = await $.ajax({
                     method: "POST",
-                    url: "update-cart.php",
+                    url: "actions/update-cart.php",
                     data: {
                         productId,
                         productQuantity
@@ -206,7 +206,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             try {
                 const deleteCart = await $.ajax({
                     method: "POST",
-                    url: "delete-cart.php",
+                    url: "actions/delete-cart.php",
                     data: {
                         action: "<?php echo DELETE; ?>",
                         productId
@@ -230,7 +230,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             try {
                 const clearCart = await $.ajax({
                     method: "POST",
-                    url: "delete-cart.php",
+                    url: "actions/delete-cart.php",
                     data: {
                         action: "<?php echo DELETE_ALL; ?>"
                     }
@@ -263,13 +263,13 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             try {
                 const goCheckout = await $.ajax({
                     method: "POST",
-                    url: "checkout.php",
+                    url: "<?php echo APP_URL; ?>/checkout/index.php",
                     data: {
                         product_cart: product_cart,
                     }
                 })
-                // console.log(goCheckout);
-                window.location.href = "checkout.php";
+                console.log(goCheckout);
+                window.location.href = "<?php echo APP_URL; ?>/checkout";
             } catch (error) {
                 toastr.error(error, "Connection error");
             }

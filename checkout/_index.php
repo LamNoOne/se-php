@@ -1,13 +1,11 @@
-<?php require_once "inc/components/header.php"; ?>
-<?php require_once "inc/utils.php"; ?>
+<?php require_once dirname(__DIR__) . "/inc/components/header.php"; ?>
+<?php require_once dirname(__DIR__) . "/inc/utils.php"; ?>
 <?php
 if (!Auth::isLoggedIn())
     Auth::requireLogin();
 
 if (!isset($conn))
-    $conn = require_once "inc/db.php";
-
-// $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data'];
+    $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
 // receive product id from cart, after that, get product info depends on productId and cartId
 $selectedProductsCart = array();
@@ -63,7 +61,7 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
                     <div class="col-8 ms-1">
                         <h5 class="checkout__title mb-4">Shipping Address</h5>
                         <div class="checkout__border border-bottom border-black border-opacity-25"></div>
-                        <form action="" method="post" class="checkout-procedure">
+                        <form action="" method="POST" class="checkout-procedure" id="form-order">
                             <fieldset>
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
                                     <label for="email" class="checkout-procedure__form__label">
@@ -90,21 +88,21 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
                                 </div>
 
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="phone" class="checkout-procedure__form__label">
+                                    <label for="phoneNumber" class="checkout-procedure__form__label">
                                         Phone Number
                                         <span>&nbsp;*</span>
                                     </label>
-                                    <input type="text" placeholder="Your Phone Number" name="phone" id="phone" <?php if (isset($_SESSION['phoneNumber'])) : ?> value="<?php echo $_SESSION['phoneNumber']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
+                                    <input type="text" placeholder="Your Phone Number" name="phoneNumber" id="phoneNumber" <?php if (isset($_SESSION['phoneNumber'])) : ?> value="<?php echo $_SESSION['phoneNumber']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
                                 </div>
 
                                 <div class="checkout-procedure__form d-flex flex-column gap-1 my-3">
-                                    <label for="street" class="checkout-procedure__form__label">
+                                    <label for="address" class="checkout-procedure__form__label">
                                         Street Address
                                         <span>&nbsp;*</span>
                                     </label>
-                                    <input type="text" placeholder="Your Address" name="street" id="street" <?php if (isset($_SESSION['address'])) : ?> value="<?php echo $_SESSION['address']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
+                                    <input type="text" placeholder="Your Address" name="address" id="address" <?php if (isset($_SESSION['address'])) : ?> value="<?php echo $_SESSION['address']; ?>" <?php endif; ?> class="checkout-procedure__form__input" />
                                 </div>
-
+                                <button class="d-none btn-submit-checkout" id="btn-submit-checkout" type="button">Submit</button>
                             </fieldset>
                         </form>
                     </div>
@@ -182,7 +180,7 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
                                             <span class="cart-item__price">$<?php echo $productCartDetail->price; ?></span>
                                         </div>
                                         <div class="col-2 d-flex align-items-center">
-                                            <input type="number" name="quantity" id="cart-quantity" min="1" value="<?php echo $productCartDetail->quantity; ?>" class="cart-item__input-quantity" />
+                                            <input type="number" disabled name="quantity" id="cart-quantity" min="1" value="<?php echo $productCartDetail->quantity; ?>" class="cart-item__input-quantity" />
                                         </div>
                                         <div class="col-2 d-flex align-items-center">
                                             <span class="cart-item__price">$<?php echo $productCartDetail->quantity * $productCartDetail->price; ?></span>
@@ -235,8 +233,8 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
                             </div>
                             <button class="checkout-summary__btn-process my-4">Proceed to Checkout</button>
                             <div class="checkout-summary__zip">
-                                <img src="assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
-                                <img src="assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
+                                <img src="<?php echo APP_URL; ?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
+                                <img src="<?php echo APP_URL; ?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
                                 <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
                             </div>
                         </div>
@@ -250,7 +248,7 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
     </div>
 </div>
 
-<?php require_once "inc/components/footer.php"; ?>
+<?php require_once dirname(__DIR__) . "/inc/components/footer.php"; ?>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script>
@@ -259,23 +257,25 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
         slidesToScroll: 1,
         appendDots: $(".nav-append-container"),
         dots: true,
+        draggable: false,
         dotsClass: "nav-append",
     });
 
     const btnPrevControl = document.querySelector(".nav-append  li:nth-child(1) button");
     const btnNextControl = document.querySelector(".nav-append li:nth-child(2) button");
     const btnPrevCheckout = document.getElementById("previous-checkout");
-    const btnCheckoutPayment = document.getElementById("btn-checkout-payment");
+    // const btnCheckoutPayment = document.getElementById("btn-checkout-payment");
+    const btnSubmitCheckout = document.querySelector(".btn-submit-checkout");
 
     btnPrevCheckout.addEventListener("click", (e) => {
         e.preventDefault();
         btnPrevControl.click();
     })
 
-    btnCheckoutPayment.addEventListener("click", (e) => {
-        e.preventDefault();
-        btnNextControl.click();
-    })
+    // btnCheckoutPayment.addEventListener("click", (e) => {
+    //     e.preventDefault();
+    //     btnNextControl.click();
+    // })
 
     btnNextControl.textContent = "";
     const spanNext = document.createElement("span");
@@ -310,4 +310,82 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
             progress_second.classList.remove("loader");
         }
     });
+</script>
+<script>
+    // validate form order
+
+    $(document).ready(function() {
+        const formOrder = $("#form-order");
+        const btnCheckoutPayment = $("#btn-checkout-payment");
+        const btnNextCheckout = $(".nav-append li:nth-child(2) button")
+
+        jQuery.validator.addMethod("valid_phone", function(value) {
+            const regex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
+            return value.trim().match(regex);
+        });
+
+        formOrder.validate({
+            rules: {
+                phoneNumber: {
+                    required: true,
+                    valid_phone: true
+                },
+                address: {
+                    required: true,
+                    minlength: 2
+                },
+            },
+            messages: {
+                phoneNumber: {
+                    required: "Please enter your phone number",
+                    valid_phone: "Please enter a valid phone number"
+                },
+                address: {
+                    required: "Please enter your address"
+                },
+            }
+        })
+
+        btnCheckoutPayment.click(async function(e) {
+            e.preventDefault();
+            if (!formOrder.valid()) {
+                return false;
+            }
+
+            // get product list
+            const productList = new Array();
+            <?php
+            foreach ($_SESSION['selected_products'] as $product) : ?>
+                productList.push('<?php echo $product ?>');
+            <?php endforeach; ?>
+
+            // console.log(productList);
+            const data = {
+                productList,
+                phone: $("#phoneNumber").val(),
+                address: $("#address").val()
+            }
+
+            const response = await $.ajax({
+                method: "POST",
+                url: "actions/create-order.php",
+                data: data
+            })
+
+            const result = JSON.parse(response);
+
+            if (result.status) {
+                if (result.data.errorMessage === null) {
+                    toastr.success(result.message, "Create Order")
+                    setTimeout(() => {
+                        btnNextCheckout.click();
+                    }, 1000)
+                } else {
+                    toastr.warning(result.data.errorMessage, "Create Order")
+                }
+            } else {
+                toastr.error("Error when creating order", "Create Order")
+            }
+        })
+    })
 </script>

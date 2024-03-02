@@ -158,8 +158,11 @@ $productDetail = Product::getProductById($conn, $product_id);
                 console.log(addCartInfo);
                 if (addCartInfo.status) {
                     toastr.success(addCartInfo.message, "Add cart");
-                    const productCartQuantity = $(".cart-btn__count").html();
-                    $(".cart-btn__count").html(parseInt(productCartQuantity) + 1);
+                    // if cart product is already in cart, not increase cart count
+                    if(!addCartInfo?.data?.modified) {
+                        const productCartQuantity = $(".cart-btn__count").html();
+                        $(".cart-btn__count").html(parseInt(productCartQuantity) + 1);
+                    }
                 } else {
                     toastr.warning(addCartInfo.message, "Warning");
                 }

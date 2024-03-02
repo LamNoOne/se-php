@@ -23,6 +23,11 @@ body {
   -webkit-filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
   filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%); }
 
+.error {
+  font-size: 0.875rem;
+  font-style: italic;
+  color: red; }
+
 #header .top-header {
   height: 2.75rem;
   background-color: black;
@@ -1412,6 +1417,39 @@ body {
         font-style: normal;
         font-weight: 400;
         line-height: 120.5%; }
+
+.payment-container .overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.8); }
+  .payment-container .overlay .overlay-content {
+    position: absolute;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    top: 50%;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: #555; }
+
+.payment-container .hidden {
+  display: none; }
+
+.payment-container .payment-body {
+  max-width: 750px !important;
+  margin: auto !important; }
+  .payment-container .payment-body #paymentResponse {
+    font-size: 17px;
+    border: 1px dashed;
+    padding: 10px;
+    color: #ea4335;
+    margin-top: 0;
+    margin-bottom: 10px; }
 
 @-webkit-keyframes spin {
   from {

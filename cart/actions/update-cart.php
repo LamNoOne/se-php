@@ -1,11 +1,11 @@
 <?php
 
-require_once "inc/init.php";
-require_once "inc/utils.php";
+require_once dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['productId']) && isset($_POST['productQuantity']) && Auth::isLoggedIn()) {
         if (!isset($conn))
-            $conn = require_once "inc/db.php";
+            $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 
         $productId = $_POST['productId'];
         $productQuantity = $_POST['productQuantity'];

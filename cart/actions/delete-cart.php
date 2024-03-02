@@ -1,13 +1,13 @@
 <?php
 
-require_once "inc/init.php";
-require_once "inc/utils.php";
+require_once dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action']) && Auth::isLoggedIn()) {
 
         if (isset($_POST['productId']) && $_POST['action'] === DELETE) {
             if (!isset($conn))
-                $conn = require_once "inc/db.php";
+                $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 
             $userId = $_SESSION['userId'];
             $productId = $_POST['productId'];
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($_POST['action'] === DELETE_ALL) {
             if (!isset($conn))
-                $conn = require_once "inc/db.php";
+                $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 
             $userId = $_SESSION['userId'];
             $deleteAllResponse = Cart::deleteAllProductFromCart($conn, $userId);
