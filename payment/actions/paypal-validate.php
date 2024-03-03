@@ -77,7 +77,7 @@ if (!empty($_POST['paypal_order_check']) && !empty($_POST['order_id'])) {
                 $payment_id = $row_id;
             } else {
                 // Insert transaction data into the database 
-                $query = "INSERT INTO payment (order_id,invoice_id,transaction_id,payer_id,payer_name,payer_email,payer_country,merchant_id,merchant_email,paid_amount,paid_amount_currency,payment_source,payment_status,createAt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                $query = "INSERT INTO payment (order_id,invoice_id,transaction_id,payer_id,payer_name,payer_email,payer_country,merchant_id,merchant_email,paid_amount,paid_amount_currency,payment_source,payment_status,createdAt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $stmt = $conn->prepare($query);
                 $insert = $stmt->execute([(int)$order_id, $invoice_id, $transaction_id, $payer_id, $payer_full_name, $payer_email_address, $payer_country_code, $merchant_id, $payee_email_address, $amount_value, $currency_code, $payment_source, $payment_status, $invoice_time]);
 

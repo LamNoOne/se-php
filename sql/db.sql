@@ -30,7 +30,7 @@ CREATE TABLE `cart` (
   PRIMARY KEY (`id`),
   KEY `userId` (`userId`),
   CONSTRAINT `Cart_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,7 +69,6 @@ CREATE TABLE `cartdetail` (
 
 LOCK TABLES `cartdetail` WRITE;
 /*!40000 ALTER TABLE `cartdetail` DISABLE KEYS */;
-INSERT INTO `cartdetail` VALUES (1,1,1,'2024-02-26 06:07:39','2024-02-26 06:07:39'),(1,3,1,'2024-02-26 06:58:35','2024-02-26 06:58:35'),(2,8,1,'2024-02-26 07:05:58','2024-02-26 07:05:58'),(2,9,1,'2024-02-26 07:04:54','2024-02-26 07:04:54');
 /*!40000 ALTER TABLE `cartdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -121,7 +120,7 @@ CREATE TABLE `order` (
   KEY `userId` (`userId`),
   CONSTRAINT `Order_ibfk_1` FOREIGN KEY (`orderStatusId`) REFERENCES `orderstatus` (`id`),
   CONSTRAINT `Order_ibfk_3` FOREIGN KEY (`userId`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,6 +129,7 @@ CREATE TABLE `order` (
 
 LOCK TABLES `order` WRITE;
 /*!40000 ALTER TABLE `order` DISABLE KEYS */;
+INSERT INTO `order` VALUES (1,1,2,'1234 ST','0834480248','2024-03-02 09:29:47','2024-03-02 09:29:47'),(2,1,2,'ABC Tower','0832038769','2024-03-02 10:11:32','2024-03-02 10:11:32'),(3,1,2,'123Tower','0834480248','2024-03-02 10:13:51','2024-03-02 10:13:51'),(4,1,2,'ABC Tower','0832038769','2024-03-02 10:16:57','2024-03-02 10:16:57'),(5,1,2,'ABC Tower','0832038769','2024-03-02 10:17:26','2024-03-02 10:17:26'),(6,1,2,'ABC Tower','0832038769','2024-03-02 10:18:40','2024-03-02 10:18:40'),(7,1,2,'ABC Tower','0832038769','2024-03-02 10:19:16','2024-03-02 10:19:16'),(8,1,2,'ABC Tower','0832038769','2024-03-02 10:19:38','2024-03-02 10:19:38'),(9,1,2,'ABC Tower','0832038769','2024-03-02 12:27:38','2024-03-02 12:27:38'),(10,1,2,'ABC Tower','0832038769','2024-03-02 12:48:27','2024-03-02 12:48:27'),(11,1,2,'ABC Tower','0832038769','2024-03-02 12:51:03','2024-03-02 12:51:03'),(12,1,2,'ABC Tower','0832038769','2024-03-02 12:58:40','2024-03-02 12:58:40'),(13,1,2,'ABC Tower','0832038769','2024-03-02 13:05:12','2024-03-02 13:05:12'),(14,1,2,'ABC Tower','0832038769','2024-03-02 13:05:45','2024-03-02 13:05:45'),(15,1,2,'ABC Tower','0832038769','2024-03-02 13:08:07','2024-03-02 13:08:07'),(16,1,2,'ABC Tower','0832038769','2024-03-03 01:28:44','2024-03-03 01:28:44'),(17,1,2,'1234 ST ADDRESS','0932038767','2024-03-03 03:51:21','2024-03-03 03:51:21');
 /*!40000 ALTER TABLE `order` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,9 +148,7 @@ CREATE TABLE `orderdetail` (
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`orderId`,`productId`),
-  KEY `productId` (`productId`),
-  CONSTRAINT `OrderDetail_ibfk_1` FOREIGN KEY (`orderId`) REFERENCES `order` (`id`),
-  CONSTRAINT `OrderDetail_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`id`)
+  KEY `productId` (`productId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -160,6 +158,7 @@ CREATE TABLE `orderdetail` (
 
 LOCK TABLES `orderdetail` WRITE;
 /*!40000 ALTER TABLE `orderdetail` DISABLE KEYS */;
+INSERT INTO `orderdetail` VALUES (1,2,6,198,'2024-03-02 09:29:47','2024-03-02 09:29:47'),(1,7,3,121,'2024-03-02 09:29:47','2024-03-02 09:29:47'),(2,13,9,1249,'2024-03-02 10:11:32','2024-03-02 10:11:32'),(2,493,3,499,'2024-03-02 10:11:32','2024-03-02 10:11:32'),(2,498,1,499,'2024-03-02 10:11:32','2024-03-02 10:11:32'),(3,111,5,558,'2024-03-02 10:13:51','2024-03-02 10:13:51'),(4,9,6,799,'2024-03-02 10:16:57','2024-03-02 10:16:57'),(5,105,3,799,'2024-03-02 10:17:26','2024-03-02 10:17:26'),(6,4,2,59,'2024-03-02 10:18:40','2024-03-02 10:18:40'),(7,14,1,799,'2024-03-02 10:19:16','2024-03-02 10:19:16'),(8,9,1,799,'2024-03-02 10:19:38','2024-03-02 10:19:38'),(9,11,1,1002,'2024-03-02 12:27:38','2024-03-02 12:27:38'),(10,482,1,999,'2024-03-02 12:48:27','2024-03-02 12:48:27'),(11,2,1,198,'2024-03-02 12:51:03','2024-03-02 12:51:03'),(12,6,1,321,'2024-03-02 12:58:40','2024-03-02 12:58:40'),(13,2,1,198,'2024-03-02 13:05:12','2024-03-02 13:05:12'),(13,102,1,102,'2024-03-02 13:05:12','2024-03-02 13:05:12'),(14,105,1,799,'2024-03-02 13:05:45','2024-03-02 13:05:45'),(14,481,1,999,'2024-03-02 13:05:45','2024-03-02 13:05:45'),(15,29,2,756,'2024-03-02 13:08:07','2024-03-02 13:08:07'),(15,107,1,855,'2024-03-02 13:08:07','2024-03-02 13:08:07'),(16,15,3,189,'2024-03-03 01:28:44','2024-03-03 01:28:44'),(16,105,1,799,'2024-03-03 01:28:44','2024-03-03 01:28:44'),(17,8,2,499,'2024-03-03 03:51:21','2024-03-03 03:51:21'),(17,13,3,1249,'2024-03-03 03:51:21','2024-03-03 03:51:21');
 /*!40000 ALTER TABLE `orderdetail` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -191,6 +190,47 @@ INSERT INTO `orderstatus` VALUES (1,'Pending','2023-11-26 16:16:15','2023-11-26 
 UNLOCK TABLES;
 
 --
+-- Table structure for table `payment`
+--
+
+DROP TABLE IF EXISTS `payment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `payment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(10) unsigned NOT NULL,
+  `invoice_id` varchar(50) NOT NULL,
+  `transaction_id` varchar(50) NOT NULL,
+  `payer_id` varchar(50) DEFAULT NULL,
+  `payer_name` varchar(50) DEFAULT NULL,
+  `payer_email` varchar(50) DEFAULT NULL,
+  `payer_country` varchar(20) DEFAULT NULL,
+  `merchant_id` varchar(255) DEFAULT NULL,
+  `merchant_email` varchar(50) DEFAULT NULL,
+  `paid_amount` float(10,2) NOT NULL,
+  `paid_amount_currency` varchar(10) NOT NULL,
+  `payment_source` varchar(50) DEFAULT NULL,
+  `payment_status` varchar(25) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `invoice_id` (`invoice_id`),
+  UNIQUE KEY `order_id` (`order_id`),
+  CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `payment`
+--
+
+LOCK TABLES `payment` WRITE;
+/*!40000 ALTER TABLE `payment` DISABLE KEYS */;
+INSERT INTO `payment` VALUES (2,15,'9R895017MP774140Y','9XX54883MM232261R','VTQWDKYKKB68N','Lam Client','sb-lgptq29434958@personal.example.com','US','QJDPB4GGR6A4Q','sb-6bdrv29335663@business.example.com',2367.00,'USD','paypal','COMPLETED','2024-03-02 09:25:53','2024-03-03 01:37:10'),(3,16,'47D866831S457804R','57A0544252937084U','VTQWDKYKKB68N','Lam Client','sb-lgptq29434958@personal.example.com','US','QJDPB4GGR6A4Q','sb-6bdrv29335663@business.example.com',1366.00,'USD','paypal','COMPLETED','2024-03-02 19:28:29','2024-03-03 01:37:10'),(4,17,'72M719190J585454L','65K870064R784691V','VTQWDKYKKB68N','Lam Client','sb-lgptq29434958@personal.example.com','US','QJDPB4GGR6A4Q','sb-6bdrv29335663@business.example.com',4745.00,'USD','paypal','COMPLETED','2024-03-02 21:51:05','2024-03-03 03:51:56');
+/*!40000 ALTER TABLE `payment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `product`
 --
 
@@ -216,8 +256,7 @@ CREATE TABLE `product` (
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `categoryId` (`categoryId`),
-  CONSTRAINT `Product_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`)
+  KEY `categoryId` (`categoryId`)
 ) ENGINE=InnoDB AUTO_INCREMENT=651 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -286,7 +325,7 @@ CREATE TABLE `user` (
   UNIQUE KEY `username` (`username`),
   KEY `roleId` (`roleId`),
   CONSTRAINT `User_ibfk_2` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -317,8 +356,92 @@ DELIMITER ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
+-- Dumping events for database 'se-php'
+--
+
+--
 -- Dumping routines for database 'se-php'
 --
+/*!50003 DROP PROCEDURE IF EXISTS `createOrderSelectedProductCart` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `createOrderSelectedProductCart`(IN `p_userId` INT, IN `p_productIds` VARCHAR(255), IN `p_shipAddress` VARCHAR(200), IN `p_phoneNumber` VARCHAR(11), OUT `p_orderId` INT, OUT `p_errorMessage` VARCHAR(255))
+create_order_selected_product_cart:BEGIN
+    DECLARE cartId INT;
+    DECLARE productId INT;
+
+    -- Declare variables for error handling
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction on exception
+        ROLLBACK;
+        SET p_errorMessage = 'An error occurred during the selected checkout process';
+    END;
+
+    -- Start a transaction
+    START TRANSACTION;
+
+    -- Find the cartId for the given userId
+    -- The cartId in cartdetail check product in cart
+    SELECT CD.cartId INTO cartId
+    FROM user U JOIN cart C ON U.id = c.userId
+    JOIN cartdetail CD ON C.id = CD.cartId 
+    WHERE U.id= p_userId LIMIT 1;
+
+    -- Exit if no cart is found for the given userId
+    IF cartId IS NULL THEN
+        -- Handle the case where no cart is found
+        SET p_errorMessage = 'No product found in cart for the given user';
+        ROLLBACK;
+        LEAVE create_order_selected_product_cart;
+    END IF;
+
+    -- Create a new order
+    INSERT INTO `order` (orderStatusId, userId, shipAddress, phoneNumber)
+    VALUES (1, p_userId, p_shipAddress, p_phoneNumber);
+
+    -- Get the last inserted order ID
+    SET p_orderId = LAST_INSERT_ID();
+
+    -- Iterate over the product IDs in the comma-separated list
+    product_loop: LOOP
+        -- Exit the loop if there are no more product IDs
+        IF p_productIds IS NULL OR LENGTH(p_productIds) = 0 THEN
+            LEAVE product_loop;
+        END IF;
+
+        -- Extract the next product ID
+        SET productId = CAST(SUBSTRING_INDEX(p_productIds, ',', 1) AS UNSIGNED);
+
+        -- Remove the extracted product ID from the list
+        SET p_productIds = TRIM(BOTH ',' FROM SUBSTRING(p_productIds, LENGTH(productId) + 2));
+
+        -- Copy selected cart detail to order detail
+        INSERT INTO orderdetail (orderId, productId, quantity, price)
+        SELECT p_orderId, cd.productId, cd.quantity, p.price
+        FROM cartdetail cd JOIN product p ON cd.productId = p.id
+        WHERE cd.cartId = cartId AND cd.productId = productId;
+
+        -- Delete selected product from cart
+        DELETE FROM cartdetail WHERE cartdetail.cartId = cartId AND cartdetail.productId = productId;
+    END LOOP;
+
+    -- Commit the transaction
+    COMMIT;
+
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -329,4 +452,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-02-26 18:49:48
+-- Dump completed on 2024-03-03 10:59:52

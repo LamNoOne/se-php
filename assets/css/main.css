@@ -774,6 +774,19 @@ body {
     font-weight: 600;
     line-height: 1.225rem; }
 
+.transaction-container {
+  position: relative;
+  margin-top: 7rem;
+  z-index: 1; }
+  .transaction-container .transaction-info__header {
+    font-size: 1.5rem;
+    font-weight: 300;
+    border-bottom: 1px dotted #ccc; }
+  .transaction-container .image-product img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain; }
+
 #product-card-container {
   margin-top: 1rem; }
   #product-card-container .page-product-desc p {
@@ -938,288 +951,6 @@ body {
     border: 1px solid #1a9cb7; }
   #pagination a:hover:not(.active) {
     background-color: #1a9cb7;
-    cursor: pointer; }
-
-#customer-login-register {
-  margin-top: 7rem; }
-  #customer-login-register #login-register-container.slick-dotted.slick-slider {
-    margin-bottom: 0 !important; }
-  #customer-login-register .customer-login-register__title {
-    color: #000;
-    font-family: Poppins;
-    font-size: 2rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal; }
-  #customer-login-register .login-container__right {
-    padding-bottom: 9.3rem !important; }
-  #customer-login-register .login-container {
-    background-color: #F5F7FF;
-    height: fit-content; }
-    #customer-login-register .login-container .dots-append {
-      list-style: none;
-      padding: 0;
-      margin-bottom: 0; }
-      #customer-login-register .login-container .dots-append li {
-        display: flex;
-        flex-direction: column-reverse; }
-        #customer-login-register .login-container .dots-append li span {
-          color: #0055ff;
-          font-style: italic;
-          text-decoration: underline;
-          font-family: Poppins;
-          font-size: 0.875rem;
-          font-weight: 400;
-          line-height: 1.25rem;
-          margin-bottom: 1rem; }
-        #customer-login-register .login-container .dots-append li button {
-          display: flex;
-          padding: 0.7rem 2rem;
-          border-radius: 3.125rem;
-          justify-content: center;
-          align-items: center;
-          color: white;
-          font-family: Poppins;
-          font-size: 0.875rem;
-          font-weight: 600;
-          line-height: normal;
-          border: none;
-          background-color: #0055ff; }
-    #customer-login-register .login-container .login-question {
-      color: #0055ff;
-      text-decoration: none;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1.25rem; }
-    #customer-login-register .login-container__create-account {
-      display: flex;
-      padding: 0.7rem 2rem;
-      border-radius: 3.125rem;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-weight: 600;
-      line-height: normal;
-      border: none;
-      background-color: #0055ff; }
-    #customer-login-register .login-container__title {
-      color: #000;
-      font-family: Poppins;
-      font-size: 1.125rem;
-      font-style: normal;
-      font-weight: 600;
-      line-height: normal; }
-    #customer-login-register .login-container__desc {
-      color: #000;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 300;
-      line-height: 1.875rem; }
-    #customer-login-register .login-container .login-form__input {
-      width: 28.0625rem;
-      height: 3.125rem;
-      border-radius: 0.25rem;
-      font-size: 0.875rem;
-      font-family: Poppins;
-      font-weight: 500;
-      border: 1px solid #A2A6B0;
-      padding-left: 1rem;
-      background: white; }
-      #customer-login-register .login-container .login-form__input:focus {
-        border-color: rgba(0, 85, 255, 0.8);
-        box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(0, 85, 255, 0.6);
-        outline: 0 none; }
-      #customer-login-register .login-container .login-form__input__label {
-        color: #000;
-        font-family: Poppins;
-        font-size: 0.8125rem;
-        font-style: normal;
-        font-weight: 600;
-        line-height: 1.70625rem; }
-        #customer-login-register .login-container .login-form__input__label span {
-          color: #C94D3F;
-          font-family: Poppins;
-          font-size: 0.8125rem;
-          font-style: normal;
-          font-weight: 600;
-          line-height: 1.70625rem; }
-    #customer-login-register .login-container .login-form__submit-container__submit {
-      display: flex;
-      padding: 0.7rem 2rem;
-      border-radius: 3.125rem;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-weight: 600;
-      line-height: normal;
-      border: none;
-      background-color: #0055ff; }
-    #customer-login-register .login-container .login-form__submit-container__forgot-password {
-      color: #0055ff;
-      text-decoration: none;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 1.25rem; }
-
-#product-detail {
-  margin-top: 7rem;
-  min-height: 42rem; }
-  #product-detail .product-desc-container .slick-next,
-  #product-detail .product-desc-container .slick-prev {
-    display: none !important; }
-  #product-detail .product-desc-container .product-desc {
-    min-height: 36rem;
-    padding: 5rem 10rem;
-    background-color: #ebefff; }
-    #product-detail .product-desc-container .product-desc__title {
-      color: #000;
-      font-family: Poppins;
-      font-size: 2rem;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal; }
-    #product-detail .product-desc-container .product-desc__desc {
-      color: #000;
-      font-family: Poppins;
-      font-size: 1.125rem;
-      font-style: normal;
-      font-weight: 300;
-      line-height: 1.875rem; }
-    #product-detail .product-desc-container .product-desc__detail {
-      color: #000;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 300;
-      line-height: 1.5rem; }
-    #product-detail .product-desc-container .product-desc__specs {
-      border: 1px solid #CACDD8; }
-      #product-detail .product-desc-container .product-desc__specs__detail {
-        padding: 0.625rem 0.9375rem;
-        background-color: white; }
-        #product-detail .product-desc-container .product-desc__specs__detail__title {
-          width: 10rem;
-          color: #000;
-          font-family: Poppins;
-          font-size: 0.875rem;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal; }
-        #product-detail .product-desc-container .product-desc__specs__detail__value {
-          color: #666;
-          font-family: Poppins;
-          font-size: 0.875rem;
-          font-style: normal;
-          font-weight: 400;
-          line-height: normal; }
-      #product-detail .product-desc-container .product-desc__specs__detail:nth-child(even) {
-        background-color: #ebefff; }
-  #product-detail .product-img-container {
-    padding: 3rem 5rem; }
-    #product-detail .product-img-container .product-img {
-      width: 24rem;
-      height: fit-content; }
-    #product-detail .product-img-container .add-on {
-      margin-top: 1rem; }
-      #product-detail .product-img-container .add-on img:first-child {
-        width: 4.8125rem;
-        height: 1.6875rem;
-        -o-object-fit: contain;
-        object-fit: contain; }
-      #product-detail .product-img-container .add-on img:last-child {
-        width: -webkit-fit-content;
-        width: -moz-fit-content;
-        width: fit-content;
-        height: 1.4375rem;
-        -o-object-fit: contain;
-        object-fit: contain; }
-      #product-detail .product-img-container .add-on p {
-        color: #000;
-        font-family: Poppins;
-        font-size: 0.75rem;
-        font-style: normal;
-        font-weight: 300;
-        line-height: 0.90375rem; }
-  #product-detail .dots-append-container .dots-append {
-    list-style: none;
-    display: flex;
-    gap: 2rem; }
-    #product-detail .dots-append-container .dots-append button {
-      border: none;
-      background-color: transparent; }
-      #product-detail .dots-append-container .dots-append button span {
-        color: #666;
-        text-align: center;
-        font-family: Poppins;
-        font-size: 0.875rem;
-        font-style: normal;
-        font-weight: 600;
-        line-height: normal; }
-      #product-detail .dots-append-container .dots-append button .active {
-        color: #0055ff !important; }
-  #product-detail .checkout-container .product-detail__quantity__des {
-    color: #000;
-    text-align: center;
-    font-family: Poppins;
-    font-size: 0.875rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal; }
-  #product-detail .checkout-container .product-detail__quantity__price {
-    color: #000;
-    font-family: Poppins;
-    font-size: 0.875rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal; }
-  #product-detail .checkout-container .product-detail__quantity__input {
-    width: 4rem;
-    height: 2.5rem;
-    outline: none;
-    border: none;
-    text-align: center;
-    border-radius: 0.375rem;
-    background: #ebefff; }
-  #product-detail .checkout-container .add-to-cart {
-    display: flex;
-    width: 9.4375rem;
-    height: 3.125rem;
-    padding: 1rem 2.125rem;
-    border: none;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: 3.125rem;
-    background-color: #0055ff;
-    cursor: pointer; }
-    #product-detail .checkout-container .add-to-cart__text {
-      color: #FFF;
-      text-align: center;
-      font-family: Poppins;
-      font-size: 0.875rem;
-      font-style: normal;
-      font-weight: 600;
-      line-height: normal; }
-  #product-detail .checkout-container .payment-paypal {
-    display: flex;
-    width: 8.75rem;
-    height: 3.125rem;
-    padding: 1rem 2.125rem;
-    border: none;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-    border-radius: 3.125rem;
-    background: #FFB800;
     cursor: pointer; }
 
 #shopping-cart {
@@ -1417,6 +1148,136 @@ body {
         font-style: normal;
         font-weight: 400;
         line-height: 120.5%; }
+
+#customer-login-register {
+  margin-top: 7rem; }
+  #customer-login-register #login-register-container.slick-dotted.slick-slider {
+    margin-bottom: 0 !important; }
+  #customer-login-register .customer-login-register__title {
+    color: #000;
+    font-family: Poppins;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal; }
+  #customer-login-register .login-container__right {
+    padding-bottom: 9.3rem !important; }
+  #customer-login-register .login-container {
+    background-color: #F5F7FF;
+    height: fit-content; }
+    #customer-login-register .login-container .dots-append {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 0; }
+      #customer-login-register .login-container .dots-append li {
+        display: flex;
+        flex-direction: column-reverse; }
+        #customer-login-register .login-container .dots-append li span {
+          color: #0055ff;
+          font-style: italic;
+          text-decoration: underline;
+          font-family: Poppins;
+          font-size: 0.875rem;
+          font-weight: 400;
+          line-height: 1.25rem;
+          margin-bottom: 1rem; }
+        #customer-login-register .login-container .dots-append li button {
+          display: flex;
+          padding: 0.7rem 2rem;
+          border-radius: 3.125rem;
+          justify-content: center;
+          align-items: center;
+          color: white;
+          font-family: Poppins;
+          font-size: 0.875rem;
+          font-weight: 600;
+          line-height: normal;
+          border: none;
+          background-color: #0055ff; }
+    #customer-login-register .login-container .login-question {
+      color: #0055ff;
+      text-decoration: none;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.25rem; }
+    #customer-login-register .login-container__create-account {
+      display: flex;
+      padding: 0.7rem 2rem;
+      border-radius: 3.125rem;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: normal;
+      border: none;
+      background-color: #0055ff; }
+    #customer-login-register .login-container__title {
+      color: #000;
+      font-family: Poppins;
+      font-size: 1.125rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal; }
+    #customer-login-register .login-container__desc {
+      color: #000;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.875rem; }
+    #customer-login-register .login-container .login-form__input {
+      width: 28.0625rem;
+      height: 3.125rem;
+      border-radius: 0.25rem;
+      font-size: 0.875rem;
+      font-family: Poppins;
+      font-weight: 500;
+      border: 1px solid #A2A6B0;
+      padding-left: 1rem;
+      background: white; }
+      #customer-login-register .login-container .login-form__input:focus {
+        border-color: rgba(0, 85, 255, 0.8);
+        box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(0, 85, 255, 0.6);
+        outline: 0 none; }
+      #customer-login-register .login-container .login-form__input__label {
+        color: #000;
+        font-family: Poppins;
+        font-size: 0.8125rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 1.70625rem; }
+        #customer-login-register .login-container .login-form__input__label span {
+          color: #C94D3F;
+          font-family: Poppins;
+          font-size: 0.8125rem;
+          font-style: normal;
+          font-weight: 600;
+          line-height: 1.70625rem; }
+    #customer-login-register .login-container .login-form__submit-container__submit {
+      display: flex;
+      padding: 0.7rem 2rem;
+      border-radius: 3.125rem;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-weight: 600;
+      line-height: normal;
+      border: none;
+      background-color: #0055ff; }
+    #customer-login-register .login-container .login-form__submit-container__forgot-password {
+      color: #0055ff;
+      text-decoration: none;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1.25rem; }
 
 .payment-container .overlay {
   position: fixed;
@@ -1872,6 +1733,158 @@ body {
       color: white;
       font-size: 0.875rem;
       font-family: Poppins; }
+
+#product-detail {
+  margin-top: 7rem;
+  min-height: 42rem; }
+  #product-detail .product-desc-container .slick-next,
+  #product-detail .product-desc-container .slick-prev {
+    display: none !important; }
+  #product-detail .product-desc-container .product-desc {
+    min-height: 36rem;
+    padding: 5rem 10rem;
+    background-color: #ebefff; }
+    #product-detail .product-desc-container .product-desc__title {
+      color: #000;
+      font-family: Poppins;
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal; }
+    #product-detail .product-desc-container .product-desc__desc {
+      color: #000;
+      font-family: Poppins;
+      font-size: 1.125rem;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.875rem; }
+    #product-detail .product-desc-container .product-desc__detail {
+      color: #000;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 300;
+      line-height: 1.5rem; }
+    #product-detail .product-desc-container .product-desc__specs {
+      border: 1px solid #CACDD8; }
+      #product-detail .product-desc-container .product-desc__specs__detail {
+        padding: 0.625rem 0.9375rem;
+        background-color: white; }
+        #product-detail .product-desc-container .product-desc__specs__detail__title {
+          width: 10rem;
+          color: #000;
+          font-family: Poppins;
+          font-size: 0.875rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal; }
+        #product-detail .product-desc-container .product-desc__specs__detail__value {
+          color: #666;
+          font-family: Poppins;
+          font-size: 0.875rem;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal; }
+      #product-detail .product-desc-container .product-desc__specs__detail:nth-child(even) {
+        background-color: #ebefff; }
+  #product-detail .product-img-container {
+    padding: 3rem 5rem; }
+    #product-detail .product-img-container .product-img {
+      width: 24rem;
+      height: fit-content; }
+    #product-detail .product-img-container .add-on {
+      margin-top: 1rem; }
+      #product-detail .product-img-container .add-on img:first-child {
+        width: 4.8125rem;
+        height: 1.6875rem;
+        -o-object-fit: contain;
+        object-fit: contain; }
+      #product-detail .product-img-container .add-on img:last-child {
+        width: -webkit-fit-content;
+        width: -moz-fit-content;
+        width: fit-content;
+        height: 1.4375rem;
+        -o-object-fit: contain;
+        object-fit: contain; }
+      #product-detail .product-img-container .add-on p {
+        color: #000;
+        font-family: Poppins;
+        font-size: 0.75rem;
+        font-style: normal;
+        font-weight: 300;
+        line-height: 0.90375rem; }
+  #product-detail .dots-append-container .dots-append {
+    list-style: none;
+    display: flex;
+    gap: 2rem; }
+    #product-detail .dots-append-container .dots-append button {
+      border: none;
+      background-color: transparent; }
+      #product-detail .dots-append-container .dots-append button span {
+        color: #666;
+        text-align: center;
+        font-family: Poppins;
+        font-size: 0.875rem;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal; }
+      #product-detail .dots-append-container .dots-append button .active {
+        color: #0055ff !important; }
+  #product-detail .checkout-container .product-detail__quantity__des {
+    color: #000;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal; }
+  #product-detail .checkout-container .product-detail__quantity__price {
+    color: #000;
+    font-family: Poppins;
+    font-size: 0.875rem;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal; }
+  #product-detail .checkout-container .product-detail__quantity__input {
+    width: 4rem;
+    height: 2.5rem;
+    outline: none;
+    border: none;
+    text-align: center;
+    border-radius: 0.375rem;
+    background: #ebefff; }
+  #product-detail .checkout-container .add-to-cart {
+    display: flex;
+    width: 9.4375rem;
+    height: 3.125rem;
+    padding: 1rem 2.125rem;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 3.125rem;
+    background-color: #0055ff;
+    cursor: pointer; }
+    #product-detail .checkout-container .add-to-cart__text {
+      color: #FFF;
+      text-align: center;
+      font-family: Poppins;
+      font-size: 0.875rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal; }
+  #product-detail .checkout-container .payment-paypal {
+    display: flex;
+    width: 8.75rem;
+    height: 3.125rem;
+    padding: 1rem 2.125rem;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 3.125rem;
+    background: #FFB800;
+    cursor: pointer; }
 
 #footer > div {
   border-bottom: 1px solid rgba(255, 255, 255, 0.5); }

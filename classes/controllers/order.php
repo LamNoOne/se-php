@@ -52,40 +52,11 @@ class Order
         }
     }
 
-    public static function createOrderByProduct($conn, $userId, $productId)
-    {
-        /**
-         * Write your code here
-         */
-    }
-
-    public static function updateOrder($conn, $orderId)
-    {
-        /**
-         * Write your code here
-         */
-    }
-
-    public static function deleteOrder($conn, $orderId)
-    {
-        /**
-         * Optional
-         * Write your code here
-         */
-    }
-
-    public static function getOrders($conn, $userId)
-    {
-        /**
-         * Write your code here
-         */
-    }
-
     public static function getOrderById($conn, $orderId)
     {
         try {
-            $queryOrderDetail = 
-                    "SELECT 
+            $queryOrderDetail =
+                "SELECT 
                         `orderdetail`.`orderId`,
                         `orderdetail`.`productId`, 
                         `orderdetail`.`quantity`, 
@@ -106,8 +77,8 @@ class Order
                     ON `orderdetail`.`productId` = `product`.`id`
                     WHERE `orderdetail`.`orderId` = :orderId";
 
-                $queryOrder = 
-                    "SELECT
+            $queryOrder =
+                "SELECT
                         `user`.`firstName`,
                         `user`.`lastName`,
                         `order`.`shipAddress`, 
@@ -119,25 +90,101 @@ class Order
                     JOIN `user` ON `order`.`userId` = `user`.`id`
                     WHERE `order`.`id` = :orderId";
 
-                $stmtOrderDetail = $conn->prepare($queryOrderDetail);
-                $stmtOrderDetail->bindParam(":orderId", $orderId, PDO::PARAM_INT);
-                $stmtOrderDetail->setFetchMode(PDO::FETCH_OBJ);
+            $stmtOrderDetail = $conn->prepare($queryOrderDetail);
+            $stmtOrderDetail->bindParam(":orderId", $orderId, PDO::PARAM_INT);
+            $stmtOrderDetail->setFetchMode(PDO::FETCH_OBJ);
 
-                if (!$stmtOrderDetail->execute()) {
-                    throw new Exception('Can not execute query');
-                }
-                $orderDetail = $stmtOrderDetail->fetchAll();
+            if (!$stmtOrderDetail->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $orderDetail = $stmtOrderDetail->fetchAll();
 
-                $stmtOrder = $conn->prepare($queryOrder);
-                $stmtOrder->bindParam(":orderId", $orderId, PDO::PARAM_INT);
-                $stmtOrder->setFetchMode(PDO::FETCH_OBJ);
+            $stmtOrder = $conn->prepare($queryOrder);
+            $stmtOrder->bindParam(":orderId", $orderId, PDO::PARAM_INT);
+            $stmtOrder->setFetchMode(PDO::FETCH_OBJ);
 
-                if (!$stmtOrder->execute()) {
-                    throw new Exception('Can not execute query');
-                }
-                $order = $stmtOrder->fetch();
+            if (!$stmtOrder->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $order = $stmtOrder->fetch();
 
-                return Message::messageData(true, 'Get orderDetail successfully', ['order' => $order, 'orderDetail' => $orderDetail]);
+            return Message::messageData(true, 'Get orderDetail successfully', ['order' => $order, 'orderDetail' => $orderDetail]);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function getOrderByTransaction($conn, $transaction_id)
+    {
+        try {
+            $queryTransaction =
+                "SELECT
+                    PAY.order_id,
+                    PAY.invoice_id,
+                    PAY.transaction_id,
+                    PAY.payer_id,
+                    PAY.payer_name,
+                    PAY.payer_email,
+                    PAY.payer_country,
+                    PAY.merchant_id,
+                    PAY.merchant_email,
+                    PAY.paid_amount,
+                    PAY.paid_amount_currency,
+                    PAY.payment_source,
+                    PAY.payment_status,
+                    O.orderStatusId,
+                    U.lastName,
+                    U.firstName,
+                    U.email,
+                    U.imageUrl,
+                    O.shipAddress,
+                    O.phoneNumber,
+                    PAY.createdAt,
+                    PAY.updatedAt
+                    FROM 
+                    `payment` AS PAY
+                    JOIN 
+                    `order` AS O ON O.id = PAY.order_id
+                    JOIN 
+                    `user` AS U ON U.id = O.userId
+                    WHERE transaction_id = :transaction_id";
+
+            $stmtTransaction = $conn->prepare($queryTransaction);
+            $stmtTransaction->bindParam(":transaction_id", $transaction_id, PDO::PARAM_STR);
+            $stmtTransaction->setFetchMode(PDO::FETCH_OBJ);
+
+            if (!$stmtTransaction->execute()) {
+                throw new Exception('Can not execute query');
+            }
+
+            $transaction = $stmtTransaction->fetch();
+
+            $queryOrderTransaction =
+                "SELECT
+                OD.productId,
+                OD.quantity,
+                OD.price,
+                PRO.name,
+                PRO.description,
+                PRO.imageUrl
+                FROM 
+                `payment` AS PAY
+                JOIN 
+                `orderdetail` AS OD ON OD.orderId = PAY.order_id
+                JOIN 
+                `product` AS PRO ON PRO.id = OD.productId
+                WHERE transaction_id = :transaction_id";
+
+            $stmtOrderTransaction = $conn->prepare($queryOrderTransaction);
+            $stmtOrderTransaction->bindParam(":transaction_id", $transaction_id, PDO::PARAM_STR);
+            $stmtOrderTransaction->setFetchMode(PDO::FETCH_OBJ);
+
+            if (!$stmtOrderTransaction->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $orderTransaction = $stmtOrderTransaction->fetchAll();
+
+            return Message::messageData(true, 'Get transaction successfully', ['transaction' => $transaction, 'orderTransaction' => $orderTransaction]);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }

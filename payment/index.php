@@ -221,7 +221,7 @@ $totalPrice = array_reduce($orderDetail, fn ($total, $orderItem) => $total += $o
                     .then((response) => response.json())
                     .then((result) => {
                         if (result.status == 1) {
-                            window.location.href = "payment-status.php?checkout_ref_id=" + result.ref_id;
+                            window.location.href = "transaction.php?checkout_ref_id=" + result.ref_id;
                             // console.log(result);
                         } else {
                             const messageContainer = document.querySelector("#paymentResponse");
