@@ -1,8 +1,34 @@
 #shopping-cart {
     margin-top: 7.5rem;
 
+    .no-cart {
+        padding-bottom: 5rem;
+
+        &__img {
+            img {
+                width : 12rem;
+                height: 12rem;
+            }
+        }
+
+        &__desc {
+            font-size  : 1rem;
+            font-weight: 500;
+            color      : rgba(black, 0.75);
+        }
+
+        &__btn {
+            padding         : 0.5rem 1rem;
+            font-size       : 1rem;
+            color           : white;
+            cursor          : pointer;
+            background-color: $primary_color;
+        }
+    }
+
     .round {
         position: relative;
+
         label {
             background-color: #fff;
             border          : 1px solid #ccc;

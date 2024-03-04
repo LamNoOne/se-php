@@ -133,6 +133,7 @@ class Order
                     PAY.payment_source,
                     PAY.payment_status,
                     O.orderStatusId,
+                    OD.name as `orderStatus`,
                     U.lastName,
                     U.firstName,
                     U.email,
@@ -147,6 +148,8 @@ class Order
                     `order` AS O ON O.id = PAY.order_id
                     JOIN 
                     `user` AS U ON U.id = O.userId
+                    JOIN
+                    `orderstatus` as OD ON OD.id = O.orderStatusId
                     WHERE transaction_id = :transaction_id";
 
             $stmtTransaction = $conn->prepare($queryTransaction);
@@ -195,5 +198,22 @@ class Order
         /**
          * Write your code here
          */
+    }
+
+    public static function updateOrderStatus($conn, $orderId, $orderStatusId) {
+        try {
+            $updateStmt = "UPDATE `order` SET orderStatusId = :orderStatusId WHERE id = :orderId";
+            $stmt = $conn->prepare($updateStmt);
+            // bind the update statement
+            $stmt->bindParam(":orderId", $orderId, PDO::PARAM_INT);
+            $stmt->bindParam(":orderStatusId", $orderStatusId, PDO::PARAM_INT);
+            $status = $stmt->execute();
+            if (!$status) {
+                throw new PDOException("Can not execute query");
+            }
+            return Message::message(true, "Update order status successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 }

@@ -4,6 +4,7 @@
 require_once dirname(dirname(__DIR__)) . "/inc/init.php";
 $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 require_once dirname(dirname(__DIR__)) . '/classes/controllers/paypal.php';
+require_once dirname(dirname(__DIR__)) . '/classes/controllers/order.php';
 $paypal = new PaypalCheckout();
 
 $response = array('status' => 0, 'msg' => 'Transaction Failed!');
@@ -83,10 +84,11 @@ if (!empty($_POST['paypal_order_check']) && !empty($_POST['order_id'])) {
 
                 if ($insert) {
                     $payment_id = $conn->lastInsertId();
+                    $status = Order::updateOrderStatus($conn, $order_id, PAID)['status'];
                 }
             }
 
-            if (!empty($payment_id)) {
+            if (!empty($payment_id) && $status) {
                 $ref_id_enc = base64_encode($transaction_id);
                 $response = array('status' => 1, 'msg' => 'Transaction completed!', 'ref_id' => $ref_id_enc);
             }

@@ -1,6 +1,11 @@
 #customer-manager {
     margin-top: 8rem;
 
+    .img-user {
+        width: 5rem;
+        height: 5rem;
+    }
+
     .customer-manager__btn-list {
         border-radius   : 0.5rem;
         background-color: #f6fbfc;

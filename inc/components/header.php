@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__DIR__) . "/init.php";
-define("APP_URL", "http://localhost/se-php");
 ?>
 
 <?php
@@ -279,10 +278,10 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                             </button>
                                             <ul class="dropdown-menu" id="dropdown-menu-user">
                                                 <li>
-                                                    <a class="dropdown-item" href="#">My Account</a>
+                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user">My Account</a>
                                                 </li>
                                                 <li>
-                                                    <a class="dropdown-item" href="#">Orders</a>
+                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user/order.php">Orders</a>
                                                 </li>
                                                 <li>
                                                     <hr class="dropdown-divider" />

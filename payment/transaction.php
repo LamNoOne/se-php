@@ -51,6 +51,10 @@ if (!empty($_GET['checkout_ref_id'])) {
                                     <span class="me-1">Date Due:</span>
                                     <span class="fw-medium"><?php echo $transaction->updatedAt; ?></span>
                                 </div>
+                                <div  class="mt-1">
+                                    <span class="me-1">Order Status:</span>
+                                    <span class="fw-medium"><?php echo $transaction->orderStatus; ?></span>
+                                </div>
                             </div>
                         </div>
                     </div>

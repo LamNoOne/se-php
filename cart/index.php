@@ -14,120 +14,130 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             <div class="row">
                 <h1 class="shopping-cart__title mb-4">Shopping Cart</h1>
             </div>
-            <div class="row">
-                <div class="col-9">
-                    <div class="row">
-                        <div class="col-5 d-flex align-items-start gap-4">
-                            <div class="round">
-                                <input type="checkbox" class="checkbox-cart checkbox-cart--all" id="checkbox-cart--all">
-                                <label for="checkbox-cart--all"></label>
+            <?php if(!empty($allCartProducts)) : ?>
+                <div class="row">
+                    <div class="col-9">
+                        <div class="row">
+                            <div class="col-5 d-flex align-items-start gap-4">
+                                <div class="round">
+                                    <input type="checkbox" class="checkbox-cart checkbox-cart--all" id="checkbox-cart--all">
+                                    <label for="checkbox-cart--all"></label>
+                                </div>
+                                <span class="cart-header">Item</span>
                             </div>
-                            <span class="cart-header">Item</span>
+                            <div class="col-2">
+                                <span class="cart-header">Price</span>
+                            </div>
+                            <div class="col-2">
+                                <span class="cart-header">Quantity</span>
+                            </div>
+                            <div class="col-2">
+                                <span class="cart-header">Subtotal</span>
+                            </div>
+                            <div class="col-1">
+                                <span class="cart-header"></span>
+                            </div>
                         </div>
-                        <div class="col-2">
-                            <span class="cart-header">Price</span>
-                        </div>
-                        <div class="col-2">
-                            <span class="cart-header">Quantity</span>
-                        </div>
-                        <div class="col-2">
-                            <span class="cart-header">Subtotal</span>
-                        </div>
-                        <div class="col-1">
-                            <span class="cart-header"></span>
-                        </div>
-                    </div>
-                    <?php foreach ($allCartProducts as $product) : ?>
-                        <div class="cart-item" data-index="<?php echo $product->productId; ?>">
+                        <?php foreach ($allCartProducts as $product) : ?>
+                            <div class="cart-item" data-index="<?php echo $product->productId; ?>">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
+                                        <div class="round">
+                                            <input type="checkbox" name="productId" id="checkbox-cart--<?php echo $product->productId; ?>" class="checkbox-cart checkbox-cart__item">
+                                            <label for="checkbox-cart--<?php echo $product->productId; ?>"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-5">
+                                        <div class="cart-item-container d-flex align-items-center">
+                                            <img class="cart-item__img" src="<?php echo $product->imageUrl; ?>" alt="item" />
+                                            <p class="cart-item__desc m-0">
+                                                <?php echo $product->name; ?>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 d-flex align-items-center">
+                                        <span class="cart-item__price">$
+                                            <span class="cart-item__price__detail"><?php echo $product->price; ?></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-2 d-flex align-items-center">
+                                        <input type="number" name="quantity" min="1" value="<?php echo $product->quantity; ?>" class="cart-item__input-quantity" />
+                                    </div>
+                                    <div class="col-2 d-flex align-items-center">
+                                        <span class="cart-item__price cart-item-subtotal">$
+                                            <span class="cart-item__subtotal__value"><?php echo $product->price * $product->quantity; ?></span>
+                                        </span>
+                                    </div>
+                                    <div class="col-1 d-flex align-items-center justify-content-start">
+                                        <button type="button" class="cart-item__btn-delete-cart">
+                                            <i class="fa-regular fa-trash-can p-2"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                        <div class="cart-item-control">
                             <div class="row">
                                 <div class="col-12">
                                     <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
-                                    <div class="round">
-                                        <input type="checkbox" name="productId" id="checkbox-cart--<?php echo $product->productId; ?>" class="checkbox-cart checkbox-cart__item">
-                                        <label for="checkbox-cart--<?php echo $product->productId; ?>"></label>
-                                    </div>
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-5">
-                                    <div class="cart-item-container d-flex align-items-center">
-                                        <img class="cart-item__img" src="<?php echo $product->imageUrl; ?>" alt="item" />
-                                        <p class="cart-item__desc m-0">
-                                            <?php echo $product->name; ?>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price">$
-                                        <span class="cart-item__price__detail"><?php echo $product->price; ?></span>
-                                    </span>
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <input type="number" name="quantity" min="1" value="<?php echo $product->quantity; ?>" class="cart-item__input-quantity" />
-                                </div>
-                                <div class="col-2 d-flex align-items-center">
-                                    <span class="cart-item__price cart-item-subtotal">$
-                                        <span class="cart-item__subtotal__value"><?php echo $product->price * $product->quantity; ?></span>
-                                    </span>
-                                </div>
-                                <div class="col-1 d-flex align-items-center justify-content-start">
-                                    <button type="button" class="cart-item__btn-delete-cart">
-                                        <i class="fa-regular fa-trash-can p-2"></i>
+                                <div class="col-12 d-flex justify-content-between">
+                                    <button class="continue-shopping">Continue Shopping</button>
+                                    <button <?php if (empty($allCartProducts)) : ?> disabled class="d-none" <?php else : ?> class="clear-cart" <?php endif; ?>>
+                                        Clear Shopping Cart
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    <?php endforeach; ?>
-                    <div class="cart-item-control">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="border-2 border-bottom border-black border-opacity-25 my-3"></div>
+                    </div>
+                        <div class="col-3">
+                            <div class="checkout-summary">
+                                <h3 class="checkout-summary__header">Summary</h3>
+                                <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                    <p class="checkout-summary__title m-0">Subtotal</p>
+                                    <span class="checkout-summary__value">$
+                                        <span class="checkout-summary__total"></span>
+                                    </span>
+                                </div>
+                                <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                    <p class="checkout-summary__title m-0">Tax</p>
+                                    <span class="checkout-summary__value">Free</span>
+                                </div>
+                                <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                    <p class="checkout-summary__title m-0">GST</p>
+                                    <span class="checkout-summary__value">Free</span>
+                                </div>
+                                <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                    <p class="checkout-summary__title m-0">Order Total</p>
+                                    <span class="checkout-summary__value">$
+                                        <span class="checkout-summary__total"></span>
+                                    </span>
+                                </div>
+                                <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
+                                <div class="checkout-summary__zip">
+                                    <img src="<?php echo APP_URL;?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
+                                    <img src="<?php echo APP_URL;?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
+                                    <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-12 d-flex justify-content-between">
-                                <button class="continue-shopping">Continue Shopping</button>
-                                <button <?php if (empty($allCartProducts)) : ?> disabled class="d-none" <?php else : ?> class="clear-cart" <?php endif; ?>>
-                                    Clear Shopping Cart
-                                </button>
-                            </div>
+                </div>
+            <?php else : ?>
+                <div class="row">
+                    <div class="no-cart d-flex flex-column justify-content-center align-items-center">
+                        <div class="no-cart__img">
+                            <img class="object-fit-contain" src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/9bdd8040b334d31946f4.png" alt="no-cart">
                         </div>
+                        <p class="no-cart__desc">There are no products in cart</p>
+                        <a href="<?php echo APP_URL; ?>" class="no-cart__btn text-decoration-none">Continue to shopping</a>
                     </div>
                 </div>
-                <?php if (!empty($allCartProducts)) : ?>
-                    <div class="col-3">
-                        <div class="checkout-summary">
-                            <h3 class="checkout-summary__header">Summary</h3>
-                            <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                <p class="checkout-summary__title m-0">Subtotal</p>
-                                <span class="checkout-summary__value">$
-                                    <span class="checkout-summary__total"></span>
-                                </span>
-                            </div>
-                            <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                <p class="checkout-summary__title m-0">Tax</p>
-                                <span class="checkout-summary__value">Free</span>
-                            </div>
-                            <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                <p class="checkout-summary__title m-0">GST</p>
-                                <span class="checkout-summary__value">Free</span>
-                            </div>
-                            <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                <p class="checkout-summary__title m-0">Order Total</p>
-                                <span class="checkout-summary__value">$
-                                    <span class="checkout-summary__total"></span>
-                                </span>
-                            </div>
-                            <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
-                            <div class="checkout-summary__zip">
-                                <img src="<?php echo APP_URL;?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
-                                <img src="<?php echo APP_URL;?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
-                                <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
-                            </div>
-                        </div>
-                    </div>
-                <?php endif; ?>
-            </div>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -239,10 +249,10 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                 const clearInfo = JSON.parse(clearCart);
                 if (clearInfo.status) {
                     toastr.success(clearInfo.message, "Clear Cart");
-                    $(".cart-item").remove();
-                    $(".clear-cart").remove();
-                    $(".checkout-summary").remove();
-                    // location.reload();
+                    // $(".cart-item").remove();
+                    // $(".clear-cart").remove();
+                    // $(".checkout-summary").remove();
+                    location.reload();
                 } else {
                     toastr.warning(clearInfo.message, "Warning");
                 }

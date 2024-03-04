@@ -955,6 +955,21 @@ body {
 
 #shopping-cart {
   margin-top: 7.5rem; }
+  #shopping-cart .no-cart {
+    padding-bottom: 5rem; }
+    #shopping-cart .no-cart__img img {
+      width: 12rem;
+      height: 12rem; }
+    #shopping-cart .no-cart__desc {
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.75); }
+    #shopping-cart .no-cart__btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      background-color: #0055ff; }
   #shopping-cart .round {
     position: relative; }
     #shopping-cart .round label {
@@ -1678,6 +1693,9 @@ body {
 
 #customer-manager {
   margin-top: 8rem; }
+  #customer-manager .img-user {
+    width: 5rem;
+    height: 5rem; }
   #customer-manager .customer-manager__btn-list {
     border-radius: 0.5rem;
     background-color: #f6fbfc;
