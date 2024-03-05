@@ -12,9 +12,8 @@ $product = Product::getProductByIdForAdmin($conn, $productId);
 
 if (!$product) {
   header('Location: 404.php');
+  return;
 }
-
-print_r($product);
 
 ?>
 
