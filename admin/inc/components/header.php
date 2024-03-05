@@ -127,7 +127,7 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
         <div id="sidebar-menu" class="sidebar-menu">
           <ul>
             <li class="active">
-              <a href="/"><img src="assets/img/icons/dashboard.svg" alt="img" /><span>
+              <a href="./"><img src="assets/img/icons/dashboard.svg" alt="img" /><span>
                   Dashboard</span>
               </a>
             </li>
@@ -174,22 +174,3 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
       </div>
     </div>
   </div>
-
-  <script src="assets/js/jquery-3.6.0.min.js"></script>
-
-  <script src="assets/js/feather.min.js"></script>
-
-  <script src="assets/js/jquery.slimscroll.min.js"></script>
-
-  <script src="assets/js/jquery.dataTables.min.js"></script>
-  <script src="assets/js/dataTables.bootstrap4.min.js"></script>
-
-  <script src="assets/js/bootstrap.bundle.min.js"></script>
-
-  <script src="assets/plugins/apexchart/apexcharts.min.js"></script>
-  <script src="assets/plugins/apexchart/chart-data.js"></script>
-
-  <script src="assets/js/script.js"></script>
-</body>
-
-</html>
