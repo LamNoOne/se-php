@@ -108,6 +108,8 @@ Auth::requireLogin();
 <script>
     $(document).ready(function() {
         const submitBtnImage = $("#submit-change-img");
+        const userImageBtn = $(".user__dropdown__image");
+        const userImageChange = $(".img-user");
 
         const uploadImage = async function(formData) {
             try {
@@ -119,18 +121,34 @@ Auth::requireLogin();
                     processData: false,
                 })
 
-                // return JSON.parse(uploadStatus);
-                return uploadStatus;
+                return JSON.parse(uploadStatus);
             } catch (error) {
-                console.error(error)
+                return {
+                    status: false,
+                    message: error.message
+                };
             }
         }
 
         submitBtnImage.click(async function() {
+            const currFile = $("#newAvatar")[0].files;
+            if(currFile.length === 0) return;
             const formData = new FormData();
-            formData.append("file", $("#newAvatar")[0].files[0]);
-            const uploadInfo = await uploadImage(formData);
-            console.log(uploadInfo);
+
+            formData.append("file", currFile[0]);
+            const {
+                status,
+                message
+            } = await uploadImage(formData);
+
+            if (status) {
+                toastr.success(message, "Update user's image");
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                toastr.error(message, "Error");
+            }
         })
     })
 </script>

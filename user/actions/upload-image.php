@@ -69,6 +69,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $status = User::updateUser($conn, $userId, ['imageUrl' => $imageUrl]);
 
+    if($status['status']) $_SESSION['image'] = $imageUrl;
+
     throwStatusMessage($status);
 }
 ?>

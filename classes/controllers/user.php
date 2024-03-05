@@ -67,12 +67,23 @@ class User
         }
     }
 
-    public static function createUser($conn, $adminId, $userData)
+    public function createUser($conn)
     {
-        /**
-         * Write your code here
-         * Validate admin and userData
-         */
+        try {
+            $insertStmt = "INSERT INTO user (firstName, lastName, email, password) VALUES (:firstName, :lastName, :email, :password)";
+            $stmt = $conn->prepare($insertStmt);
+            $stmt->bindValue(":firstName", $this->firstName, PDO::PARAM_STR);
+            $stmt->bindValue(":lastName", $this->lastName, PDO::PARAM_STR);
+            $stmt->bindValue(":email", $this->email, PDO::PARAM_STR);
+            $password_hash = password_hash($this->password, PASSWORD_DEFAULT);
+            $stmt->bindValue(":password", $password_hash, PDO::PARAM_STR);
+            $status = $stmt->execute();
+            if (!$status)
+                return Message::message(false, "Can not create user at this time");
+            return Message::message(true, "Create user successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
     public static function updateUser($conn, $userId, $userData)

@@ -37,7 +37,7 @@
     }
 }
 
-@mixin form-input($width: 28.0625rem, $height: 3.125rem) {
+@mixin form-input($width: 100%, $height: 3.125rem) {
     width        : $width;
     height       : $height;
     border-radius: 0.25rem;

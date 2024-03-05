@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
         <div class="row">
-            <div class="col-1"></div>
-            <div class="col-5">
+            <div class="d-sm-none d-lg-block col-lg-1"></div>
+            <div class="col-sm-12 col-lg-5">
                 <div id="login-register-container">
                     <div class="login-container p-5">
                         <h3 class="login-container__title mb-2">Registered Customers</h3>
@@ -85,15 +85,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="login-container p-5">
                         <h3 class="login-container__title mb-2">Customers Register</h3>
                         <p class="login-container__desc m-0">Please sign up to access our services:</p>
-                        <form action="" method="post" class="login-form">
+                        <form action="" method="" id="form-register" class="login-form">
                             <fieldset>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="firstname" class="login-form__input__label">First Name:<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Ex: John" name="name" id="firstname" class="login-form__input" />
+                                    <input type="text" placeholder="Ex: John" name="firstName" id="firstname" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="lastname" class="login-form__input__label">Last Name:<span>&nbsp;*</span></label>
-                                    <input type="text" placeholder="Ex: William" name="name" id="lastname" class="login-form__input" />
+                                    <input type="text" placeholder="Ex: William" name="lastName" id="lastname" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="email-register" class="login-form__input__label">Email<span>&nbsp;*</span></label>
@@ -105,9 +105,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="confirm_password" class="login-form__input__label">Confirm Password<span>&nbsp;*</span></label>
-                                    <input type="password" placeholder="Confirm Password" name="password" id="confirm_password" class="login-form__input" />
+                                    <input type="password" placeholder="Confirm Password" name="confirm_password" id="confirm_password" class="login-form__input" />
                                 </div>
-                                <button type="submit" class="login-form__submit-container__submit my-4">
+                                <button type="submit" id="submit-register" class="login-form__submit-container__submit my-4">
                                     Create an Account
                                 </button>
                             </fieldset>
@@ -115,7 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
             </div>
-            <div class="col-5">
+            <div class="col-sm-12 col-lg-5">
                 <div class="login-container p-5 login-container__right">
                     <h3 class="login-container__title mb-2">New Customer?</h3>
                     <p class="login-container__desc m-0">Creating an account has many benefits:</p>
@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
             </div>
-            <div class="col-1"></div>
+            <div class="d-sm-none d-lg-block col-lg-1"></div>
         </div>
     </div>
 </div>
@@ -192,4 +192,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 signInContainer.classList.remove("d-none");
             }
         });
+</script>
+
+<script>
+    $(document).ready(function() {
+        const formRegister = $("#form-register");
+
+        jQuery.validator.addMethod("valid_email", function(value) {
+            const regex = /^[a-z0-9]+([-._][a-z0-9]+)*@([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{1,5}$/;
+            return value.trim().match(regex);
+        });
+
+        formRegister.validate({
+        rules: {
+            firstName: {
+                required: true,
+                minlength: 2,
+            },
+            lastName: {
+                required: true,
+                minlength: 2,
+            },
+            email: {
+                required: true,
+                valid_email: true,
+            },
+            password: {
+                required: true,
+                minlength: 6,
+            },
+            confirm_password: {
+                required: true,
+                minlength: 6,
+                equalTo: "#password-register",
+            },
+        },
+        messages: {
+            firstName: {
+                required: "Please enter your first name",
+                minlength:
+                    "Your first name must consist of at least 2 characters",
+            },
+            lastName: {
+                required: "Please enter your last name",
+                minlength:
+                    "Your last name must consist of at least 2 characters",
+            },
+            email: {
+                required: "Please enter your email",
+                valid_email: "Please enter a valid email address!"
+            },
+            password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+            },
+            confirm_password: {
+                required: "Please provide a password",
+                minlength: "Your password must be at least 6 characters long",
+                equalTo: "Please enter the same password as above",
+            },
+        },
+    });
+
+        formRegister.submit(function(e) {
+            e.preventDefault();
+        })
+    })
 </script>

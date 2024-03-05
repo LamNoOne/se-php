@@ -195,12 +195,53 @@ class Order
 
     public static function getOrderByUserId($conn, $userId)
     {
-        /**
-         * Write your code here
-         */
+        try {
+            // get orders
+            $queryOrder =
+                "SELECT
+                O.id,
+                O.orderStatusId,
+                O.shipAddress,
+                O.phoneNumber,
+                OT.name
+                FROM 
+                `order` AS O
+                JOIN 
+                `user` AS U ON U.id = O.userId
+                JOIN
+                `orderstatus` AS OT ON OT.id = O.orderStatusId
+                WHERE U.id = :userId";
+
+            $stmtOrder = $conn->prepare($queryOrder);
+            $stmtOrder->bindParam(":userId", $userId, PDO::PARAM_INT);
+            $stmtOrder->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmtOrder->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $order = $stmtOrder->fetchAll();
+
+            // get order id from order
+            // loop through order get order details
+            $tmpOrders = array();
+
+            foreach($order as $singleOrder) {
+                $orderId = $singleOrder->id;
+                $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
+                if(!$orderDetailData['status'])
+                    throw new Exception("Order detail not found");
+                $orderDetail = $orderDetailData['data'];
+                $singleOrder->orderDetail = $orderDetail;
+                $tmpOrders = [...$tmpOrders, $singleOrder];
+            }
+
+            return Message::messageData(true, 'Get order successfully', $tmpOrders);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
-    public static function updateOrderStatus($conn, $orderId, $orderStatusId) {
+    public static function updateOrderStatus($conn, $orderId, $orderStatusId)
+    {
         try {
             $updateStmt = "UPDATE `order` SET orderStatusId = :orderStatusId WHERE id = :orderId";
             $stmt = $conn->prepare($updateStmt);
@@ -212,6 +253,43 @@ class Order
                 throw new PDOException("Can not execute query");
             }
             return Message::message(true, "Update order status successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function getOrderDetailByUser($conn, $orderId)
+    {
+        try {
+            // get order details
+            $queryOrderDetail =
+                "SELECT
+                    OD.productId,
+                    OD.quantity,
+                    OD.price,
+                    OT.id as `orderStatusId`,
+                    OT.name as `orderStatus`,
+                    P.name,
+                    P.description,
+                    P.imageUrl
+                    FROM 
+                    `order` AS O
+                    JOIN
+                    `orderstatus` AS OT ON OT.id = O.orderStatusId
+                    JOIN 
+                    `orderdetail` AS OD ON OD.orderId = O.id
+                    JOIN
+                    `product` AS P ON P.id = OD.productId
+                    WHERE O.id = :orderId";
+            $stmtOrderDetail = $conn->prepare($queryOrderDetail);
+            $stmtOrderDetail->bindParam(":orderId", $orderId, PDO::PARAM_INT);
+
+            $stmtOrderDetail->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmtOrderDetail->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            $orderDetail = $stmtOrderDetail->fetchAll();
+            return Message::messageData(true, 'Get orderDetail successfully', $orderDetail);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
