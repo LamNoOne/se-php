@@ -31,12 +31,14 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
   <div class="main-wrapper">
     <div class="header">
       <div class="header-left active">
-        <a href="index.html" class="logo">
-          <img src="assets/img/logo.png" alt="" />
-        </a>
-        <a href="index.html" class="logo-small">
-          <img src="assets/img/logo-small.png" alt="" />
-        </a>
+        <div class="flex-fill">
+          <a href="./" class="logo">
+            <img src="assets/img/logo.svg" alt="" />
+          </a>
+          <a href="./" class="logo-small">
+            <img src="assets/img/logo.svg" alt="" />
+          </a>
+        </div>
         <a id="toggle_btn" href="javascript:void(0);"> </a>
       </div>
 
@@ -66,35 +68,16 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
           </div>
         </li>
 
-        <li class="nav-item dropdown has-arrow flag-nav">
-          <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="javascript:void(0);" role="button">
-            <img src="assets/img/flags/us1.png" alt="" height="20" />
-          </a>
-          <div class="dropdown-menu dropdown-menu-right">
-            <a href="javascript:void(0);" class="dropdown-item">
-              <img src="assets/img/flags/us.png" alt="" height="16" /> English
-            </a>
-            <a href="javascript:void(0);" class="dropdown-item">
-              <img src="assets/img/flags/fr.png" alt="" height="16" /> French
-            </a>
-            <a href="javascript:void(0);" class="dropdown-item">
-              <img src="assets/img/flags/es.png" alt="" height="16" /> Spanish
-            </a>
-            <a href="javascript:void(0);" class="dropdown-item">
-              <img src="assets/img/flags/de.png" alt="" height="16" /> German
-            </a>
-          </div>
-        </li>
-
         <li class="nav-item dropdown has-arrow main-drop">
           <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-            <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt="" />
+            <span class="user-img"><img src="assets/img/no-avatar-image.png" alt="" />
               <span class="status online"></span></span>
           </a>
           <div class="dropdown-menu menu-drop-user">
             <div class="profilename">
               <div class="profileset">
-                <span class="user-img"><img src="assets/img/profiles/avator1.jpg" alt="" />
+                <span class="user-img">
+                  <img src="assets/img/no-avatar-image.png" alt="profile" />
                   <span class="status online"></span></span>
                 <div class="profilesets">
                   <h6>John Doe</h6>
@@ -159,14 +142,6 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
                 <li><a href="add-customer.html">Add Customer</a></li>
                 <li><a href="users.html">User List</a></li>
                 <li><a href="add-user.html">Add User</a></li>
-              </ul>
-            </li>
-            <li class="submenu">
-              <a href="javascript:void(0);"><i data-feather="alert-octagon"></i>
-                <span> Error Pages </span> <span class="menu-arrow"></span></a>
-              <ul>
-                <li><a href="error-404.html">404 Error </a></li>
-                <li><a href="error-500.html">500 Error </a></li>
               </ul>
             </li>
           </ul>

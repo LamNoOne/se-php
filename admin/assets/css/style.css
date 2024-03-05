@@ -3062,16 +3062,10 @@ div.dataTables_wrapper div.dataTables_info {
 	display: inline-block;
 	line-height: 0;
 }
-.header .header-left .logo img {
-	width: 140px;
-}
 @media (max-width: 991px) {
 	.header .header-left .logo {
 		text-align: center;
 		width: 100%;
-	}
-	.header .header-left .logo img {
-		width: 140px;
 	}
 }
 .header .header-left .logo-small {
