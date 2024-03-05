@@ -33,7 +33,7 @@ $productDetail = Product::getProductById($conn, $product_id);
                             <span class="add-to-cart__text"> Add to Cart </span>
                         </button>
 
-                        <button class="payment-paypal">
+                        <button class="payment-paypal" id="payment-paypal">
                             <img class="payment-paypal__img" src="<?php echo APP_URL; ?>/assets/img/payment.svg" alt="pay-with-paypal" />
                         </button>
                     </div>
@@ -170,5 +170,12 @@ $productDetail = Product::getProductById($conn, $product_id);
                 toastr.warning(error, "Error");
             }
         });
+
+        $("#payment-paypal").on("click", function (e) {
+            e.preventDefault();
+            const quantity = parseInt($("#product-detail__quantity__input").val());
+            const productId =parseInt("<?php echo $product_id; ?>");
+            window.location.href = `<?php echo APP_URL; ?>/checkout?product_id=${productId}&quantity=${quantity}`;
+        })
     });
 </script>

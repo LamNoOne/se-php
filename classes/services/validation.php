@@ -22,6 +22,7 @@ class Validation
         $defaults = [
             'fields' => '*',
             'filters' => [],
+            'joins' => [],
             'orderBy' => '',
             'limit' => 20,
             'offset' => 0,
@@ -36,6 +37,7 @@ class Validation
         $options = array_merge($defaults, $options);
         $options['fields'] = self::validateFields($options['fields']);
         $options['filters'] = self::validateFilters($options['filters']);
+        $options['joins'] = self::validateJoins($options['joins']);
         $options['orderBy'] = self::validateOrderBy($options['orderBy']);
         $options['limit'] = self::validateLimit($options['limit']);
         $options['offset'] = self::validateOffset($options['offset']);
@@ -51,6 +53,12 @@ class Validation
     {
         // Add your validation logic here
         return $fields;
+    }
+
+    private static function validateJoins($joins)
+    {
+        // Add your validation logic here
+        return $joins;
     }
 
     /**

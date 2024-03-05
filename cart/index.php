@@ -14,7 +14,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
             <div class="row">
                 <h1 class="shopping-cart__title mb-4">Shopping Cart</h1>
             </div>
-            <?php if(!empty($allCartProducts)) : ?>
+            <?php if (!empty($allCartProducts)) : ?>
                 <div class="row">
                     <div class="col-9">
                         <div class="row">
@@ -95,37 +95,37 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                             </div>
                         </div>
                     </div>
-                        <div class="col-3">
-                            <div class="checkout-summary">
-                                <h3 class="checkout-summary__header">Summary</h3>
-                                <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                    <p class="checkout-summary__title m-0">Subtotal</p>
-                                    <span class="checkout-summary__value">$
-                                        <span class="checkout-summary__total"></span>
-                                    </span>
-                                </div>
-                                <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                    <p class="checkout-summary__title m-0">Tax</p>
-                                    <span class="checkout-summary__value">Free</span>
-                                </div>
-                                <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                    <p class="checkout-summary__title m-0">GST</p>
-                                    <span class="checkout-summary__value">Free</span>
-                                </div>
-                                <div class="checkout-summary__block d-flex justify-content-between my-2">
-                                    <p class="checkout-summary__title m-0">Order Total</p>
-                                    <span class="checkout-summary__value">$
-                                        <span class="checkout-summary__total"></span>
-                                    </span>
-                                </div>
-                                <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
-                                <div class="checkout-summary__zip">
-                                    <img src="<?php echo APP_URL;?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
-                                    <img src="<?php echo APP_URL;?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
-                                    <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
-                                </div>
+                    <div class="col-3">
+                        <div class="checkout-summary">
+                            <h3 class="checkout-summary__header">Summary</h3>
+                            <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                <p class="checkout-summary__title m-0">Subtotal</p>
+                                <span class="checkout-summary__value">$
+                                    <span class="checkout-summary__total"></span>
+                                </span>
+                            </div>
+                            <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                <p class="checkout-summary__title m-0">Tax</p>
+                                <span class="checkout-summary__value">Free</span>
+                            </div>
+                            <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                <p class="checkout-summary__title m-0">GST</p>
+                                <span class="checkout-summary__value">Free</span>
+                            </div>
+                            <div class="checkout-summary__block d-flex justify-content-between my-2">
+                                <p class="checkout-summary__title m-0">Order Total</p>
+                                <span class="checkout-summary__value">$
+                                    <span class="checkout-summary__total"></span>
+                                </span>
+                            </div>
+                            <button class="checkout-summary__btn-process text-decoration-none my-4">Proceed to Checkout</button>
+                            <div class="checkout-summary__zip">
+                                <img src="<?php echo APP_URL; ?>/assets/img/zip.svg" alt="zip" class="checkout-summary__zip__img object-fit-contain" />
+                                <img src="<?php echo APP_URL; ?>/assets/img/vector.svg" alt="vector" class="checkout-summary__vector object-fit-contain" />
+                                <p class="checkout-summary__zip__content m-0">up to 6 months interest free.</p>
                             </div>
                         </div>
+                    </div>
                 </div>
             <?php else : ?>
                 <div class="row">
@@ -210,6 +210,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
         $(".cart-item__btn-delete-cart").click(async function() {
             // find the closest element that this action happen
             const el = $(this).closest(".cart-item");
+            const allItems = $(".cart-item").get();
             // get the productId from input field
             const productId = parseInt(el.data('index'));
 
@@ -226,6 +227,11 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                 const deleteInfo = JSON.parse(deleteCart);
                 if (deleteInfo.status) {
                     toastr.success(deleteInfo.message, "Delete Cart");
+                    if (allItems.length === 1) {
+                        location.reload();
+                        return;
+                    }
+
                     el.remove();
                 } else {
                     toastr.warning(deleteInfo.message, "Warning");

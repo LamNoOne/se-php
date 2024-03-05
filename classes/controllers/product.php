@@ -123,8 +123,8 @@ class Product extends DataFetcher
     {
         try {
             $table = "product";
-            $dataFetcher = DataFetcher::getInstance($conn);
-            $products = $dataFetcher->fetchData($table, $queryData, "Product");
+            $dataFetcher = new DataFetcher($conn);
+            $products = $dataFetcher->fetchData($table, $queryData);
             return $products;
         } catch (PDOException $e) {
             return Message::message(false, "Can not get products by category: " . $e->getMessage());

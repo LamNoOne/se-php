@@ -55,6 +55,39 @@ class Order extends DataFetcher
         }
     }
 
+    public static function createOrderByProduct($conn, $data)
+    {
+        $createOrderStatement =
+            "CALL createOrderDirectlyProduct(:userId, :productId, :quantity, :shipAddress, :phoneNumber, @p_orderId, @p_errorMessage)";
+        $createOrderPattern = ['userId', 'productId', 'quantity', 'shipAddress', 'phoneNumber'];
+
+        try {
+            // validate orders data
+            if (!Validation::validateData($createOrderPattern, $data)) {
+                throw new InvalidArgumentException('Invalid order data');
+            }
+
+            $stmt = $conn->prepare($createOrderStatement);
+
+            $stmt->bindParam(":userId", $data['userId'], PDO::PARAM_INT);
+            $stmt->bindParam(":productId", $data['productId'], PDO::PARAM_INT);
+            $stmt->bindParam(":quantity", $data['quantity'], PDO::PARAM_INT);
+            $stmt->bindParam(":shipAddress", $data['shipAddress'], PDO::PARAM_STR);
+            $stmt->bindParam(":phoneNumber", $data['phoneNumber'], PDO::PARAM_STR);
+
+            $status = $stmt->execute();
+            if (!$status) {
+                throw new PDOException("Can not execute query");
+            }
+
+            $stmt = $conn->query("SELECT @p_orderId as orderId, @p_errorMessage as errorMessage");
+            $result = $stmt->fetch(PDO::FETCH_OBJ);
+            return Message::messageData(true, "Create order successfully", $result);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function getOrderById($conn, $orderId)
     {
         try {
@@ -196,48 +229,42 @@ class Order extends DataFetcher
         }
     }
 
+    // chua xu ly xong
     public static function getOrderByUserId($conn, $userId)
     {
         try {
-            // get orders
-            $queryOrder =
-                "SELECT
-                O.id,
-                O.orderStatusId,
-                O.shipAddress,
-                O.phoneNumber,
-                OT.name
-                FROM 
-                `order` AS O
-                JOIN 
-                `user` AS U ON U.id = O.userId
-                JOIN
-                `orderstatus` AS OT ON OT.id = O.orderStatusId
-                WHERE U.id = :userId";
+            $queryOrder = [
+                'fields' => 'O.id, O.orderStatusId, O.shipAddress, O.phoneNumber, OS.name',
+                'joins' => [
+                    ['type' => 'INNER', 'table' => '`user` AS U', 'on' => 'U.id = O.userId'],
+                    ['type' => 'INNER', 'table' => '`orderstatus` AS OS', 'on' => 'OS.id = O.orderStatusId'],
+                ],
+                'filters' => [
+                    ['column' => 'U.id', 'operator' => NULL, 'alias' => 'userId', 'value' => $userId]
+                ],
+                'limit' => 20,
+                'offset' => 0,
+            ];
 
-            $stmtOrder = $conn->prepare($queryOrder);
-            $stmtOrder->bindParam(":userId", $userId, PDO::PARAM_INT);
-            $stmtOrder->setFetchMode(PDO::FETCH_OBJ);
-            if (!$stmtOrder->execute()) {
-                throw new Exception('Can not execute query');
-            }
-            $order = $stmtOrder->fetchAll();
-
+            $dataFetcher = new DataFetcher($conn);
+            $orders = $dataFetcher->fetchData("`order` AS O", $queryOrder);
             // get order id from order
             // loop through order get order details
-            $tmpOrders = array();
 
-            foreach ($order as $singleOrder) {
-                $orderId = $singleOrder->id;
-                $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
-                if (!$orderDetailData['status'])
-                    throw new Exception("Order detail not found");
-                $orderDetail = $orderDetailData['data'];
-                $singleOrder->orderDetail = $orderDetail;
-                $tmpOrders = [...$tmpOrders, $singleOrder];
-            }
+            return $orders;
+            // $_orders = array();
 
-            return Message::messageData(true, 'Get order successfully', $tmpOrders);
+            // foreach ($orders as $singleOrder) {
+            //     $orderId = $singleOrder->id;
+            //     $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
+            //     if (!$orderDetailData['status'])
+            //         throw new Exception("Order detail not found");
+            //     $orderDetail = $orderDetailData['data'];
+            //     $singleOrder->orderDetail = $orderDetail;
+            //     $_orders = [...$_orders, $singleOrder];
+            // }
+
+            // return Message::messageData(true, 'Get order successfully', $_orders);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
