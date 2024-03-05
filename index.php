@@ -1,4 +1,5 @@
 <?php require_once "inc/components/header.php"; ?>
+<?php require_once "inc/utils.php"; ?>
 <?php
 if (!isset($conn))
     $conn = require_once "inc/db.php";
@@ -8,8 +9,12 @@ $newProducts = Product::getAllProducts($conn, 20);
 // Query Laptops
 $laptopParams =
     [
-        'filters' => ['categoryId' => 2],
+        'fields' => '*',
+        'filters' => [
+            createFilter('categoryId', 2)
+        ],
         'limit' => 20,
+        'offset' => 0,
     ];
 
 $laptops = Product::getProductsByCategory($conn, $laptopParams)['data'];
@@ -18,8 +23,12 @@ $laptops = Product::getProductsByCategory($conn, $laptopParams)['data'];
 // Query PCs
 $computerParams =
     [
-        'filters' => ['categoryId' => 6],
+        'fields' => '*',
+        'filters' => [
+            createFilter('categoryId', 6)
+        ],
         'limit' => 20,
+        'offset' => 0,
     ];
 
 $computers = Product::getProductsByCategory($conn, $computerParams)['data'];
@@ -28,8 +37,12 @@ $computers = Product::getProductsByCategory($conn, $computerParams)['data'];
 // Query Monitors
 $monitorParams =
     [
-        'filters' => ['categoryId' => 7],
+        'fields' => '*',
+        'filters' => [
+            createFilter('categoryId', 7)
+        ],
         'limit' => 20,
+        'offset' => 0,
     ];
 
 $monitors = Product::getProductsByCategory($conn, $monitorParams)['data'];

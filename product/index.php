@@ -13,14 +13,19 @@ if (!empty($_GET)) {
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
         if ($key !== 'page' && $key !== 'orderby') {
+            // if the value contains commas
             if (strpos($value, ',') !== false) {
-                // If it does, split the value into an array using commas as separators
-                $parsedParams[$key] = explode(',', $value);
-                // Trim each value to remove leading/trailing spaces
-                $parsedParams[$key] = array_map('trim', $parsedParams[$key]);
+                // convert comma string to array
+                $_values = array_map('trim', explode(',', $value));
+                if ($key === 'price') {
+                    $parsedParams = [...$parsedParams, createFilter($key, $_values, "BETWEEN")];
+                    continue;
+                }
+
+                $parsedParams = [...$parsedParams, createFilter($key, $_values, "IN")];
             } else {
                 // If it doesn't contain commas, use the value as is
-                $parsedParams[$key] = $value;
+                $parsedParams = [...$parsedParams, createFilter($key, $value)];
             }
         }
     }
@@ -49,8 +54,11 @@ if (!empty($_GET)) {
     if (!empty($parsedParams)) {
         // Apply filters
         $selectors['filters'] = $parsedParams;
+
+        // print_r($selectors);
         // Get product object
         $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+
         // Get all products
         $allProducts = $selectedProducts['data'];
         // Get total pages
@@ -317,9 +325,9 @@ if (!empty($_GET)) {
     const inputChecks = document.querySelectorAll("input[type=checkbox]");
 
     // Construct the base URL
-    const baseUrl = "<?php echo APP_URL ?>/product/";
+    const baseUrl = "<?php echo APP_URL; ?>/product/";
 
-    // Function to convert object to query string
+    // Function to convert object to filtered query string
     function objectToQueryString(obj) {
         const queryString = Object.keys(obj)
             .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
@@ -343,18 +351,22 @@ if (!empty($_GET)) {
 
         // Split the query string by "&" to get individual key-value pairs
         const pairs = strSelector.split("&");
+        // console.log(`PAIR::${pairs}`)
 
         // Iterate over each key-value pair
         pairs.forEach((pair) => {
             // Split each pair by "=" to separate key and value
             const [key, value] = pair.split("=");
+            // console.log(`KEY::${key} VALUE::${value}`)
 
             // Decode URI component to handle special characters properly
-            // Initialize an array for each key and store the value in it
+            // Initialize an array for each key and store the value in selectors array
             selector[key] = new Array(decodeURIComponent(value))[0].split(",");
         });
 
-        // Output the selector object after initializing it with query parameters
+        console.log(selector)
+
+        // Activate input elements depend on query URL string
         inputChecks.forEach(inputCheck => {
             Object.keys(selector).forEach(key => {
                 if (checkParams.includes(String(key)) && selector[key].includes(inputCheck.value)) {
@@ -367,6 +379,7 @@ if (!empty($_GET)) {
     /** Fix refresh page  */
 
     // Add click event listener to each input container
+    // Create query URL string and navigate to output
     inputContainers.forEach((inputContainer) => {
         inputContainer.addEventListener("click", (event) => {
             // Check if the clicked element is a checkbox

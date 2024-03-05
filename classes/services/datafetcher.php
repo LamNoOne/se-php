@@ -9,53 +9,55 @@ class DataFetcher extends QueryBuilder
     private $queryBuilder;
     private $conn;
 
-    private function __construct($conn)
+    public function __construct($conn)
     {
         $this->conn = $conn;
         $this->queryBuilder = new QueryBuilder($conn);
     }
 
+    // /**
+    //  * @param mixed $conn
+    //  * @return object
+    //  */
+    // public static function getInstance($conn): DataFetcher
+    // {
+    //     if (!self::$instance) {
+    //         self::$instance = new self($conn);
+    //     }
+
+    //     return self::$instance;
+    // }
+
+    // private function __clone()
+    // {
+    //     // Disable cloning
+    // }
+
     /**
-     * @param mixed $conn
-     * @return object
-     */
-    public static function getInstance($conn): DataFetcher
-    {
-        if (!self::$instance) {
-            self::$instance = new self($conn);
-        }
-
-        return self::$instance;
-    }
-
-    private function __clone()
-    {
-        // Disable cloning
-    }
-
-    /**
-     * @param string $tableName
+     * @param string $table
      * @param mixed $options
      * @param string $fetchType
      * @return array
      */
-    protected function fetchData($tableName, $options = [], $fetchType)
+    protected function fetchData($table, $options = [])
     {
         try {
             $options = $this->queryBuilder->validateQueryOptions($options);
             // Build and execute the fetch data with limit and offset
-            $sql = $this->queryBuilder->buildSqlQuery($tableName, $options);
-            $stmt = $this->queryBuilder->executeQuery($this->conn, $sql, $options);
-            $data = $stmt->fetchAll(PDO::FETCH_CLASS, $fetchType);
+            $sql = $this->queryBuilder->buildSqlQuery($table, $options);
+            // print($sql);
+            $stmt = $this->queryBuilder->executeQuery($sql, $options);
+            // print_r($stmt);
+            $data = $stmt->fetchAll(PDO::FETCH_OBJ);
             $currentRows = intval($options['limit']);
             // print_r("CURRENT ROWS: " . $currentRows . "<br />");
 
             // Get a number of rows
             $options['fields'] = 'COUNT(*)';
-            $sqlGetRows = $this->queryBuilder->buildSqlQuery($tableName, $options, false);
-            $stmtGetRows = $this->queryBuilder->executeQuery($this->conn, $sqlGetRows, $options);
+            $sqlGetRows = $this->queryBuilder->buildSqlQuery($table, $options, false);
+            $stmtGetRows = $this->queryBuilder->executeQuery($sqlGetRows, $options);
             $dataRows = $stmtGetRows->fetchColumn();
-            // print_r("DATA ROWS: " . $dataRows . "<br />");
+            // print_r("DATA ROWS: " . $dataRows);
 
             // In case of no results of current rows
             // TotalPage will be assigned to zero

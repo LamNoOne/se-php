@@ -100,7 +100,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                 <div class="row">
                     <div class="col-sm-2 col-lg-5 col-xl-6" id="main-header-menu">
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
-                            <nav class="navbar navbar-expand-lg navbar-light bg-transparent w-100">
+                            <nav class="navbar navbar-expand-lg navbar-light bg-white w-100">
                                 <div class="container-fluid p-0">
                                     <a class="navbar-brand d-sm-none d-xl-block" href="#">
                                         <img src="<?php echo APP_URL; ?>/assets/img/logo.svg" alt="logo" />
@@ -245,7 +245,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                         </div>
                     </div>
                     <div class="col" id="main-header-mechanism">
-                        <div class="main-header__mechanism h-100 d-flex gap-3 align-items-center justify-content-end">
+                        <div class="main-header__mechanism h-100 d-flex gap-4 align-items-center justify-content-end">
                             <div class="search-bar-container flex-grow-1">
                                 <form action="" class="search" id="search-bar">
                                     <input type="text" placeholder="Type something..." name="search" class="search__input" />
@@ -257,16 +257,17 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                 </form>
                             </div>
 
-                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-3">
+                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-4">
                                 <li class="cart-component">
-                                    <div class="cart-container">
+                                    <div class="cart-container d-flex flex-column">
                                         <button class="btn cart-btn" id="cart-btn" type="button">
                                             <img src="<?php echo APP_URL; ?>/assets/img/cart-btn.svg" alt="cart-btn" />
                                             <span class="cart-btn__count"> <?php echo $cartQuantity; ?></span>
                                         </button>
+                                        <span class="header-control-desc">Cart</span>
                                     </div>
                                 </li>
-                                <li class="user-component-dropdown">
+                                <li class="user-component-dropdown d-flex align-items-center">
                                     <div class="dropdown dropdown-user">
                                         <?php if (Auth::isLoggedIn()) : ?>
                                             <button class="btn dropdown-toggle dropdown-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -291,8 +292,9 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                                 </li>
                                             </ul>
                                         <?php else : ?>
-                                            <a href="<?php echo APP_URL; ?>/auth/login-register.php" class="login-btn">
-                                                <i class="fa-sharp fa-solid fa-user-secret"></i>
+                                            <a href="<?php echo APP_URL; ?>/auth/login-register.php" class="login-btn text-decoration-none">
+                                                <i class="fa-regular fa-circle-user"></i>
+                                                <span class="header-control-desc">Login</span>
                                             </a>
                                         <?php endif; ?>
                                     </div>

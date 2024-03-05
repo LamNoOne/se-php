@@ -1,8 +1,7 @@
 <?php require_once dirname(__DIR__) . "/inc/components/header.php"; ?>
 <?php require_once dirname(__DIR__) . "/inc/utils.php"; ?>
 <?php
-if (!Auth::isLoggedIn())
-    Auth::requireLogin();
+Auth::requireLogin();
 
 if (!isset($conn))
     $conn = require_once dirname(__DIR__) . "/inc/db.php";
@@ -13,9 +12,14 @@ $selectedProductsCart = array();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_cart']))
     $_SESSION['selected_products'] = $_POST['product_cart'];
 
-if (!isset($_SESSION['selected_products'])) redirect(APP_URL);
+if (isset($_SESSION['selected_products']))
+    $selectedProductsCart = [...$_SESSION['selected_products']];
 
-$selectedProductsCart = [...$_SESSION['selected_products']];
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset($_GET['quantity'])) {
+    $productId = $_GET['product_id'];
+    $productQuantity = $_GET['quantity'];
+    $productSelectedCheckout = Product::getProductById($conn, $productId);
+}
 
 ?>
 <div id="main-content" class="main-content">
@@ -116,28 +120,48 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
                                         <p class="order-summary__items__desc m-0">&nbsp;Items in Cart</p>
                                 </div>
                                 <ul class="order-summary__items__list list-unstyled m-0 d-flex flex-column gap-3">
-                                    <?php foreach ($selectedProductsCart as $productId) :
-                                        $productCartDetail = Cart::getProductDetailFromCart($conn, $_SESSION['userId'], $productId)['data'];
-                                        if (isset($productCartDetail)) :
-                                    ?>
-                                            <li class="order-summary__items__list__product d-flex justify-content-start align-items-start gap-3">
-                                                <img src="<?php echo $productCartDetail->imageUrl; ?>" alt="product" class="object-fit-contain" />
-                                                <div class="order-summary__items__list__info d-flex flex-column">
-                                                    <p class="order-summary__items__list__desc m-0">
-                                                        <?php echo $productCartDetail->name; ?>
-                                                    </p>
-                                                    <div class="order-summary__items__list__specs d-flex">
-                                                        <span class="order-summary__items__list__quantity">
-                                                            <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span><?php $productCartDetail->quantity; ?></span>
-                                                        <span class="order-summary__items__list__price">&nbsp;&nbsp;$<?php echo $productCartDetail->price ?></span>
+                                    <?php if (!isset($productSelectedCheckout)) : ?>
+                                        <?php foreach ($selectedProductsCart as $productId) :
+                                            $productCartDetail = Cart::getProductDetailFromCart($conn, $_SESSION['userId'], $productId)['data'];
+                                            if (isset($productCartDetail)) :
+                                        ?>
+                                                <li class="order-summary__items__list__product d-flex justify-content-start align-items-start gap-3">
+                                                    <img src="<?php echo $productCartDetail->imageUrl; ?>" alt="product" class="object-fit-contain" />
+                                                    <div class="order-summary__items__list__info d-flex flex-column">
+                                                        <p class="order-summary__items__list__desc m-0">
+                                                            <?php echo $productCartDetail->name; ?>
+                                                        </p>
+                                                        <div class="order-summary__items__list__specs d-flex">
+                                                            <span class="order-summary__items__list__quantity">
+                                                                <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span><?php echo $productCartDetail->quantity; ?></span>
+                                                            <span class="order-summary__items__list__price">&nbsp;&nbsp;$<?php echo $productCartDetail->price ?></span>
+                                                        </div>
                                                     </div>
+                                                </li>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    <?php else : ?>
+                                        <li class="order-summary__items__list__product d-flex justify-content-start align-items-start gap-3">
+                                            <img src="<?php echo $productSelectedCheckout->imageUrl; ?>" alt="product" class="object-fit-contain" />
+                                            <div class="order-summary__items__list__info d-flex flex-column">
+                                                <p class="order-summary__items__list__desc m-0">
+                                                    <?php echo $productSelectedCheckout->name; ?>
+                                                </p>
+                                                <div class="order-summary__items__list__specs d-flex">
+                                                    <span class="order-summary__items__list__quantity">
+                                                        <span class="order-summary__items__list__quantity__title">Qty&nbsp;</span><?php echo $productQuantity; ?></span>
+                                                    <span class="order-summary__items__list__price">&nbsp;&nbsp;$<?php echo $productSelectedCheckout->price ?></span>
                                                 </div>
-                                            </li>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
+                                            </div>
+                                        </li>
+                                    <?php endif; ?>
                                 </ul>
                             </div>
-                            <button type="button" class="btn-checkout-payment" id="btn-checkout-payment">Go to Payment</button>
+                            <?php if (!isset($productSelectedCheckout)) : ?>
+                                <button type="button" class="btn-checkout-payment" id="btn-checkout-payment">Go to Payment</button>
+                            <?php else : ?>
+                                <button type="button" class="btn-checkout-payment" id="btn-checkout-payment-single-product">Go to Payment</button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -154,6 +178,7 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
     $(document).ready(function() {
         const formOrder = $("#form-order");
         const btnCheckoutPayment = $("#btn-checkout-payment");
+        const btnCheckoutPaymentSingleProduct = $("#btn-checkout-payment-single-product");
 
         jQuery.validator.addMethod("valid_phone", function(value) {
             const regex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
@@ -204,7 +229,53 @@ $selectedProductsCart = [...$_SESSION['selected_products']];
 
             const response = await $.ajax({
                 method: "POST",
-                url: "actions/create-order.php",
+                url: "actions/create-order-cart.php",
+                data: data
+            })
+
+            const result = JSON.parse(response);
+            console.log(result);
+
+            if (result.status) {
+                if (result.data.errorMessage === null) {
+                    toastr.success(result.message, "Create Order")
+                    const orderId = result.data.orderId
+                    setTimeout(() => {
+                        window.location.href = `<?php echo APP_URL; ?>/payment?orderId=${orderId}`
+                    }, 500)
+                } else {
+                    toastr.warning(result.data.errorMessage, "Create Order")
+                }
+            } else {
+                toastr.error("Error when creating order", "Create Order")
+            }
+        })
+
+
+        btnCheckoutPaymentSingleProduct.click(async function(e) {
+            e.preventDefault();
+            if (!formOrder.valid()) {
+                return false;
+            }
+
+            // get product list
+            const productCheckout = {
+                productId: "<?php echo $productId ?>",
+                productQuantity: "<?php echo isset($productQuantity) ? $productQuantity : 0 ?>"
+            }
+
+            // console.log(productList);
+            const data = {
+                productCheckout,
+                phone: $("#phoneNumber").val(),
+                address: $("#address").val()
+            }
+
+            console.log(data)
+
+            const response = await $.ajax({
+                method: "POST",
+                url: "actions/create-order-product.php",
                 data: data
             })
 

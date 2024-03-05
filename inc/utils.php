@@ -21,6 +21,11 @@ function throwStatusMessage($status)
     echo $jsonStatus;
 }
 
+function createFilter(string $key, mixed $value, string | null $operator = null): array
+{
+    return ['column' => strval($key), 'operator' => strval($operator), 'value' => $value];
+}
+
 function generateSQLConditions(
     $filter = [],
     $sorter = ['id' => 'ASC'],
