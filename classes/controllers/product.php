@@ -128,4 +128,21 @@ class Product extends DataFetcher
             return Message::message(false, "Can not get products by category: " . $e->getMessage());
         }
     }
+
+    public static function getAllProductsForAdmin($conn)
+    {
+        try {
+            $query = "
+                SELECT p.id, p.imageUrl, p.name, c.id as categoryId, c.name as categoryName, p.createdAt, p.updatedAt
+                FROM product as p JOIN category as c on p.categoryId = c.id
+                ORDER BY p.createdAt DESC, p.updatedAt DESC
+            ";
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return Message::message(false, "Can not get all products" . $e->getMessage());
+        }
+    }
 }

@@ -317,7 +317,7 @@ if (!empty($_GET)) {
     const inputChecks = document.querySelectorAll("input[type=checkbox]");
 
     // Construct the base URL
-    const baseUrl = "http://localhost/se-php/product/";
+    const baseUrl = "<?php echo APP_URL ?>/product/";
 
     // Function to convert object to query string
     function objectToQueryString(obj) {

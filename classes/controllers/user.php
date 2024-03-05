@@ -129,9 +129,13 @@ class User
 
     public static function getUsers($conn, $adminId)
     {
-        /**
-         * Write your code here
-         */
+        try {
+            $query = "
+
+            ";
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
     public static function getUserById($conn, $userId)

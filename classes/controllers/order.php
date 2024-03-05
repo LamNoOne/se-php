@@ -1,7 +1,8 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
-class Order
+require_once dirname(__DIR__) . "/services/datafetcher.php";
+class Order extends DataFetcher
 {
     public $orderId;
     public $productId;
@@ -10,7 +11,7 @@ class Order
     public $createdAt;
     public $updatedAt;
 
-    public function __construct($orderId, $productId, $quantity, $price)
+    public function __construct($orderId = null, $productId = null, $quantity = null, $price = null)
     {
         $this->orderId = $orderId;
         $this->productId = $productId;
@@ -224,10 +225,10 @@ class Order
             // loop through order get order details
             $tmpOrders = array();
 
-            foreach($order as $singleOrder) {
+            foreach ($order as $singleOrder) {
                 $orderId = $singleOrder->id;
                 $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
-                if(!$orderDetailData['status'])
+                if (!$orderDetailData['status'])
                     throw new Exception("Order detail not found");
                 $orderDetail = $orderDetailData['data'];
                 $singleOrder->orderDetail = $orderDetail;
@@ -292,6 +293,31 @@ class Order
             return Message::messageData(true, 'Get orderDetail successfully', $orderDetail);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function getAllOrders($conn)
+    {
+        try {
+            // $table = "`order`";
+            // $dataFetcher = DataFetcher::getInstance($conn);
+            // $orders = $dataFetcher->fetchData($table, $queryData, "Order");
+            $query = "
+                SELECT O.id, O.shipAddress, O.phoneNumber, OS.name as status, U.imageUrl, U.firstName, U.lastName, SUM(OD.quantity * OD.price) as 'total', O.createdAt, O.updatedAt
+                FROM `order` as O join user as U on O.`userId` = U.id
+                    join orderdetail as OD on OD.orderId = O.id
+                    join orderstatus as OS on OS.id = O.orderStatusId
+                GROUP BY O.id
+                ORDER BY O.createdAt DESC, O.updatedAt DESC
+            ";
+
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            $stmt->execute();
+
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            return Message::message(false, "Can not get orders: " . $e->getMessage());
         }
     }
 }
