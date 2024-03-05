@@ -1,5 +1,10 @@
 <?php
 require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
+if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'])) {
+  header("HTTP/1.0 404 Not Found");
+  include('404.php');
+  exit();
+}
 ?>
 
 <!DOCTYPE html>

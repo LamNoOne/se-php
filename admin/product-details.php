@@ -1,4 +1,6 @@
-<?php require_once "./inc/components/header.php" ?>;
+<?php
+require_once  dirname(__DIR__) . "/inc/init.php";
+?>
 
 <?php
 if (!isset($conn))
@@ -8,9 +10,15 @@ $productId = $_GET['id'];
 
 $product = Product::getProductByIdForAdmin($conn, $productId);
 
+if (!$product) {
+  header('Location: 404.php');
+}
+
 print_r($product);
 
 ?>
+
+<?php require_once "./inc/components/header.php" ?>;
 
 <div class="page-wrapper">
   <div class="content">
