@@ -17,7 +17,7 @@ if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $_SERVER['REQUEST_URI'])) {
   <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive" />
   <meta name="author" content="Dreamguys - Bootstrap Admin Template" />
   <meta name="robots" content="noindex, nofollow" />
-  <title>SE Shop PHP Admin</title>
+  <title>SE Shop PHP - Admin</title>
 
   <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg" />
   <link rel="stylesheet" href="assets/css/bootstrap.min.css" />

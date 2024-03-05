@@ -8,7 +8,7 @@
   <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
   <meta name="author" content="Dreamguys - Bootstrap Admin Template">
   <meta name="robots" content="noindex, nofollow">
-  <title>Error server - SE Shop PHP Admin</title>
+  <title>Error Server - SE Shop PHP - Admin</title>
 
   <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
 
