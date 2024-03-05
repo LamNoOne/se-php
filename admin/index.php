@@ -134,12 +134,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a href="./product-details.html"><?php echo $product->id ?></a></td>
+                      <td><a href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->id ?></a></td>
                       <td class="productimgname">
-                        <a class="product-img" href="productlist.html">
+                        <a class="product-img" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>">
                           <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
                         </a>
-                        <a href="product-details.html"><?php echo $product->name ?></a>
+                        <a href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
                       </td>
                       <td><?php echo $product->categoryName ?></td>
                       <td><?php echo $product->createdAt ?></td>
@@ -248,3 +248,5 @@ $users = User::getAllUsers($conn, [], $sorter);
     </div>
   </div>
 </div>
+
+<?php require_once "./inc/components/footer.php" ?>;

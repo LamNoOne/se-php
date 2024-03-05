@@ -149,10 +149,32 @@ class Product extends DataFetcher
             ";
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_OBJ);
-            $stmt->execute();
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
             return $stmt->fetchAll();
         } catch (Exception $e) {
             return Message::message(false, "Can not get all products" . $e->getMessage());
+        }
+    }
+
+    public static function getProductByIdForAdmin($conn, $productId)
+    {
+        try {
+            $query = "
+                SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
+                FROM product p JOIN category c on p.categoryId = c.id
+                WHERE p.id = $productId
+            ";
+
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return Message::message(false, "Can not get product by id" . $e->getMessage());
         }
     }
 }
