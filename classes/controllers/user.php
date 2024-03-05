@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 class User
 {
     public $id;
@@ -127,12 +128,29 @@ class User
          */
     }
 
-    public static function getUsers($conn, $adminId)
-    {
+    public static function getAllUsers(
+        $conn,
+        $filter = [],
+        $sorter = ['id' => 'ASC'],
+        $paginator = []
+    ) {
         try {
-            $query = "
+            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
 
+            $query = "
+                SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
+                FROM `user` U join `role` R on U.roleId = R.id
+                {$sqlConditions['where']}
+                {$sqlConditions['orderBy']}
+                {$sqlConditions['limit']}
+                {$sqlConditions['offset']}
             ";
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException("Can not execute query");
+            }
+            return $stmt->fetchAll();
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }

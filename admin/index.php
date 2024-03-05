@@ -4,10 +4,15 @@
 if (!isset($conn))
   $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
-$orders = Order::getAllOrders($conn);
-$products = Product::getAllProductsForAdmin($conn);
+$sorter = array(
+  'createdAt' => 'DESC',
+  'updatedAt' => 'DESC'
+);
 
-// print_r($products);
+$orders = Order::getAllOrders($conn, [], $sorter);
+$products = Product::getAllProductsForAdmin($conn, [], $sorter);
+$customers = User::getAllUsers($conn, ['roleId' => 3], $sorter);
+$users = User::getAllUsers($conn, [], $sorter);
 
 ?>
 
@@ -39,7 +44,7 @@ $products = Product::getAllProductsForAdmin($conn);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count das2">
           <div class="dash-counts">
-            <h4>100</h4>
+            <h4><?php echo count($customers) ?></h4>
             <h5>Customers</h5>
           </div>
           <div class="dash-imgs">
@@ -50,7 +55,7 @@ $products = Product::getAllProductsForAdmin($conn);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count das3">
           <div class="dash-counts">
-            <h4>100</h4>
+            <h4><?php echo count($users) ?></h4>
             <h5>Users</h5>
           </div>
           <div class="dash-imgs">
@@ -63,10 +68,9 @@ $products = Product::getAllProductsForAdmin($conn);
           <div class="card-body">
             <h4 class="card-title">Recently Added Orders</h4>
             <div class="table-responsive dataview">
-              <table class="table datatable">
+              <table class="table">
                 <thead>
                   <tr>
-                    <th>No</th>
                     <th>Order ID</th>
                     <th>Customer</th>
                     <th>Total</th>
@@ -75,15 +79,17 @@ $products = Product::getAllProductsForAdmin($conn);
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $numberOrders = 4 ?>
-                  <?php for ($i = 0; $i < $numberOrders; $i++) : ?>
-                    <?php $order = $orders[$i] ?>
+                  <?php $count = 1 ?>
+                  <?php foreach ($orders as $order) : ?>
+                    <?php
+                    if ($count > 4) break;
+                    $count++
+                    ?>
                     <tr>
-                      <td><?php echo $i + 1 ?></td>
                       <td><a href="./product-details.html"><?php echo $order->id ?></a></td>
                       <td class="productimgname">
                         <a class="product-img" href="productlist.html">
-                          <img src="<?php echo $order->imageUrl ?>" alt="product" />
+                          <img src="<?php echo $order->imageUrl ? $order->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="avatar" />
                         </a>
                         <a href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
                       </td>
@@ -99,7 +105,7 @@ $products = Product::getAllProductsForAdmin($conn);
                       </td>
                       <td><?php echo $order->createdAt ?></td>
                     </tr>
-                  <?php endfor; ?>
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>
@@ -111,10 +117,9 @@ $products = Product::getAllProductsForAdmin($conn);
           <div class="card-body">
             <h4 class="card-title">Recently Added Products</h4>
             <div class="table-responsive dataview">
-              <table class="table datatable">
+              <table class="table">
                 <thead>
                   <tr>
-                    <th>No</th>
                     <th>Product ID</th>
                     <th>Name</th>
                     <th>Category</th>
@@ -122,22 +127,24 @@ $products = Product::getAllProductsForAdmin($conn);
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $numberProducts = 4 ?>
-                  <?php for ($i = 0; $i < $numberProducts; $i++) : ?>
-                    <?php $product = $products[$i] ?>
+                  <?php $count = 1 ?>
+                  <?php foreach ($products as $product) : ?>
+                    <?php
+                    if ($count > 4) break;
+                    $count++
+                    ?>
                     <tr>
-                      <td><?php echo $i + 1 ?></td>
                       <td><a href="./product-details.html"><?php echo $product->id ?></a></td>
                       <td class="productimgname">
                         <a class="product-img" href="productlist.html">
-                          <img src="<?php echo $product->imageUrl ?>" alt="product" />
+                          <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
                         </a>
                         <a href="product-details.html"><?php echo $product->name ?></a>
                       </td>
                       <td><?php echo $product->categoryName ?></td>
                       <td><?php echo $product->createdAt ?></td>
                     </tr>
-                  <?php endfor; ?>
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>
@@ -149,10 +156,9 @@ $products = Product::getAllProductsForAdmin($conn);
           <div class="card-body">
             <h4 class="card-title">Recently Added Customers</h4>
             <div class="table-responsive dataview">
-              <table class="table datatable">
+              <table class="table">
                 <thead>
                   <tr>
-                    <th>No</th>
                     <th>Customer ID</th>
                     <th>Full Name</th>
                     <th>Phone</th>
@@ -162,62 +168,28 @@ $products = Product::getAllProductsForAdmin($conn);
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td><a href="./product-details.html">IT0001</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product2.jpg" alt="product" />
-                      </a>
-                      <a href="product-details.html">Thomas</a>
-                    </td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>12-12-2022</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td><a href="javascript:void(0);">IT0002</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product3.jpg" alt="product" />
-                      </a>
-                      <a href="productlist.html">Miss</a>
-                    </td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>25-11-2022</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td><a href="javascript:void(0);">IT0003</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product4.jpg" alt="product" />
-                      </a>
-                      <a href="productlist.html">Tommy</a>
-                    </td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>19-11-2022</td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td><a href="javascript:void(0);">IT0004</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product5.jpg" alt="product" />
-                      </a>
-                      <a href="productlist.html">Alexander</a>
-                    </td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>20-11-2022</td>
-                  </tr>
+                  <?php $count = 1 ?>
+                  <?php foreach ($customers as $customer) : ?>
+                    <?php
+                    if ($count > 4) break;
+                    $count++
+                    ?>
+                    <tr>
+                      <td><a href="./product-details.html"><?php echo $customer->id ?></a></td>
+                      <td class="productimgname">
+                        <a class="product-img" href="productlist.html">
+                          <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="product" />
+                        </a>
+                        <a href="product-details.html">
+                          <?php echo $customer->firstName . ' ' . $customer->lastName ?>
+                        </a>
+                      </td>
+                      <td><?php echo $customer->phoneNumber ?></td>
+                      <td><?php echo $customer->email ?></td>
+                      <td><?php echo $customer->address ?></td>
+                      <td><?php echo $customer->createdAt ?></td>
+                    </tr>
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>
@@ -229,13 +201,11 @@ $products = Product::getAllProductsForAdmin($conn);
           <div class="card-body">
             <h4 class="card-title">Recently Added Users</h4>
             <div class="table-responsive dataview">
-              <table class="table datatable">
+              <table class="table">
                 <thead>
                   <tr>
-                    <th>No</th>
                     <th>User ID</th>
                     <th>Full Name</th>
-                    <th>Username</th>
                     <th>Phone</th>
                     <th>Email</th>
                     <th>Address</th>
@@ -243,66 +213,32 @@ $products = Product::getAllProductsForAdmin($conn);
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td><a href="./product-details.html">IT0001</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product2.jpg" alt="product" />
-                      </a>
-                      <a href="product-details.html">Thomas</a>
-                    </td>
-                    <td>thomas123</td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>12-12-2022</td>
-                  </tr>
-                  <tr>
-                    <td>2</td>
-                    <td><a href="./product-details.html">IT0002</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product2.jpg" alt="product" />
-                      </a>
-                      <a href="product-details.html">Thomas</a>
-                    </td>
-                    <td>thomas123</td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>21-05-2022</td>
-                  </tr>
-                  <tr>
-                    <td>3</td>
-                    <td><a href="./product-details.html">IT0003</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product2.jpg" alt="product" />
-                      </a>
-                      <a href="product-details.html">Thomas</a>
-                    </td>
-                    <td>thomas123</td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>21-05-2022</td>
-                  </tr>
-                  <tr>
-                    <td>4</td>
-                    <td><a href="./product-details.html">IT0004</a></td>
-                    <td class="productimgname">
-                      <a class="product-img" href="productlist.html">
-                        <img src="assets/img/product/product2.jpg" alt="product" />
-                      </a>
-                      <a href="product-details.html">Thomas</a>
-                    </td>
-                    <td>thomas123</td>
-                    <td>123456789</td>
-                    <td>example@email.com</td>
-                    <td>USA</td>
-                    <td>21-05-2022</td>
-                  </tr>
+                  <?php $count = 1 ?>
+                  <?php foreach ($users as $user) : ?>
+                    <?php
+                    if ($count > 4) break;
+                    $count++
+                    ?>
+                    <tr>
+                      <td><a href="./product-details.html">
+                          <?php echo $user->id ?>
+                        </a></td>
+                      <td class="productimgname">
+                        <a class="product-img" href="productlist.html">
+                          <img src="
+                            <?php echo $user->imageUrl ? $user->imageUrl : './assets/imag/no-avatar-image.png' ?>
+                          " alt="product" />
+                        </a>
+                        <a href="product-details.html">
+                          <?php echo $user->firstName . ' ' . $user->lastName ?>
+                        </a>
+                      </td>
+                      <td><?php echo $user->phoneNumber ?></td>
+                      <td><?php echo $user->email ?></td>
+                      <td><?php echo $user->address ?></td>
+                      <td><?php echo $user->createdAt ?></td>
+                    </tr>
+                  <?php endforeach; ?>
                 </tbody>
               </table>
             </div>

@@ -1,6 +1,8 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/datafetcher.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+
 class Product extends DataFetcher
 {
 
@@ -129,13 +131,21 @@ class Product extends DataFetcher
         }
     }
 
-    public static function getAllProductsForAdmin($conn)
-    {
+    public static function getAllProductsForAdmin(
+        $conn,
+        $filter = [],
+        $sorter = ['id' => 'ASC'],
+        $paginator = []
+    ) {
         try {
+            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
             $query = "
                 SELECT p.id, p.imageUrl, p.name, c.id as categoryId, c.name as categoryName, p.createdAt, p.updatedAt
                 FROM product as p JOIN category as c on p.categoryId = c.id
-                ORDER BY p.createdAt DESC, p.updatedAt DESC
+                {$sqlConditions['where']}
+                {$sqlConditions['orderBy']}
+                {$sqlConditions['limit']}
+                {$sqlConditions['offset']}
             ";
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_OBJ);

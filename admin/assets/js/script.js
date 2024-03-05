@@ -84,7 +84,9 @@ $(document).ready(function () {
 		readURL(this)
 	})
 	if ($('.datatable').length > 0) {
-		$('.datatable').DataTable({ bFilter: false })
+		$('.datatable').DataTable({
+			bFilter: false
+		})
 	}
 	setTimeout(function () {
 		$('#global-loader')

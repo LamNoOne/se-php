@@ -2,6 +2,8 @@
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
 require_once dirname(__DIR__) . "/services/datafetcher.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+
 class Order extends DataFetcher
 {
     public $orderId;
@@ -296,25 +298,30 @@ class Order extends DataFetcher
         }
     }
 
-    public static function getAllOrders($conn)
-    {
+    public static function getAllOrders(
+        $conn,
+        $filter = [],
+        $sorter = ['id' => 'ASC'],
+        $paginator = []
+    ) {
         try {
-            // $table = "`order`";
-            // $dataFetcher = DataFetcher::getInstance($conn);
-            // $orders = $dataFetcher->fetchData($table, $queryData, "Order");
+            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
             $query = "
                 SELECT O.id, O.shipAddress, O.phoneNumber, OS.name as status, U.imageUrl, U.firstName, U.lastName, SUM(OD.quantity * OD.price) as 'total', O.createdAt, O.updatedAt
                 FROM `order` as O join user as U on O.`userId` = U.id
                     join orderdetail as OD on OD.orderId = O.id
                     join orderstatus as OS on OS.id = O.orderStatusId
+                {$sqlConditions['where']}
                 GROUP BY O.id
-                ORDER BY O.createdAt DESC, O.updatedAt DESC
+                {$sqlConditions['orderBy']}
+                {$sqlConditions['limit']}
+                {$sqlConditions['offset']}
             ";
-
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_OBJ);
-            $stmt->execute();
-
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             return Message::message(false, "Can not get orders: " . $e->getMessage());
