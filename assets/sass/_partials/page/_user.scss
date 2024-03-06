@@ -1,8 +1,10 @@
 #customer-manager {
-    margin-top: 8rem;
+    margin-top      : 7rem;
+    padding-top     : 2rem;
+    background-color: #f4f6f8;
 
     .img-user {
-        width: 5rem;
+        width : 5rem;
         height: 5rem;
     }
 
@@ -44,13 +46,13 @@
     }
 
     .order-item {
-        background-color: #f6fbfc;
+        background-color: #fff;
         border-radius   : 0.5rem;
         padding         : 1rem;
 
         img {
-            width : 7.5rem;
-            height: 7.5rem;
+            width : 4rem;
+            height: 4rem;
         }
 
         &__desc {
@@ -73,15 +75,23 @@
                 color      : #999;
             }
 
-            .btn-order-detail {
-                border          : none;
-                padding         : 0.5rem 1rem;
-                border-radius   : 0.25rem;
-                background-color: $primary_color;
-                color           : white;
-                font-size       : 0.875rem;
-                font-family     : Poppins;
+            .subtotal-price {
+                font-size  : 0.875rem;
+                font-family: Poppins;
+                font-weight: 600;
+                color      : red;
             }
+        }
+
+        .btn-order-detail {
+            border          : none;
+            width           : 8rem;
+            height          : 2.5rem;
+            border-radius   : 0.25rem;
+            background-color: $primary_color;
+            color           : white;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
         }
     }
 }

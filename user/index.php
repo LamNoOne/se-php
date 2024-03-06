@@ -12,16 +12,16 @@ Auth::requireLogin();
             <div class="col-2">
                 <ul class="list-unstyled customer-manager__btn-list">
                     <li>
-                        <button type="button" class="customer-manager__btn-list__item">
+                        <a href="<?php echo APP_URL; ?>/user/" class="customer-manager__btn-list__item text-decoration-none text-black">
                             <img class="object-fit-contain" src="../assets/img/person.svg" alt="account">
                             <span>Your Account</span>
-                        </button>
+                        </a>
                     </li>
                     <li>
-                        <button type="button" class="customer-manager__btn-list__item">
+                        <a href="<?php echo APP_URL; ?>/user/order.php" class="customer-manager__btn-list__item text-decoration-none text-black">
                             <img class="object-fit-contain" src="../assets/img/history.svg" alt="history">
                             <span>Order History</span>
-                        </button>
+                        </a>
                     </li>
                     <li>
                         <button type="button" class="customer-manager__btn-list__item">
