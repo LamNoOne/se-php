@@ -140,7 +140,7 @@ class Product extends DataFetcher
         try {
             $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
             $query = "
-                SELECT p.id, p.imageUrl, p.name, c.id as categoryId, c.name as categoryName, p.createdAt, p.updatedAt
+                SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
                 FROM product as p JOIN category as c on p.categoryId = c.id
                 {$sqlConditions['where']}
                 {$sqlConditions['orderBy']}

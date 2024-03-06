@@ -9,11 +9,11 @@ class Category extends Message
     public $createdAt;
     public $updatedAt;
 
-    public function __construct($id, $name, $description)
+    public function __construct($id = null, $name = null, $description = null)
     {
-        $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
+        $id = $id;
+        $name = $name;
+        $description = $description;
     }
 
     public static function createCategory($conn, $categoryData)
@@ -39,7 +39,7 @@ class Category extends Message
 
     public static function getAllCategories($conn)
     {
-        $query = "SELECT * FROM categories";
+        $query = "SELECT * FROM category";
         try {
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_CLASS, "Category");
