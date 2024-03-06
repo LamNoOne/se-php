@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="login-container p-5">
                         <h3 class="login-container__title mb-2">Customers Register</h3>
                         <p class="login-container__desc m-0">Please sign up to access our services:</p>
-                        <form action="" method="" id="form-register" class="login-form">
+                        <form action="actions/register.php" method="POST" id="form-register" class="login-form">
                             <fieldset>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="firstname" class="login-form__input__label">First Name:<span>&nbsp;*</span></label>
@@ -94,6 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="lastname" class="login-form__input__label">Last Name:<span>&nbsp;*</span></label>
                                     <input type="text" placeholder="Ex: William" name="lastName" id="lastname" class="login-form__input" />
+                                </div>
+                                <div class="login-form__input-container d-flex flex-column gap-1 my-3">
+                                    <label for="username" class="login-form__input__label">Username:<span>&nbsp;*</span></label>
+                                    <input type="text" placeholder="username" name="username" id="username" class="login-form__input" />
                                 </div>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="email-register" class="login-form__input__label">Email<span>&nbsp;*</span></label>
@@ -204,58 +208,89 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         });
 
         formRegister.validate({
-        rules: {
-            firstName: {
-                required: true,
-                minlength: 2,
+            rules: {
+                firstName: {
+                    required: true,
+                    minlength: 2,
+                },
+                lastName: {
+                    required: true,
+                    minlength: 2,
+                },
+                username: {
+                    required: true,
+                    minlength: 6,
+                },
+                email: {
+                    required: true,
+                    valid_email: true,
+                },
+                password: {
+                    required: true,
+                    minlength: 6,
+                },
+                confirm_password: {
+                    required: true,
+                    minlength: 6,
+                    equalTo: "#password-register",
+                },
             },
-            lastName: {
-                required: true,
-                minlength: 2,
+            messages: {
+                firstName: {
+                    required: "Please enter your first name",
+                    minlength: "Your first name must consist of at least 2 characters",
+                },
+                lastName: {
+                    required: "Please enter your last name",
+                    minlength: "Your last name must consist of at least 2 characters",
+                },
+                username: {
+                    required: "Please enter your username",
+                    minlength: "Your username must consist of at least 6 characters",
+                },
+                email: {
+                    required: "Please enter your email",
+                    valid_email: "Please enter a valid email address!"
+                },
+                password: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 6 characters long",
+                },
+                confirm_password: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 6 characters long",
+                    equalTo: "Please enter the same password as above",
+                },
             },
-            email: {
-                required: true,
-                valid_email: true,
-            },
-            password: {
-                required: true,
-                minlength: 6,
-            },
-            confirm_password: {
-                required: true,
-                minlength: 6,
-                equalTo: "#password-register",
-            },
-        },
-        messages: {
-            firstName: {
-                required: "Please enter your first name",
-                minlength:
-                    "Your first name must consist of at least 2 characters",
-            },
-            lastName: {
-                required: "Please enter your last name",
-                minlength:
-                    "Your last name must consist of at least 2 characters",
-            },
-            email: {
-                required: "Please enter your email",
-                valid_email: "Please enter a valid email address!"
-            },
-            password: {
-                required: "Please provide a password",
-                minlength: "Your password must be at least 6 characters long",
-            },
-            confirm_password: {
-                required: "Please provide a password",
-                minlength: "Your password must be at least 6 characters long",
-                equalTo: "Please enter the same password as above",
-            },
-        },
-    });
+        });
 
-        formRegister.submit(function(e) {
+        formRegister.submit(async function(e) {
             e.preventDefault();
+            const formData = {
+                firstName: $("#firstname").val(),
+                lastName: $("#lastname").val(),
+                username: $("#username").val(),
+                email: $("#email-register").val(),
+                password: $("#password-register").val(),
+            }
+
+            try {
+                const registerResponse = await $.ajax({
+                    method: "POST",
+                    url: "actions/register.php",
+                    data: formData,
+                })
+
+                const {
+                    status,
+                    message
+                } = JSON.parse(registerResponse);
+
+                status ? toastr.success(message, "Register User") :
+                    toastr.warning(message, "User registration failed");
+            } catch (error) {
+                toastr.error(message, "Registration error");
+            }
         })
     })
 </script>

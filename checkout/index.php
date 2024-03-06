@@ -21,6 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
     $productSelectedCheckout = Product::getProductById($conn, $productId);
 }
 
+// print_r($selectedProductsCart);
+
 ?>
 <div id="main-content" class="main-content">
     <div id="checkout-container">
@@ -216,9 +218,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
             // get product list
             const productList = new Array();
             <?php
+            if(empty($productSelectedCheckout)) :
             foreach ($_SESSION['selected_products'] as $product) : ?>
                 productList.push('<?php echo $product ?>');
-            <?php endforeach; ?>
+            <?php endforeach;
+                endif;
+            ?>
+
+            console.log(productList);
 
             // console.log(productList);
             const data = {
@@ -260,7 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
 
             // get product list
             const productCheckout = {
-                productId: "<?php echo $productId ?>",
+                productId: "<?php echo isset($productId) ? $productId : 0?>",
                 productQuantity: "<?php echo isset($productQuantity) ? $productQuantity : 0 ?>"
             }
 
