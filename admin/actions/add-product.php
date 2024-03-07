@@ -4,7 +4,6 @@ session_start();
 require_once dirname(dirname(__DIR__)) . '/inc/init.php';
 $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
 require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
-require_once dirname(dirname(__DIR__)) . '/uploadfile.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $categoryId = $_POST['category'];
@@ -21,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $price = $_POST['price'];
   $stockQuantity = $_POST['quantity'];
 
-  $uploadResult = upload_file('image');
+  $uploadResult = UploadFile::process('image');
   if ($uploadResult['status']) {
     $newProduct = new Product(
       $categoryId,
@@ -51,7 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       exit();
     }
   } else {
-    throwStatusMessage($uploadResult);
+    throwStatusMessage([
+      'status' => false,
+      'message' => 'Image is required'
+    ]);
     exit();
   }
 }

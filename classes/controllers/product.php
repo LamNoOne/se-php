@@ -80,7 +80,7 @@ class Product extends DataFetcher
     {
         try {
             if (!$this->validate()) {
-                throw new InvalidArgumentException('Invalid arguments');
+                throw new InvalidArgumentException('Missing required fields');
             }
 
             $insert = "

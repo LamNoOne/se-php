@@ -1,6 +1,5 @@
 <?php
 require_once dirname(__DIR__) . '/inc/init.php';
-require_once dirname(__DIR__) . '/uploadfile.php';
 require_once dirname(__DIR__) . '/classes/controllers/product.php';
 if (!isset($conn)) {
   $conn = require_once dirname(__DIR__) . '/inc/db.php';
@@ -132,7 +131,7 @@ $categories = Category::getAllCategories($conn);
                   </div>
                   <div class="col-lg-8">
                     <div class="preview-image d-flex justify-content-center">
-                      <img src="/uploads/design-patterns-1.png" alt="">
+                      <img src="" alt="">
                     </div>
                   </div>
                 </div>
@@ -153,47 +152,45 @@ $categories = Category::getAllCategories($conn);
 
 <script defer>
   $(document).ready(function() {
-    $('#form').validate({
-      rules: {
-        name: {
-          required: true
-        },
-        category: {
-          required: true
-        },
-        price: {
-          required: true,
-          number: true
-        },
-        quantity: {
-          required: true,
-          number: true
-        },
-        image: {
-          required: true
-        },
-        ram: {
-          number: true
-        },
-        storageCapacity: {
-          number: true
-        },
-        weight: {
-          number: true
-        },
-        batteryCapacity: {
-          number: true
-        }
-      },
-    })
+    // $('#form').validate({
+    //   rules: {
+    //     name: {
+    //       required: true
+    //     },
+    //     category: {
+    //       required: true
+    //     },
+    //     price: {
+    //       required: true,
+    //       number: true
+    //     },
+    //     quantity: {
+    //       required: true,
+    //       number: true
+    //     },
+    //     image: {
+    //       required: true
+    //     },
+    //     ram: {
+    //       number: true
+    //     },
+    //     storageCapacity: {
+    //       number: true
+    //     },
+    //     weight: {
+    //       number: true
+    //     },
+    //     batteryCapacity: {
+    //       number: true
+    //     }
+    //   },
+    // })
 
 
     $('#form').submit(async function(event) {
       try {
         event.preventDefault()
-        const validForm = $('#form').valid()
-        console.log(validForm);
-        if (validForm) {
+        if ($('#form').valid()) {
           const formData = new FormData($(this)[0])
 
           const response = await $.ajax({
@@ -212,6 +209,7 @@ $categories = Category::getAllCategories($conn);
           }
         }
       } catch (error) {
+        console.log(error);
         toastr.error('Something went wrong')
       }
     })
