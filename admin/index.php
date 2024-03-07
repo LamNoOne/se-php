@@ -21,7 +21,7 @@ $users = User::getAllUsers($conn, [], $sorter);
   <div class="content">
     <div class="row">
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count">
+        <div class="dash-count box-shadow">
           <div class="dash-counts">
             <h4><?php echo count($orders) ?></h4>
             <h5>Orders</h5>
@@ -32,7 +32,7 @@ $users = User::getAllUsers($conn, [], $sorter);
         </div>
       </div>
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das1">
+        <div class="dash-count das1 box-shadow">
           <div class="dash-counts">
             <h4><?php echo count($products) ?></h4>
             <h5>Products</h5>
@@ -43,7 +43,7 @@ $users = User::getAllUsers($conn, [], $sorter);
         </div>
       </div>
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das2">
+        <div class="dash-count das2 box-shadow">
           <div class="dash-counts">
             <h4><?php echo count($customers) ?></h4>
             <h5>Customers</h5>
@@ -54,7 +54,7 @@ $users = User::getAllUsers($conn, [], $sorter);
         </div>
       </div>
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
-        <div class="dash-count das3">
+        <div class="dash-count das3 box-shadow">
           <div class="dash-counts">
             <h4><?php echo count($users) ?></h4>
             <h5>Users</h5>

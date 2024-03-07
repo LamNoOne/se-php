@@ -11,11 +11,12 @@ $categories = Category::getAllCategories($conn);
 
 <?php require_once "./inc/components/header.php"; ?>
 
-<div class="page-wrapper">
+<div class="page-wrapper" style="top: 21px">
   <div class="content">
     <div class="page-header">
       <div class="page-title">
         <h3>Add Product</h3>
+        <h4>Create new product</h4>
       </div>
     </div>
 
@@ -128,7 +129,7 @@ $categories = Category::getAllCategories($conn);
                       <div class="icon">
                         <i class="fas fa-cloud-upload-alt"></i>
                       </div>
-                      <p class="text">No File Chosen, yet!</p>
+                      <p class="text">No file chosen, yet!</p>
                     </div>
                     <div class="cancel-btn">
                       <i class="fas fa-times"></i>

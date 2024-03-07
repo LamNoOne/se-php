@@ -89,11 +89,8 @@ $(document).ready(function () {
 		})
 	}
 	setTimeout(function () {
-		$('#global-loader')
-		setTimeout(function () {
-			$('#global-loader').fadeOut('slow')
-		}, 50)
-	}, 50)
+		$('#global-loader').fadeOut('slow')
+	}, 0)
 	if ($('.datetimepicker').length > 0) {
 		$('.datetimepicker').datetimepicker({
 			format: 'DD-MM-YYYY',

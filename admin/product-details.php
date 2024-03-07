@@ -32,7 +32,11 @@ if (!$product) {
             <div class="productdetails">
               <ul class="product-bar">
                 <li>
-                  <h4>Product</h4>
+                  <h4>ID</h4>
+                  <h6><?php echo $product->id ?></h6>
+                </li>
+                <li>
+                  <h4>Name</h4>
                   <h6><?php echo $product->name ?></h6>
                 </li>
                 <li>

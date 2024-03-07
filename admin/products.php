@@ -120,6 +120,7 @@ $products = Product::getAllProductsForAdmin($conn);
                   </label>
                 </th>
                 <th>No</th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
@@ -139,6 +140,7 @@ $products = Product::getAllProductsForAdmin($conn);
                     </label>
                   </td>
                   <td><?php echo $count++ ?></td>
+                  <td><?php echo $product->id ?></td>
                   <td class="productimgname">
                     <a href="<?php echo "product-details.php?id=$product->id" ?>" class="product-img">
                       <img src="<?php echo $product->imageUrl ?>" alt="Product image" />
