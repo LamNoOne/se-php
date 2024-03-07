@@ -20,12 +20,12 @@ if (!$product) {
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h4>Product Details</h4>
-        <h6>Full details of a product</h6>
+        <h3>Product Details</h3>
+        <h4>Full details of a product</h4>
       </div>
     </div>
 
-    <div class="row">
+    <div class="row g-5">
       <div class="col-lg-8 col-sm-12">
         <div class="card">
           <div class="card-body">
@@ -89,10 +89,8 @@ if (!$product) {
         </div>
       </div>
       <div class="col-lg-4 col-sm-12">
-        <div class="card">
-          <div class="card-body">
-            <img src="<?php echo $product->imageUrl ?>" alt="img" />
-          </div>
+        <div class="box-shadow">
+          <img style="width: 100%; object-fit: cover;" src="<?php echo $product->imageUrl ?>" alt="img" />
         </div>
       </div>
     </div>

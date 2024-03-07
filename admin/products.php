@@ -14,11 +14,11 @@ $products = Product::getAllProductsForAdmin($conn);
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h4>Product List</h4>
-        <h6>Manage your products</h6>
+        <h3>Product List</h3>
+        <h4>Manage your products</h4>
       </div>
       <div class="page-btn">
-        <a href="add-product.php" class="btn btn-added"><img src="assets/img/icons/plus.svg" alt="img" class="me-1" />Add New Product</a>
+        <a href="add-product.php" class="btn btn-added box-shadow"><img src="assets/img/icons/plus.svg" alt="img" class="me-1" />Add New Product</a>
       </div>
     </div>
 
@@ -143,7 +143,7 @@ $products = Product::getAllProductsForAdmin($conn);
                     <a href="<?php echo "product-details.php?id=$product->id" ?>" class="product-img">
                       <img src="<?php echo $product->imageUrl ?>" alt="Product image" />
                     </a>
-                    <a href="<?php echo "product-details.php?id=$product->id" ?>">
+                    <a class="text-linear" href="<?php echo "product-details.php?id=$product->id" ?>">
                       <?php echo $product->name ?>
                     </a>
                   </td>

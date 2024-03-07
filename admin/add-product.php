@@ -15,7 +15,7 @@ $categories = Category::getAllCategories($conn);
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h4>Add Product</h4>
+        <h3>Add Product</h3>
       </div>
     </div>
 
@@ -141,10 +141,10 @@ $categories = Category::getAllCategories($conn);
               </div>
             </div>
           </div>
-      </div>
-      <div class="col-lg-12 mt-4">
-        <button type="submit" class="btn btn-submit me-2">Submit</button>
-        <button class="btn btn-cancel">Cancel</button>
+          <div class="col-lg-12 mt-5">
+            <button type="submit" class="btn btn-submit me-2">Submit</button>
+            <button class="btn btn-cancel">Cancel</button>
+          </div>
       </div>
     </div>
     </form>

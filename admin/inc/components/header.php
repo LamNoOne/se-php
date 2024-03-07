@@ -87,7 +87,10 @@
                 <i class="me-2" data-feather="user"></i> My Profile</a>
               <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
               <hr class="m-0" />
-              <a class="dropdown-item logout pb-0" href="signin.html"><img src="assets/img/icons/log-out.svg" class="me-2" alt="img" />Logout</a>
+              <a class="dropdown-item logout" href="signin.html">
+                <i class="me-2 fas fa-sign-out-alt"></i>
+                Logout
+              </a>
             </div>
           </div>
         </li>
@@ -117,10 +120,10 @@
                   Product</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a href="products.php">Product List</a></li>
-                <li><a href="add-product.php">Add Product</a></li>
-                <li><a href="categories.html">Category List</a></li>
-                <li><a href="add-category.html">Add Category</a></li>
+                <li><a class="text-linear" href="products.php">Product List</a></li>
+                <li><a class="text-linear" href="add-product.php">Add Product</a></li>
+                <li><a class="text-linear" href="categories.html">Category List</a></li>
+                <li><a class="text-linear" href="add-category.html">Add Category</a></li>
               </ul>
             </li>
             <li class="submenu">
@@ -128,7 +131,7 @@
                   Sales</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a href="orders.html">Order List</a></li>
+                <li><a class="text-linear" href="orders.html">Order List</a></li>
               </ul>
             </li>
             <li class="submenu">
@@ -136,10 +139,10 @@
                   People</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a href="customers.html">Customer List</a></li>
-                <li><a href="add-customer.html">Add Customer</a></li>
-                <li><a href="users.html">User List</a></li>
-                <li><a href="add-user.html">Add User</a></li>
+                <li><a class="text-linear" href="customers.html">Customer List</a></li>
+                <li><a class="text-linear" href="add-customer.html">Add Customer</a></li>
+                <li><a class="text-linear" href="users.html">User List</a></li>
+                <li><a class="text-linear" href="add-user.html">Add User</a></li>
               </ul>
             </li>
           </ul>

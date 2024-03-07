@@ -1,2 +1,2 @@
-ErrorDocument 404 /admin/404.php
-ErrorDocument 500 /admin/500.php
+ErrorDocument 404 /se-php/admin/404.php
+ErrorDocument 500 /se-php/admin/500.php
