@@ -1696,7 +1696,9 @@ body {
       line-height: 1.225rem; }
 
 #customer-manager {
-  margin-top: 8rem; }
+  margin-top: 7rem;
+  padding-top: 2rem;
+  background-color: #f4f6f8; }
   #customer-manager .img-user {
     width: 5rem;
     height: 5rem; }
@@ -1728,12 +1730,12 @@ body {
       #customer-manager .customer-manager__btn-list__item:hover img {
         filter: invert(16%) sepia(94%) saturate(4747%) hue-rotate(222deg) brightness(105%) contrast(101%); }
   #customer-manager .order-item {
-    background-color: #f6fbfc;
+    background-color: #fff;
     border-radius: 0.5rem;
     padding: 1rem; }
     #customer-manager .order-item img {
-      width: 7.5rem;
-      height: 7.5rem; }
+      width: 4rem;
+      height: 4rem; }
     #customer-manager .order-item__desc {
       font-size: 0.875rem;
       font-family: Poppins; }
@@ -1747,9 +1749,15 @@ body {
       font-family: Poppins;
       font-weight: normal;
       color: #999; }
-    #customer-manager .order-item__time .btn-order-detail {
+    #customer-manager .order-item__time .subtotal-price {
+      font-size: 0.875rem;
+      font-family: Poppins;
+      font-weight: 600;
+      color: red; }
+    #customer-manager .order-item .btn-order-detail {
       border: none;
-      padding: 0.5rem 1rem;
+      width: 8rem;
+      height: 2.5rem;
       border-radius: 0.25rem;
       background-color: #0055ff;
       color: white;

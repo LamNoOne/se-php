@@ -230,41 +230,44 @@ class Order extends DataFetcher
     }
 
     // chua xu ly xong
-    public static function getOrderByUserId($conn, $userId)
+    public static function getOrderByUserId($conn, $userId, $limit = 20, $offset = 0)
     {
         try {
             $queryOrder = [
-                'fields' => 'O.id, O.orderStatusId, O.shipAddress, O.phoneNumber, OS.name',
+                'fields' => 'O.id, P.transaction_id, O.orderStatusId, O.shipAddress, O.phoneNumber, OS.name, O.createdAt, O.updatedAt',
                 'joins' => [
                     ['type' => 'INNER', 'table' => '`user` AS U', 'on' => 'U.id = O.userId'],
                     ['type' => 'INNER', 'table' => '`orderstatus` AS OS', 'on' => 'OS.id = O.orderStatusId'],
+                    ['type' => 'INNER', 'table' => '`payment` AS P', 'on' => 'P.order_id = O.id'],
                 ],
                 'filters' => [
                     ['column' => 'U.id', 'operator' => NULL, 'alias' => 'userId', 'value' => $userId]
                 ],
-                'limit' => 20,
-                'offset' => 0,
+                'orderBy' => 'O.createdAt DESC',
+                'limit' => $limit,
+                'offset' => $offset,
             ];
 
             $dataFetcher = new DataFetcher($conn);
             $orders = $dataFetcher->fetchData("`order` AS O", $queryOrder);
             // get order id from order
             // loop through order get order details
+            $_tmpOrders = [...$orders['data']];
+            $_orders = array();
+
+            foreach ($_tmpOrders as $singleOrder) {
+                $orderId = $singleOrder->id;
+                $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
+                if (!$orderDetailData['status'])
+                    throw new Exception("Order detail not found");
+                $orderDetail = $orderDetailData['data'];
+                $singleOrder->orderDetail = $orderDetail;
+                $_orders = [...$_orders, $singleOrder];
+            }
+
+            $orders = [...$orders, 'data' => $_orders];
 
             return $orders;
-            // $_orders = array();
-
-            // foreach ($orders as $singleOrder) {
-            //     $orderId = $singleOrder->id;
-            //     $orderDetailData = static::getOrderDetailByUser($conn, $orderId);
-            //     if (!$orderDetailData['status'])
-            //         throw new Exception("Order detail not found");
-            //     $orderDetail = $orderDetailData['data'];
-            //     $singleOrder->orderDetail = $orderDetail;
-            //     $_orders = [...$_orders, $singleOrder];
-            // }
-
-            // return Message::messageData(true, 'Get order successfully', $_orders);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
@@ -301,7 +304,9 @@ class Order extends DataFetcher
                     OT.name as `orderStatus`,
                     P.name,
                     P.description,
-                    P.imageUrl
+                    P.imageUrl,
+                    OD.createdAt,
+                    OD.updatedAt
                     FROM 
                     `order` AS O
                     JOIN

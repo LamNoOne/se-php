@@ -108,15 +108,14 @@ if (!empty($_GET)) {
                                 <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '5') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
                                 <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '6') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
                                 <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '7') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '8') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=8">Product</a></li>
                             </ul>
                         </div>
 
                         <div class="price-filter py-3">
                             <h6 class="filter-title">Price</h6>
-                            <form action="" method="" class="d-flex gap-1">
+                            <form action="" method="" class="d-flex flex-column flex-xl-row gap-1">
                                 <input class="price-filter--min" placeholder="Min" type="number" name="min" id="min-number" min="0" pattern="[0-9]*" />
-                                <span>-</span>
+                                <span class="d-none d-xl-block">-</span>
                                 <input class="price-filter--max" placeholder="Max" type="number" name="max" id="max-number" min="0" pattern="[0-9]*" />
                                 <button class="price-filter__btn-price" type="button">
                                     <i class="fa-solid fa-play"></i>
@@ -324,6 +323,13 @@ if (!empty($_GET)) {
     // Select all input with type checkbox
     const inputChecks = document.querySelectorAll("input[type=checkbox]");
 
+    // Select button filter price
+    const btnFilterPrice = document.querySelector(".price-filter__btn-price");
+
+    // Min / Max input filter price
+    const inputMinPrice = document.querySelector("#min-number");
+    const inputMaxPrice = document.querySelector("#max-number");
+
     // Construct the base URL
     const baseUrl = "<?php echo APP_URL; ?>/product/";
 
@@ -366,6 +372,11 @@ if (!empty($_GET)) {
 
         console.log(selector)
 
+        if (selector.hasOwnProperty("price")) {
+            inputMinPrice.value = selector.price[0];
+            inputMaxPrice.value = selector.price[1];
+        }
+
         // Activate input elements depend on query URL string
         inputChecks.forEach(inputCheck => {
             Object.keys(selector).forEach(key => {
@@ -377,6 +388,36 @@ if (!empty($_GET)) {
     }
 
     /** Fix refresh page  */
+
+    // Filter with price
+    btnFilterPrice.addEventListener("click", (event) => {
+        event.preventDefault();
+        const min = parseInt(inputMinPrice.value);
+        const max = parseInt(inputMaxPrice.value);
+
+        if (isNaN(min) || isNaN(max)) {
+            return;
+        }
+
+        if (min > max) {
+            if (selector.hasOwnProperty('price')) {
+                delete selector.price;
+                navigateTo(baseUrl, selector);
+            }
+            return;
+        }
+
+        if (min === 0 && max === 0) {
+            if (selector.hasOwnProperty('price')) {
+                delete selector.price;
+                navigateTo(baseUrl, selector);
+            }
+            return;
+        }
+
+        selector['price'] = [min, max];
+        navigateTo(baseUrl, selector);
+    })
 
     // Add click event listener to each input container
     // Create query URL string and navigate to output
