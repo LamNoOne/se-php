@@ -152,39 +152,39 @@ $categories = Category::getAllCategories($conn);
 
 <script defer>
   $(document).ready(function() {
-    // $('#form').validate({
-    //   rules: {
-    //     name: {
-    //       required: true
-    //     },
-    //     category: {
-    //       required: true
-    //     },
-    //     price: {
-    //       required: true,
-    //       number: true
-    //     },
-    //     quantity: {
-    //       required: true,
-    //       number: true
-    //     },
-    //     image: {
-    //       required: true
-    //     },
-    //     ram: {
-    //       number: true
-    //     },
-    //     storageCapacity: {
-    //       number: true
-    //     },
-    //     weight: {
-    //       number: true
-    //     },
-    //     batteryCapacity: {
-    //       number: true
-    //     }
-    //   },
-    // })
+    $('#form').validate({
+      rules: {
+        name: {
+          required: true
+        },
+        category: {
+          required: true
+        },
+        price: {
+          required: true,
+          number: true
+        },
+        quantity: {
+          required: true,
+          number: true
+        },
+        image: {
+          required: true
+        },
+        ram: {
+          number: true
+        },
+        storageCapacity: {
+          number: true
+        },
+        weight: {
+          number: true
+        },
+        batteryCapacity: {
+          number: true
+        }
+      },
+    })
 
 
     $('#form').submit(async function(event) {
