@@ -57,7 +57,7 @@ if (!empty($_GET)) {
 
         // print_r($selectors);
         // Get product object
-        $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+        $selectedProducts = Product::getAllProductsByCondition($conn, $selectors);
 
         // Get all products
         $allProducts = $selectedProducts['data'];

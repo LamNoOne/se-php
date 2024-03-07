@@ -394,12 +394,12 @@ body {
 #header .main-header .search-bar-container {
   position: relative;
   height: 100%;
-  margin-right: -12px;
   display: flex;
   align-items: center; }
   #header .main-header .search-bar-container .search-box {
     position: absolute;
-    top: 4rem;
+    top: 3.6rem;
+    left: 0;
     width: 100%;
     height: fit-content;
     border-radius: 0.25rem;
@@ -442,67 +442,14 @@ body {
           color: #555;
           font-weight: 500;
           text-decoration: line-through; }
-  #header .main-header .search-bar-container .search {
-    align-self: center;
-    position: absolute;
+  #header .main-header .search-bar-container .search-box-layout {
+    z-index: -1;
+    background-color: rgba(0, 0, 0, 0.15);
+    position: fixed;
+    top: 0;
+    left: 0;
     right: 0;
-    width: 50px;
-    height: 50px;
-    background-color: #f5f7ff;
-    border-radius: 4rem;
-    padding: 10px;
-    overflow: hidden;
-    transition: width 0.5s cubic-bezier(0.9, 0, 0.3, 0.9); }
-    #header .main-header .search-bar-container .search__input {
-      border: none;
-      outline: none;
-      width: calc(100% - 64px);
-      height: 100%;
-      color: #757575;
-      background-color: #f5f7ff;
-      border-radius: 4rem;
-      padding-left: 14px;
-      font-size: 0.875rem;
-      font-weight: 500;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 1.5s; }
-      #header .main-header .search-bar-container .search__input:-webkit-autofill {
-        box-shadow: 0 0 0 100px white inset; }
-    #header .main-header .search-bar-container .search__button {
-      width: 30px;
-      height: 30px;
-      background-color: rgba(0, 85, 255, 0.3);
-      border-radius: 50%;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      right: 10px;
-      margin: auto;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: transform 0.6s cubic-bezier(0.9, 0, 0.3, 0.9); }
-    #header .main-header .search-bar-container .search__icon, #header .main-header .search-bar-container .search__close {
-      color: rgba(0, 0, 0, 0.8);
-      font-size: 1rem;
-      position: absolute;
-      transition: opacity 0.5s cubic-bezier(0.9, 0, 0.3, 0.9); }
-    #header .main-header .search-bar-container .search__icon {
-      opacity: 1; }
-    #header .main-header .search-bar-container .search__close {
-      opacity: 0; }
-  #header .main-header .search-bar-container .show-search {
-    width: 100%; }
-    #header .main-header .search-bar-container .show-search .search__input {
-      opacity: 1;
-      pointer-events: initial; }
-    #header .main-header .search-bar-container .show-search .search__button {
-      transform: rotate(90deg); }
-    #header .main-header .search-bar-container .show-search .search__icon {
-      opacity: 0; }
-    #header .main-header .search-bar-container .show-search .search__close {
-      opacity: 1; }
+    bottom: 0; }
 
 #header {
   position: fixed;

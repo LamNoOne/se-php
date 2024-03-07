@@ -190,7 +190,7 @@ class Product extends DataFetcher
                 $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
             }
 
-            $stmt->setFetchMode(PDO::FETCH_INTO, new Product());
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException($stmt->errorInfo());
             }
@@ -225,7 +225,7 @@ class Product extends DataFetcher
      * @param mixed $conn
      * @param string | int $categoryId
      */
-    public static function getProductsByCategory($conn, $queryData = [])
+    public static function getAllProductsByCondition($conn, $queryData = [])
     {
         try {
             $table = "product";
