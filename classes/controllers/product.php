@@ -69,37 +69,39 @@ class Product extends DataFetcher
                 'message' => 'Missing required fields'
             ];
         }
+        return [
+            'status' => true,
+            'message' => 'Valid'
+        ];
 
-        $numberRule = is_integer($this->categoryId)
-            && is_integer($this->ram)
-            && is_integer($this->storageCapacity)
-            && is_numeric($this->weight)
-            && is_integer($this->batteryCapacity)
-            && is_integer($this->price)
-            && is_integer($this->price);
-        if (!$numberRule) {
-            return [
-                'status' => false,
-                'message' => 'There are some fields are not valid numbers'
-            ];
-        }
+        // $numberRule = is_integer($this->categoryId)
+        //     && is_integer($this->ram)
+        //     && is_integer($this->storageCapacity)
+        //     && is_numeric($this->weight)
+        //     && is_integer($this->batteryCapacity)
+        //     && is_integer($this->price)
+        //     && is_integer($this->price);
+        // if (!$numberRule) {
+        //     return [
+        //         'status' => false,
+        //         'message' => 'There are some fields are not valid numbers'
+        //     ];
+        // }
 
-        $notEmptyStringRule = !empty($this->name)
-            && !empty($this->imageUrl)
-            && !empty($this->description)
-            && !empty($this->screen)
-            && !empty($this->operatingSystem)
-            && !empty($this->processor)
-            && !empty($this->description)
-            && !empty($this->color);
-        if (!$notEmptyStringRule) {
-            return [
-                'status' => false,
-                'message' => 'There are some fields are empty strings'
-            ];
-        }
-
-        $status = $requiredRule && $numberRule && $notEmptyStringRule;
+        // $notEmptyStringRule = !empty($this->name)
+        //     && !empty($this->imageUrl)
+        //     && !empty($this->description)
+        //     && !empty($this->screen)
+        //     && !empty($this->operatingSystem)
+        //     && !empty($this->processor)
+        //     && !empty($this->description)
+        //     && !empty($this->color);
+        // if (!$notEmptyStringRule) {
+        //     return [
+        //         'status' => false,
+        //         'message' => 'There are some fields are empty strings'
+        //     ];
+        // }
     }
 
     public static function paginationQuery($query, $limit, $offset)

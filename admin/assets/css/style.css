@@ -7473,3 +7473,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	cursor: pointer;
 	letter-spacing: 1px;
 }
+
+.preview-image-wrapper .input-file {
+	display: none;
+}

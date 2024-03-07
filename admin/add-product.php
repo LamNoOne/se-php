@@ -213,6 +213,7 @@ $categories = Category::getAllCategories($conn);
           }
         }
       } catch (error) {
+        console.log(error);
         toastr.error('Something went wrong')
       }
     })

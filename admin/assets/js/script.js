@@ -597,6 +597,17 @@ $(document).ready(function () {
 			'.preview-image-wrapper .preview-image'
 		)
 
+		if (
+			!inputFile ||
+			!customBtn ||
+			!cancelBtn ||
+			!image ||
+			!fileName ||
+			!previewImage
+		) {
+			return
+		}
+
 		customBtn.onclick = function (event) {
 			event.preventDefault()
 			inputFile.click()
