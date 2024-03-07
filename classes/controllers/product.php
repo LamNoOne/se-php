@@ -106,7 +106,7 @@ class Product extends DataFetcher
             ]);
 
             if (!$status) {
-                throw new InvalidArgumentException('Invalid arguments');
+                throw new InvalidArgumentException('Add product failed');
             }
 
             return Message::message(true, 'Add product successfully');
