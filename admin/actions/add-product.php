@@ -2,8 +2,9 @@
 session_start();
 
 require_once dirname(dirname(__DIR__)) . '/inc/init.php';
-require_once dirname(dirname(__DIR__)) . '/uploadfile.php';
 $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
+require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
+require_once dirname(dirname(__DIR__)) . '/uploadfile.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $categoryId = $_POST['category'];
@@ -45,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       throwStatusMessage($response);
       exit();
     } else {
+      deleteFileByURL($uploadResult['url']);
       throwStatusMessage($createProductResult);
       exit();
     }

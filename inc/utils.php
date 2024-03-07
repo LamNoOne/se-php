@@ -69,3 +69,9 @@ function generateSQLConditions(
         'offset' => $offsetCondition
     ];
 }
+
+function deleteFileByURL($url)
+{
+    $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];
+    return unlink($pathToDelete);
+}
