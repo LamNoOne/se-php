@@ -247,14 +247,104 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                     <div class="col" id="main-header-mechanism">
                         <div class="main-header__mechanism h-100 d-flex gap-4 align-items-center justify-content-end">
                             <div class="search-bar-container flex-grow-1">
-                                <form action="" class="search" id="search-bar">
-                                    <input type="text" placeholder="Type something..." name="search" class="search__input" />
-
-                                    <div class="search__button" id="search-button">
-                                        <i class="fa-solid fa-magnifying-glass search__icon"></i>
-                                        <i class="fa-solid fa-xmark search__close"></i>
-                                    </div>
+                                <form class="input-group d-flex">
+                                    <input type="search" id="input-search" class="form-control" style="border-radius: 0.375rem;">
+                                    <button type="submit" class="btn btn-primary" style="position: absolute; right: 0; top: 0; z-index: 9999; bottom: 0;">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </form>
+                                <div class="search-box d-none">
+                                    <p class="title-box">Suggested products</p>
+                                    <ul class="product-box list-unstyled">
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <p class="product-name m-0">Smart phone iphone SX max pro 16</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <p class="product-name m-0">Smart phone iphone SX max pro 16</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <p class="product-name m-0">Smart phone iphone SX max pro 16</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <p class="product-name m-0">Smart phone iphone SX max pro 16</p>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <p class="product-name m-0">Smart phone iphone SX max pro 16</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <ul class="product-box list-unstyled">
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="product" class="product-image" />
+                                                <div class="product-info d-flex flex-column justify-content-center">
+                                                    <p class="product-title m-0">I Phone 12 128GB | VN/A</p>
+                                                    <div class="product-price d-flex justify-content-start">
+                                                        <span class="product-new-price">30.029 USD</span>
+                                                        <span class="product-old-price">30.029 USD</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="product" class="product-image" />
+                                                <div class="product-info d-flex flex-column justify-content-center">
+                                                    <p class="product-title m-0">I Phone 12 128GB | VN/A</p>
+                                                    <div class="product-price d-flex justify-content-start">
+                                                        <span class="product-new-price">30.029 USD</span>
+                                                        <span class="product-old-price">30.029 USD</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="product" class="product-image" />
+                                                <div class="product-info d-flex flex-column justify-content-center">
+                                                    <p class="product-title m-0">I Phone 12 128GB | VN/A</p>
+                                                    <div class="product-price d-flex justify-content-start">
+                                                        <span class="product-new-price">30.029 USD</span>
+                                                        <span class="product-old-price">30.029 USD</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="product" class="product-image" />
+                                                <div class="product-info d-flex flex-column justify-content-center">
+                                                    <p class="product-title m-0">I Phone 12 128GB | VN/A</p>
+                                                    <div class="product-price d-flex justify-content-start">
+                                                        <span class="product-new-price">30.029 USD</span>
+                                                        <span class="product-old-price">30.029 USD</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="d-flex justify-content-start product-container">
+                                                <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="product" class="product-image" />
+                                                <div class="product-info d-flex flex-column justify-content-center">
+                                                    <p class="product-title m-0">I Phone 12 128GB | VN/A</p>
+                                                    <div class="product-price d-flex justify-content-start">
+                                                        <span class="product-new-price">30.029 USD</span>
+                                                        <span class="product-old-price">30.029 USD</span>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
 
                             <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-4">
@@ -330,4 +420,15 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
             </div>
         </div>
     </header>
+    <script>
+        const inputSearch = document.querySelector("#input-search");
+        const searchBox = document.querySelector("#search-box");
+
+        inputSearch.addEventListener("focus", (e) => {
+            // if (e.key === "Enter") {
+            //     searchBox.submit();
+            // }
+            searchBox.classList.toggle("d-none");
+        });
+    </script>
     <!-- End Header -->

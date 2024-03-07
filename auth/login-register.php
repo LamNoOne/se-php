@@ -39,6 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             redirect(APP_URL);
         } else {
             // Display toast message warning
+            // Cannot display error message when wrong username or password, move logic to login.php later
             $status = $data['status'];
             $message = $data['message'];
         }

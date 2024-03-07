@@ -117,10 +117,24 @@ class User
     {
         try {
             // define user data pattern
-            $userPattern = ['roleId', 'lastName', 'firstName', 'imageUrl', 'phoneNumber', 'email', 'address', 'username', 'password', 'active'];
+            $userPattern = ['lastName', 'firstName', 'imageUrl', 'phoneNumber', 'address', 'username'];
             // validate user data
             if (!Validation::validateData($userPattern, $userData)) {
                 throw new InvalidArgumentException('Invalid user data');
+            }
+
+            //  check if phone number is exist, throw error because phone number is unique in database
+            if (!empty($userData['phoneNumber'])) {
+                $query = "SELECT * FROM user WHERE phoneNumber=:phoneNumber LIMIT 1";
+                $stmt = $conn->prepare($query);
+                $stmt->bindValue(":phoneNumber", $userData['phoneNumber'], PDO::PARAM_STR);
+                $stmt->setFetchMode(PDO::FETCH_INTO, new User());
+                if (!$stmt->execute())
+                    throw new PDOException("Cannot execute query");
+                $stmt->execute();
+                $user = $stmt->fetch();
+                if (!empty($user) && $user->id !== $userId)
+                    return Message::message(false, "Phone number is already taken");
             }
 
             // Build user query string
@@ -141,6 +155,35 @@ class User
                 throw new PDOException("Can not execute query");
             }
             return Message::message(true, "Update user successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function changeUserPassword($conn, $userId, $oldPassword, $newPassword)
+    {
+        try {
+            $query = "SELECT password FROM user WHERE id=:userId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
+            if (!$stmt->execute())
+                throw new PDOException("Cannot execute query");
+            $stmt->execute();
+            $user = $stmt->fetch();
+            if (password_verify($oldPassword, $user->password)) {
+                $password_hash = password_hash($newPassword, PASSWORD_DEFAULT);
+                $query = "UPDATE user SET password=:password WHERE id=:userId";
+                $stmt = $conn->prepare($query);
+                $stmt->bindValue(":password", $password_hash, PDO::PARAM_STR);
+                $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
+                $status = $stmt->execute();
+                if (!$status) {
+                    throw new PDOException("Can not execute query");
+                }
+                return Message::message(true, "Update password successfully");
+            }
+            return Message::message(false, "Invalid current password");
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }

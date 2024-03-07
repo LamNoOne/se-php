@@ -397,6 +397,51 @@ body {
   margin-right: -12px;
   display: flex;
   align-items: center; }
+  #header .main-header .search-bar-container .search-box {
+    position: absolute;
+    top: 4rem;
+    width: 100%;
+    height: fit-content;
+    border-radius: 0.25rem;
+    background-color: white;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05); }
+    #header .main-header .search-bar-container .search-box .title-box {
+      background-color: #f3f3f3;
+      margin: 0;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #555; }
+    #header .main-header .search-bar-container .search-box .product-box .product-name {
+      color: #333;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding-left: 0.5rem;
+      padding-right: 0.5rem; }
+    #header .main-header .search-bar-container .search-box .product-box .product-container {
+      padding: 0.5rem;
+      text-decoration: none;
+      gap: 1rem; }
+      #header .main-header .search-bar-container .search-box .product-box .product-container .product-image {
+        width: 3rem;
+        height: 3rem;
+        object-fit: contain; }
+      #header .main-header .search-bar-container .search-box .product-box .product-container:hover {
+        background-color: #f3f3f3; }
+      #header .main-header .search-bar-container .search-box .product-box .product-container .product-info .product-title {
+        color: #333;
+        font-weight: 600;
+        font-size: 0.8rem; }
+      #header .main-header .search-bar-container .search-box .product-box .product-container .product-info .product-price {
+        font-size: 0.8rem;
+        color: red;
+        font-weight: 600;
+        gap: 0.5rem; }
+        #header .main-header .search-bar-container .search-box .product-box .product-container .product-info .product-price .product-old-price {
+          font-size: 0.8rem;
+          color: #555;
+          font-weight: 500;
+          text-decoration: line-through; }
   #header .main-header .search-bar-container .search {
     align-self: center;
     position: absolute;
