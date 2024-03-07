@@ -117,22 +117,20 @@ $categories = Category::getAllCategories($conn);
               </div>
             </div>
             <div class="col-lg-12">
-              <div class="form-group">
-                <label>Image</label>
-                <div class="row">
-                  <div class="col-lg-4">
-                    <div class="image-upload">
-                      <input type="file" name="image" accept="image/png, image/gif, image/jpeg" />
-                      <div class="image-uploads">
-                        <img src="assets/img/icons/upload.svg" alt="img" />
-                        <h4>Drag and drop a image to upload</h4>
-                      </div>
-                    </div>
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group">
+                    <label>Image</label>
+                    <input id="image-file" type="file" name="image" accept="image/png, image/gif, image/jpeg" />
+                    <label for="image-file" class="file-choose-btn">
+                      <img src="assets/img/icons/upload.svg" alt="img" />
+                      <p>Drag and drop a image to upload</p>
+                    </label>
                   </div>
-                  <div class="col-lg-8">
-                    <div class="preview-image d-flex justify-content-center">
-                      <img src="" alt="">
-                    </div>
+                </div>
+                <div class="col-lg-8">
+                  <div class="preview-image d-flex justify-content-center">
+                    <img src="" alt="">
                   </div>
                 </div>
               </div>

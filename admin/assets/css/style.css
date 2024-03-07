@@ -3,6 +3,34 @@
 }
 
 /* Custom */
+.form-group .file-choose-btn {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	border-radius: 5px;
+	border: 1px solid rgba(145, 158, 171, 0.32);
+	cursor: pointer;
+}
+
+.form-group .file-choose-btn:hover {
+	border-color: #ff9f43;
+}
+
+.form-group input:hover,
+.form-group textarea:hover,
+.form-group input:hover {
+	border-color: #ff9f43 !important;
+}
+
+.form-group .file-choose-btn p {
+	opacity: 0.8;
+}
+.form-group input[type='file'] {
+	display: none;
+}
+
 #category-error + .select2-container--default .select2-selection--single {
 	border: 1px solid var(--error-validate-color) !important;
 }
