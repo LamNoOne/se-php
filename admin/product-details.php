@@ -1,8 +1,5 @@
 <?php
 require_once  dirname(__DIR__) . "/inc/init.php";
-?>
-
-<?php
 if (!isset($conn))
   $conn = require_once dirname(__DIR__) . "/inc/db.php";
 

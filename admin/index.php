@@ -1,6 +1,5 @@
-<?php require_once "./inc/components/header.php" ?>;
-
 <?php
+require_once  dirname(__DIR__) . "/inc/init.php";
 if (!isset($conn))
   $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
@@ -15,6 +14,8 @@ $customers = User::getAllUsers($conn, ['roleId' => 3], $sorter);
 $users = User::getAllUsers($conn, [], $sorter);
 
 ?>
+
+<?php require_once "./inc/components/header.php" ?>;
 
 <div class="page-wrapper">
   <div class="content">

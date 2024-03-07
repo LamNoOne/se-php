@@ -1,6 +1,5 @@
-<?php require_once "./inc/components/header.php" ?>;
-
 <?php
+require_once  dirname(__DIR__) . "/inc/init.php";
 if (!isset($conn)) {
   $conn = require_once dirname(__DIR__) . '/inc/db.php';
 }
@@ -8,6 +7,8 @@ if (!isset($conn)) {
 $products = Product::getAllProductsForAdmin($conn);
 
 ?>
+
+<?php require_once "./inc/components/header.php" ?>;
 
 <div class="page-wrapper">
   <div class="content">

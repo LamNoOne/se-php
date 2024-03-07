@@ -1,24 +1,41 @@
 <?php
-require_once "inc/init.php";
 require_once "inc/utils.php";
 
-Auth::requireLogin();
-
-function upload_file($__FILES)
+// Auth::requireLogin();
+/**
+ * Uploads a file to the server.
+ *
+ * @param string $fieldName The name of the field containing the file to upload.
+ *
+ * @return array An associative array containing the upload status and message:
+ * - 'status': A boolean indicating the upload status (true for success, false for failure).
+ * - 'message': A string describing the upload result.
+ * - 'url': (Optional) The URL of the uploaded file, available if upload is successful.
+ */
+function upload_file($fieldName)
 {
     try {
-        if (empty($__FILES)) {
-            return Message::message(false, 'Can not upload files');
+        if (empty($_FILES)) {
+            return [
+                'status' => false,
+                'message' => Message::message(false, 'Can not upload files')
+            ];
         }
 
-        $rs = Errorfileupload::err($__FILES['file']['error']);
+        $rs = Errorfileupload::err($_FILES[$fieldName]['error']);
         if ($rs != 'OK') {
-            return Message::message(false, $rs);
+            return [
+                'status' => false,
+                'message' => Message::message(false, $rs)
+            ];
         }
 
         $fileMaxSize = FILE_MAX_SIZE;
-        if ($__FILES['file']['size'] > $fileMaxSize) {
-            return Message::message(false, 'File too large, must smaller than: ' .  $fileMaxSize);
+        if ($_FILES[$fieldName]['size'] > $fileMaxSize) {
+            return [
+                'status' => false,
+                'message' => Message::message(false, 'File too large, must smaller than: ' .  $fileMaxSize)
+            ];
         }
 
         // limit file image type
@@ -26,33 +43,49 @@ function upload_file($__FILES)
         // check if image
         $fileinfo = finfo_open(FILEINFO_MIME_TYPE);
         // file upload will store in tmp_name
-        $file_mime_type = finfo_file($fileinfo, $__FILES['file']['tmp_name']);
+        $file_mime_type = finfo_file($fileinfo, $_FILES[$fieldName]['tmp_name']);
         if (!in_array($file_mime_type, $mime_types)) {
-            return Message::message(false, 'Invalid file type, file must be an image');
+            return [
+                'status' => false,
+                'message' => Message::message(false, 'Invalid file type, file must be an image')
+            ];
         }
 
         // standardize image before upload to server
-        $pathinfo = pathinfo($__FILES['file']['name']);
+        $pathinfo = pathinfo($_FILES[$fieldName]['name']);
         $filename = $pathinfo['filename'];
         $filename = preg_replace('/[^a-zA-Z0-9_-]/', '_', $filename);
 
-        // Handle override file exist in uploads folder
-        $fullname = $filename . '.' . $pathinfo['extension'];
         // create path to uploads folder in server
-        $fileToHost = 'uploads/' . $fullname;
+        $fullname = $filename . '.' . $pathinfo['extension'];
+        $path = '/uploads/' . $fullname;
+        $fileToHost = $_SERVER['DOCUMENT_ROOT'] . $path;
+        $uploadedFileUrl = APP_URL . '/' . $path;
+
+        // Handle override file exist in uploads folder
         $i = 1;
         while (file_exists($fileToHost)) {
             $fullname = $filename . "-$i." . $pathinfo['extension'];
-            $fileToHost = 'uploads/' . $fullname;
+            $path = '/uploads/' . $fullname;
+
+            $fileToHost = $_SERVER['DOCUMENT_ROOT'] . $path;
+            $uploadedFileUrl = APP_URL . '/' . $path;
             $i++;
         }
 
-        $fileTmp = $__FILES['file']['tmp_name'];
+        $fileTmp = $_FILES[$fieldName]['tmp_name'];
+
         if (move_uploaded_file($fileTmp, $fileToHost)) {
-            return Message::message(true, $fullname);
-        } else {
-            return Message::message(false, "Error uploading!");
+            return [
+                'status' => true,
+                'message' => Message::message(true, $fullname),
+                'url' => $uploadedFileUrl
+            ];
         }
+        return [
+            'status' => false,
+            'message' => Message::message(false, "Error uploading!"),
+        ];
     } catch (Exception $e) {
         return Message::message(false, $e->getMessage());
     }

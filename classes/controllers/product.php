@@ -5,12 +5,11 @@ require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 
 class Product extends DataFetcher
 {
-
     public $id;
     public $categoryId;
     public $name;
-    public $description;
     public $imageUrl;
+    public $description;
     public $screen;
     public $operatingSystem;
     public $processor;
@@ -24,8 +23,45 @@ class Product extends DataFetcher
     public $createdAt;
     public $updatedAt;
 
-    public function __construct()
+    public function __construct(
+        $categoryId = null,
+        $name = null,
+        $imageUrl = null,
+        $description = null,
+        $screen = null,
+        $operatingSystem = null,
+        $processor = null,
+        $ram = null,
+        $storageCapacity = null,
+        $weight = null,
+        $batteryCapacity = null,
+        $color = null,
+        $price = null,
+        $stockQuantity = null
+    ) {
+        $this->categoryId = $categoryId;
+        $this->name = $name;
+        $this->imageUrl = $imageUrl;
+        $this->description = $description;
+        $this->screen = $screen;
+        $this->operatingSystem = $operatingSystem;
+        $this->processor = $processor;
+        $this->ram = $ram;
+        $this->storageCapacity = $storageCapacity;
+        $this->weight = $weight;
+        $this->batteryCapacity = $batteryCapacity;
+        $this->color = $color;
+        $this->price = $price;
+        $this->stockQuantity = $stockQuantity;
+    }
+
+    private function validate()
     {
+        return $this->categoryId
+            && $this->name
+            && $this->imageUrl
+            && $this->price
+            && $this->stockQuantity;
     }
 
     public static function paginationQuery($query, $limit, $offset)
@@ -40,12 +76,43 @@ class Product extends DataFetcher
         return $query;
     }
 
-    public static function createProduct($conn, $userId)
+    public function createProduct($conn)
     {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+        try {
+            if (!$this->validate()) {
+                throw new InvalidArgumentException('Invalid arguments');
+            }
+
+            $insert = "
+                INSERT INTO `product`(`categoryId`, `name`, `description`, `imageUrl`, `screen`, `operatingSystem`, `processor`, `ram`, `storageCapacity`, `weight`, `batteryCapacity`, `color`, `price`, `stockQuantity`)
+                VALUES (:categoryId, :name, :description, :imageUrl, :screen, :operatingSystem, :processor, :ram, :storageCapacity, :weight, :batteryCapacity, :color, :price, :stockQuantity)
+            ";
+            $stmt = $conn->prepare($insert);
+            $status = $stmt->execute([
+                ':categoryId' => $this->categoryId,
+                ':name' => $this->name,
+                ':description' => $this->description,
+                ':imageUrl' => $this->imageUrl,
+                ':screen' => $this->screen,
+                ':operatingSystem' => $this->operatingSystem,
+                ':processor' => $this->processor,
+                ':ram' => $this->ram,
+                ':storageCapacity' => $this->storageCapacity,
+                ':weight' => $this->weight,
+                ':batteryCapacity' => $this->batteryCapacity,
+                ':color' => $this->color,
+                ':price' => $this->price,
+                ':stockQuantity' => $this->stockQuantity,
+            ]);
+
+            if (!$status) {
+                throw new InvalidArgumentException('Invalid arguments');
+            }
+
+            return Message::message(true, 'Add product successfully');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
     public static function updateProduct($conn, $userId)

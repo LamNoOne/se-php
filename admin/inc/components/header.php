@@ -1,7 +1,3 @@
-<?php
-require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -21,6 +17,7 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
   <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css" />
   <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css" />
   <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css" />
+  <link href="<?php echo APP_URL; ?>/assets/toastr/toastr.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 
@@ -121,7 +118,7 @@ require_once  dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
                 <span class="menu-arrow"></span></a>
               <ul>
                 <li><a href="products.php">Product List</a></li>
-                <li><a href="add-product.html">Add Product</a></li>
+                <li><a href="add-product.php">Add Product</a></li>
                 <li><a href="categories.html">Category List</a></li>
                 <li><a href="add-category.html">Add Category</a></li>
               </ul>

@@ -563,4 +563,17 @@ $(document).ready(function () {
 			).addClass('active')
 		}
 	})
+
+	// Custom
+	$('form .image-upload input[type="file"][name="image"]').on(
+		'change',
+		function (event) {
+			const files = event.target.files
+			if (files.length > 0) {
+				const src = URL.createObjectURL(files[0])
+				$('form .preview-image img').attr('src', src)
+				$('form .preview-image img').show()
+			}
+		}
+	)
 })

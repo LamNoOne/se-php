@@ -1,4 +1,13 @@
-@import '../../../../css2';
+/* Custom */
+form label.error {
+	color: red;
+}
+
+form .form-group .preview-image img {
+	object-fit: contain;
+	display: none;
+}
+
 .css-equal-content,
 .css-equal-heights {
 	display: flex;
@@ -1843,6 +1852,7 @@ a:hover {
 	}
 }
 .form-group input[type='text'],
+.form-group input[type='number'],
 .form-group input[type='password'] {
 	border: 1px solid rgba(145, 158, 171, 0.32);
 	height: 40px;

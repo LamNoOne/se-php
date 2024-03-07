@@ -9,6 +9,9 @@
 <script src="assets/plugins/apexchart/apexcharts.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalert2.all.min.js"></script>
 <script src="assets/plugins/sweetalert/sweetalerts.min.js"></script>
+<script src="<?php echo APP_URL; ?>/assets/toastr/toastr.min.js"></script>
+<script src="<?php echo APP_URL; ?>/assets/toastr/toastr.config.js"></script>
+<script src="<?php echo APP_URL; ?>/assets/jquery/jquery.validate.min.js"></script>
 <script src="assets/js/script.js"></script>
 </body>
 
