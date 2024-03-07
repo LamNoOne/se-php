@@ -567,7 +567,7 @@ $(document).ready(function () {
 	/**
 	 * CUSTOM
 	 */
-	$('form .image-upload input[type="file"][name="image"]').on(
+	$('form .form-group input[type="file"][name="image"]').on(
 		'change',
 		function (event) {
 			const files = event.target.files
@@ -578,6 +578,60 @@ $(document).ready(function () {
 			}
 		}
 	)
+
+	const previewImage = () => {
+		const inputFile = document.querySelector(
+			'.preview-image-wrapper .input-file'
+		)
+		const customBtn = document.querySelector(
+			'.preview-image-wrapper .custom-btn'
+		)
+		const cancelBtn = document.querySelector(
+			'.preview-image-wrapper .preview-image .cancel-btn'
+		)
+		const image = document.querySelector('.preview-image-wrapper img')
+		const fileName = document.querySelector(
+			'.preview-image-wrapper .preview-image .file-name'
+		)
+		const previewImage = document.querySelector(
+			'.preview-image-wrapper .preview-image'
+		)
+
+		customBtn.onclick = function (event) {
+			event.preventDefault()
+			inputFile.click()
+		}
+
+		inputFile.onchange = function () {
+			const file = this.files[0]
+			if (file) {
+				const src = URL.createObjectURL(file)
+				image.src = src
+				image.style.display = 'block'
+
+				const patternRegex =
+					/[^\\/:*?"<>|\r\n]*[^\s\\/:*?"<>|\r\n]+\.[a-zA-Z0-9]+/
+				const match = inputFile.value?.match(patternRegex)
+				fileName.innerText = match ? match[0] : null
+
+				previewImage.classList.add('active')
+			} else {
+				image.src = ''
+				fileName.innerText = ''
+				previewImage.classList.remove('active')
+				image.style.display = 'none'
+			}
+		}
+
+		cancelBtn.onclick = function () {
+			inputFile.value = ''
+			image.src = ''
+			fileName.innerText = ''
+			previewImage.classList.remove('active')
+			image.style.display = 'none'
+		}
+	}
+	previewImage()
 })
 
 /**
@@ -586,6 +640,9 @@ $(document).ready(function () {
 // replace error image with default image
 $('img').each(function () {
 	const imgSrc = $(this).attr('src')
+	if (imgSrc === '') {
+		return
+	}
 	const img = new Image()
 	img.src = imgSrc
 

@@ -117,33 +117,40 @@ $categories = Category::getAllCategories($conn);
               </div>
             </div>
             <div class="col-lg-12">
-              <div class="row">
-                <div class="col-lg-4">
-                  <div class="form-group">
-                    <label>Image</label>
-                    <input id="image-file" type="file" name="image" accept="image/png, image/gif, image/jpeg" />
-                    <label for="image-file" class="file-choose-btn">
-                      <img src="assets/img/icons/upload.svg" alt="img" />
-                      <p>Drag and drop a image to upload</p>
-                    </label>
+              <div class="form-group">
+                <label>Image</label>
+                <div class="preview-image-wrapper">
+                  <div class="preview-image">
+                    <div class="image">
+                      <img src="">
+                    </div>
+                    <div class="content">
+                      <div class="icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                      </div>
+                      <div class="text">No File Chosen, yet!</div>
+                    </div>
+                    <div class="cancel-btn">
+                      <i class="fas fa-times"></i>
+                    </div>
+                    <p class="file-name">File name here</p>
                   </div>
-                </div>
-                <div class="col-lg-8">
-                  <div class="preview-image d-flex justify-content-center">
-                    <img src="" alt="">
-                  </div>
+                  <input name="image" class="input-file" type="file">
+                  <button class="custom-btn">Choose a image</button>
                 </div>
               </div>
             </div>
-            <div class="col-lg-12">
-              <button type="submit" class="btn btn-submit me-2">Submit</button>
-              <button class="btn btn-cancel">Cancel</button>
-            </div>
           </div>
-        </form>
+      </div>
+      <div class="col-lg-12">
+        <button type="submit" class="btn btn-submit me-2">Submit</button>
+        <button class="btn btn-cancel">Cancel</button>
       </div>
     </div>
+    </form>
   </div>
+</div>
+</div>
 </div>
 
 <?php require_once "./inc/components/footer.php"; ?>
@@ -183,7 +190,6 @@ $categories = Category::getAllCategories($conn);
         }
       },
     })
-
 
     $('#form').submit(async function(event) {
       try {
