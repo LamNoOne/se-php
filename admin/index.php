@@ -87,12 +87,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a class="text-linear" href="./product-details.html"><?php echo $order->id ?></a></td>
+                      <td><a class="text-linear-hover" href="./product-details.html"><?php echo $order->id ?></a></td>
                       <td class="productimgname">
                         <a class="product-img" href="productlist.html">
                           <img src="<?php echo $order->imageUrl ? $order->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="avatar" />
                         </a>
-                        <a class="text-linear" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
+                        <a class="text-linear-hover" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
                       </td>
                       <td><?php echo $order->total ?></td>
                       <td>
@@ -135,12 +135,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a class="text-linear" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->id ?></a></td>
+                      <td><a class="text-linear-hover" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->id ?></a></td>
                       <td class="productimgname">
                         <a class="product-img" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>">
                           <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
                         </a>
-                        <a class="text-linear" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
+                        <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
                       </td>
                       <td><?php echo $product->categoryName ?></td>
                       <td><?php echo $product->createdAt ?></td>
@@ -176,12 +176,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a class="text-linear" href="./product-details.html"><?php echo $customer->id ?></a></td>
+                      <td><a class="text-linear-hover" href="./product-details.html"><?php echo $customer->id ?></a></td>
                       <td class="productimgname">
                         <a class="product-img" href="productlist.html">
                           <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="product" />
                         </a>
-                        <a class="text-linear" href="product-details.html">
+                        <a class="text-linear-hover" href="product-details.html">
                           <?php echo $customer->firstName . ' ' . $customer->lastName ?>
                         </a>
                       </td>
@@ -221,7 +221,7 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a class="text-linear" href="./product-details.html">
+                      <td><a class="text-linear-hover" href="./product-details.html">
                           <?php echo $user->id ?>
                         </a></td>
                       <td class="productimgname">
@@ -230,7 +230,7 @@ $users = User::getAllUsers($conn, [], $sorter);
                             <?php echo $user->imageUrl ? $user->imageUrl : './assets/imag/no-avatar-image.png' ?>
                           " alt="product" />
                         </a>
-                        <a class="text-linear" href="product-details.html">
+                        <a class="text-linear-hover" href="product-details.html">
                           <?php echo $user->firstName . ' ' . $user->lastName ?>
                         </a>
                       </td>

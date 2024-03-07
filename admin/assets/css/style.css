@@ -9,7 +9,13 @@
 /* Custom */
 
 /* common */
-.text-linear:hover {
+.text-linear {
+	background: var(--primary-color) !important;
+	background-clip: text !important;
+	-webkit-text-fill-color: transparent !important;
+}
+
+a.text-linear-hover:hover {
 	background: var(--primary-color) !important;
 	background-clip: text !important;
 	-webkit-text-fill-color: transparent !important;
@@ -1771,7 +1777,7 @@ div#global-loader,
 	}
 }
 .page-wrapper .content {
-	padding: 32px 44px 44px;
+	padding: 0px 44px 16px;
 }
 @media (max-width: 991px) {
 	.page-wrapper .content {
@@ -3145,12 +3151,19 @@ table.dataTable > thead .sorting_desc_disabled:before {
 	color: #fff;
 }
 .pagination li a:hover {
-	background: var(--primary-color);
-	color: #fff;
+	background: var(--primary-color) !important;
+	color: #fff !important;
+}
+.page-link:focus {
+	background: var(--primary-color) !important;
+	color: #fff !important;
 }
 .pagination li.active a.page-link {
 	background: var(--primary-color);
 	border-radius: 5px;
+}
+.table-responsive {
+	padding-bottom: 21px !important;
 }
 .dataTables_length,
 .dataTables_paginate {
@@ -3789,6 +3802,7 @@ hr {
 }
 .profilename {
 	padding: 0;
+	box-shadow: var(--box-shadow);
 }
 .profilename .profileset {
 	padding: 10px 10px 3px;
@@ -5510,16 +5524,20 @@ span.select2-container.select2-container--default.select2-container--open {
 	margin-bottom: 25px;
 }
 .page-header h3 {
+	background: var(--primary-color) !important;
+	background-clip: text !important;
+	-webkit-text-fill-color: transparent !important;
 	font-weight: 700;
-	color: #212b36;
-	font-size: 22px;
+	font-size: 25px;
 	letter-spacing: 1px;
 	text-shadow: var(--box-shadow);
 }
 
 .page-header h4 {
+	background: var(--primary-color) !important;
+	background-clip: text !important;
+	-webkit-text-fill-color: transparent !important;
 	font-weight: 500;
-	color: #212b36;
 	font-size: 14px;
 	letter-spacing: 1px;
 	text-shadow: var(--box-shadow);

@@ -145,7 +145,7 @@ $products = Product::getAllProductsForAdmin($conn);
                     <a href="<?php echo "product-details.php?id=$product->id" ?>" class="product-img">
                       <img src="<?php echo $product->imageUrl ?>" alt="Product image" />
                     </a>
-                    <a class="text-linear" href="<?php echo "product-details.php?id=$product->id" ?>">
+                    <a class="text-linear-hover" href="<?php echo "product-details.php?id=$product->id" ?>">
                       <?php echo $product->name ?>
                     </a>
                   </td>

@@ -120,10 +120,10 @@
                   Product</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear" href="products.php">Product List</a></li>
-                <li><a class="text-linear" href="add-product.php">Add Product</a></li>
-                <li><a class="text-linear" href="categories.html">Category List</a></li>
-                <li><a class="text-linear" href="add-category.html">Add Category</a></li>
+                <li><a class="text-linear-hover" href="products.php">Product List</a></li>
+                <li><a class="text-linear-hover" href="add-product.php">Add Product</a></li>
+                <li><a class="text-linear-hover" href="categories.html">Category List</a></li>
+                <li><a class="text-linear-hover" href="add-category.html">Add Category</a></li>
               </ul>
             </li>
             <li class="submenu">
@@ -131,7 +131,7 @@
                   Sales</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear" href="orders.html">Order List</a></li>
+                <li><a class="text-linear-hover" href="orders.html">Order List</a></li>
               </ul>
             </li>
             <li class="submenu">
@@ -139,10 +139,10 @@
                   People</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear" href="customers.html">Customer List</a></li>
-                <li><a class="text-linear" href="add-customer.html">Add Customer</a></li>
-                <li><a class="text-linear" href="users.html">User List</a></li>
-                <li><a class="text-linear" href="add-user.html">Add User</a></li>
+                <li><a class="text-linear-hover" href="customers.html">Customer List</a></li>
+                <li><a class="text-linear-hover" href="add-customer.html">Add Customer</a></li>
+                <li><a class="text-linear-hover" href="users.html">User List</a></li>
+                <li><a class="text-linear-hover" href="add-user.html">Add User</a></li>
               </ul>
             </li>
           </ul>

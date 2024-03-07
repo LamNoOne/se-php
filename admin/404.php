@@ -25,9 +25,9 @@
 </head>
 
 <body class="error-page">
-  <!-- <div id="global-loader">
-      <div class="whirly-loader"> </div>
-    </div> -->
+  <div id="global-loader">
+    <div class="whirly-loader"></div>
+  </div>
 
   <div class="main-wrapper">
     <div class="error-box">
