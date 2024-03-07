@@ -17,7 +17,7 @@ $laptopParams =
         'offset' => 0,
     ];
 
-$laptops = Product::getProductsByCategory($conn, $laptopParams)['data'];
+$laptops = Product::getAllProductsByCondition($conn, $laptopParams)['data'];
 // End Query Laptops
 
 // Query PCs
@@ -31,7 +31,7 @@ $computerParams =
         'offset' => 0,
     ];
 
-$computers = Product::getProductsByCategory($conn, $computerParams)['data'];
+$computers = Product::getAllProductsByCondition($conn, $computerParams)['data'];
 // End Query PCs
 
 // Query Monitors
@@ -45,7 +45,7 @@ $monitorParams =
         'offset' => 0,
     ];
 
-$monitors = Product::getProductsByCategory($conn, $monitorParams)['data'];
+$monitors = Product::getAllProductsByCondition($conn, $monitorParams)['data'];
 // End Query Monitors
 ?>
 <div id="main-content" class="main-content">

@@ -59,7 +59,8 @@ class QueryBuilder extends Validation
                     } else {
                         $whereClauses[] = "$column IN (" . implode(",", $value) . ")";
                     }
-                    // $placeholders = implode(', ', $value);
+                } elseif($operator === 'LIKE') {
+                    $whereClauses[] = "$column LIKE '$value'";
                 } else {
                     isset($filter['alias']) ?
                         $whereClauses[] = "$column = :" . $filter['alias'] :
@@ -106,11 +107,13 @@ class QueryBuilder extends Validation
             $limit = $options['limit'];
             $offset = $options['offset'];
 
+            $operators = ['BETWEEN', 'IN', 'LIKE'];
+
             // print_r($filters);
 
             foreach ($filters as $filter) {
                 // Handle $value is an array...
-                if (!is_array($filter['value'])) {
+                if (!is_array($filter['value']) && !in_array($filter['operator'], $operators)) {
                     isset($filter['alias']) ?
                         $stmt->bindValue(":" . $filter['alias'], $filter['value'], PDO::PARAM_INPUT_OUTPUT) :
                         $stmt->bindValue(":" . $filter['column'], $filter['value'], PDO::PARAM_INPUT_OUTPUT);

@@ -173,11 +173,107 @@
     });
 </script>
 <script>
-    const cartBtn =document.querySelector('#cart-btn');
+    const cartBtn = document.querySelector('#cart-btn');
 
     cartBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        window.location.href = "<?php echo APP_URL;?>/cart";
+        window.location.href = "<?php echo APP_URL; ?>/cart";
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        const searchInput = $("#input-search");
+        const searchBox = $("#search-box");
+        const searchBoxLayout = $("#search-box-layout");
+
+        function html([first, ...strings], ...values) {
+            return values.reduce(
+                    (acc, cur) => acc.concat(cur, strings.shift()),
+                    [first]
+                )
+                .filter(x => x && x !== true || x === 0)
+                .join('')
+        }
+
+        function searchSuggest({
+            item
+        }) {
+            return html `
+            <li>
+                <a href="#" class="d-flex justify-content-start product-container">
+                    <p class="product-name m-0">${item?.description}</p>
+                </a>
+            </li>
+        `;
+        }
+
+        function productItem({
+            item
+        }) {
+            return html `
+            <li>
+                <a href="<?php echo APP_URL; ?>/product/product-detail.php?product_id=${item?.id}" class="d-flex justify-content-start product-container">
+                    <img src="${item?.imageUrl}" alt="product" class="product-image" />
+                    <div class="product-info d-flex flex-column justify-content-center">
+                        <p class="product-title m-0">${item?.name}</p>
+                        <div class="product-price d-flex justify-content-start">
+                            <span class="product-new-price">${item?.price} USD</span>
+                            <span class="product-old-price">${item?.price} USD</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+        }
+
+        function productSearchItem({
+            products
+        }) {
+            return html`
+            <p class="title-box">Suggested products</p>
+            <ul class="product-box list-unstyled">
+                ${products.map((item) => searchSuggest({ item }))}
+            </ul>
+            <ul class="product-box list-unstyled">
+                ${products.map((item) => productItem({ item }))}
+            </ul>
+        `;
+        }
+
+        searchInput.on("keyup", async function(event) {
+            searchBox.removeClass("d-none");
+            searchBoxLayout.removeClass("d-none");
+            const getData = {
+                search: searchInput.val(),
+                limit: 5
+            };
+
+            const baseUrl = "<?php echo APP_URL; ?>/inc/components/actions/search.php"
+
+            try {
+                const searchResponse = await $.ajax({
+                    method: "POST",
+                    url: baseUrl,
+                    data: getData,
+                })
+
+                searchBox.empty();
+                const searchResult = JSON.parse(searchResponse);
+                if (Array.isArray(searchResult) && searchResult.length > 0) {
+                    searchBox.append(productSearchItem({
+                        products: searchResult
+                    }));
+                }
+            } catch (error) {
+                toastr.error(error.message, "Error")
+            }
+        });
+
+        searchBoxLayout.on("click", function(event) {
+            searchBox.toggleClass("d-none");
+            searchBoxLayout.toggleClass("d-none");
+        });
     })
 </script>
 </body>

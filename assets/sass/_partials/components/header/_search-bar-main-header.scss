@@ -3,15 +3,15 @@
 
         // ==========================Search Bar Header ========================== //
         .search-bar-container {
-            position    : relative;
-            height      : 100%;
-            margin-right: -12px;
-            display     : flex;
-            align-items : center;
+            position   : relative;
+            height     : 100%;
+            display    : flex;
+            align-items: center;
 
             .search-box {
                 position        : absolute;
-                top             : 4rem;
+                top             : 3.6rem;
+                left            : 0;
                 width           : 100%;
                 height          : fit-content;
                 border-radius   : 0.25rem;
@@ -77,90 +77,14 @@
                 }
             }
 
-            .search {
-                align-self      : center;
-                position        : absolute;
+            .search-box-layout {
+                z-index         : -1;
+                background-color: rgba(0, 0, 0, 0.15);
+                position        : fixed;
+                top             : 0;
+                left            : 0;
                 right           : 0;
-                width           : 50px;
-                height          : 50px;
-                background-color: $search_background;
-                border-radius   : 4rem;
-                padding         : 10px;
-                overflow        : hidden;
-                transition      : width .5s cubic-bezier(.9, 0, .3, .9);
-
-                &__input {
-                    border          : none;
-                    outline         : none;
-                    width           : calc(100% - 64px);
-                    height          : 100%;
-                    color           : $color_search_bar;
-                    background-color: $search_background;
-                    border-radius   : 4rem;
-                    padding-left    : 14px;
-                    font-size       : $primary_font_size;
-                    font-weight     : 500;
-                    opacity         : 0;
-                    pointer-events  : none;
-                    transition      : opacity 1.5s;
-
-                    &:-webkit-autofill {
-                        box-shadow: 0 0 0 100px white inset;
-                    }
-                }
-
-                &__button {
-                    width           : 30px;
-                    height          : 30px;
-                    background-color: rgba($primary_color, 0.3);
-                    border-radius   : 50%;
-                    position        : absolute;
-                    top             : 0;
-                    bottom          : 0;
-                    right           : 10px;
-                    margin          : auto;
-                    display         : grid;
-                    place-items     : center;
-                    cursor          : pointer;
-                    transition      : transform .6s cubic-bezier(.9, 0, .3, .9);
-                }
-
-                &__icon,
-                &__close {
-                    color     : rgba(black, 0.8);
-                    font-size : 1rem;
-                    position  : absolute;
-                    transition: opacity .5s cubic-bezier(.9, 0, .3, .9);
-                }
-
-                &__icon {
-                    opacity: 1;
-                }
-
-                &__close {
-                    opacity: 0;
-                }
-            }
-
-            .show-search {
-                width: 100%;
-
-                & .search__input {
-                    opacity       : 1;
-                    pointer-events: initial;
-                }
-
-                & .search__button {
-                    transform: rotate(90deg);
-                }
-
-                & .search__icon {
-                    opacity: 0;
-                }
-
-                & .search__close {
-                    opacity: 1;
-                }
+                bottom          : 0;
             }
         }
     }
