@@ -28,7 +28,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Product Name</label>
-                    <input type="text" name="name" />
+                    <input type="text" name="name" autofocus />
                   </div>
                 </div>
                 <div class="col-lg-12 col-sm-6 col-12">
@@ -209,7 +209,6 @@ $categories = Category::getAllCategories($conn);
           }
         }
       } catch (error) {
-        console.log(error);
         toastr.error('Something went wrong')
       }
     })

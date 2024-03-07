@@ -57,11 +57,49 @@ class Product extends DataFetcher
 
     private function validate()
     {
-        return $this->categoryId
+
+        $requiredRule = $this->categoryId
             && $this->name
             && $this->imageUrl
             && $this->price
             && $this->stockQuantity;
+        if (!$requiredRule) {
+            return [
+                'status' => false,
+                'message' => 'Missing required fields'
+            ];
+        }
+
+        $numberRule = is_integer($this->categoryId)
+            && is_integer($this->ram)
+            && is_integer($this->storageCapacity)
+            && is_numeric($this->weight)
+            && is_integer($this->batteryCapacity)
+            && is_integer($this->price)
+            && is_integer($this->price);
+        if (!$numberRule) {
+            return [
+                'status' => false,
+                'message' => 'There are some fields are not valid numbers'
+            ];
+        }
+
+        $notEmptyStringRule = !empty($this->name)
+            && !empty($this->imageUrl)
+            && !empty($this->description)
+            && !empty($this->screen)
+            && !empty($this->operatingSystem)
+            && !empty($this->processor)
+            && !empty($this->description)
+            && !empty($this->color);
+        if (!$notEmptyStringRule) {
+            return [
+                'status' => false,
+                'message' => 'There are some fields are empty strings'
+            ];
+        }
+
+        $status = $requiredRule && $numberRule && $notEmptyStringRule;
     }
 
     public static function paginationQuery($query, $limit, $offset)
@@ -79,8 +117,9 @@ class Product extends DataFetcher
     public function createProduct($conn)
     {
         try {
-            if (!$this->validate()) {
-                throw new InvalidArgumentException('Missing required fields');
+            $validateResult = $this->validate();
+            if (!$validateResult['status']) {
+                throw new InvalidArgumentException($validateResult['message']);
             }
 
             $insert = "
