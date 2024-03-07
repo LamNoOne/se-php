@@ -119,7 +119,7 @@ $categories = Category::getAllCategories($conn);
             <div class="col-lg-12">
               <div class="form-group">
                 <label>Image</label>
-                <div class="preview-image-wrapper">
+                <div class="preview-image-wrapper mx-auto">
                   <div class="preview-image">
                     <div class="image">
                       <img src="">
@@ -128,7 +128,7 @@ $categories = Category::getAllCategories($conn);
                       <div class="icon">
                         <i class="fas fa-cloud-upload-alt"></i>
                       </div>
-                      <div class="text">No File Chosen, yet!</div>
+                      <p class="text">No File Chosen, yet!</p>
                     </div>
                     <div class="cancel-btn">
                       <i class="fas fa-times"></i>
@@ -136,13 +136,13 @@ $categories = Category::getAllCategories($conn);
                     <p class="file-name">File name here</p>
                   </div>
                   <input name="image" class="input-file" type="file">
-                  <button class="custom-btn">Choose a image</button>
+                  <button class="choose-file-btn">Choose a image</button>
                 </div>
               </div>
             </div>
           </div>
       </div>
-      <div class="col-lg-12">
+      <div class="col-lg-12 mt-4">
         <button type="submit" class="btn btn-submit me-2">Submit</button>
         <button class="btn btn-cancel">Cancel</button>
       </div>

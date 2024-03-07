@@ -583,8 +583,8 @@ $(document).ready(function () {
 		const inputFile = document.querySelector(
 			'.preview-image-wrapper .input-file'
 		)
-		const customBtn = document.querySelector(
-			'.preview-image-wrapper .custom-btn'
+		const chooseFileBtn = document.querySelector(
+			'.preview-image-wrapper .choose-file-btn'
 		)
 		const cancelBtn = document.querySelector(
 			'.preview-image-wrapper .preview-image .cancel-btn'
@@ -599,7 +599,7 @@ $(document).ready(function () {
 
 		if (
 			!inputFile ||
-			!customBtn ||
+			!chooseFileBtn ||
 			!cancelBtn ||
 			!image ||
 			!fileName ||
@@ -608,7 +608,7 @@ $(document).ready(function () {
 			return
 		}
 
-		customBtn.onclick = function (event) {
+		chooseFileBtn.onclick = function (event) {
 			event.preventDefault()
 			inputFile.click()
 		}
