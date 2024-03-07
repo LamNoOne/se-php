@@ -44,7 +44,7 @@ class UploadFile
             $file_mime_type = finfo_file($fileinfo, $_FILES[$fieldName]['tmp_name']);
             if (!in_array($file_mime_type, $mime_types)) {
                 return [
-                    ...Message::message(false, 'Invalid file type, file must be an image')
+                    ...Message::message(false, 'Invalid file type, file must be: ' . implode('; ', FILE_TYPE))
                 ];
             }
 
