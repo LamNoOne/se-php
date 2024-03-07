@@ -141,7 +141,7 @@ $products = Product::getAllProductsForAdmin($conn);
                   <td><?php echo $count++ ?></td>
                   <td class="productimgname">
                     <a href="<?php echo "product-details.php?id=$product->id" ?>" class="product-img">
-                      <img src="<?php echo $product->imageUrl ?>" alt="product" />
+                      <img src="<?php echo $product->imageUrl ?>" alt="Product image" />
                     </a>
                     <a href="<?php echo "product-details.php?id=$product->id" ?>">
                       <?php echo $product->name ?>

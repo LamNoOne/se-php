@@ -564,7 +564,9 @@ $(document).ready(function () {
 		}
 	})
 
-	// Custom
+	/**
+	 * CUSTOM
+	 */
 	$('form .image-upload input[type="file"][name="image"]').on(
 		'change',
 		function (event) {
@@ -576,4 +578,18 @@ $(document).ready(function () {
 			}
 		}
 	)
+})
+
+/**
+ * CUSTOM
+ */
+// replace error image with default image
+$('img').each(function () {
+	const imgSrc = $(this).attr('src')
+	const img = new Image()
+	img.src = imgSrc
+
+	img.onerror = () => {
+		$(this).attr('src', 'assets/img/no-image.png')
+	}
 })
