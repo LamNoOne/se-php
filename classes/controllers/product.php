@@ -151,7 +151,7 @@ class Product extends DataFetcher
                 $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
             }
 
-            $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+            $stmt->setFetchMode(PDO::FETCH_INTO, new Product());
             if (!$stmt->execute()) {
                 throw new PDOException($stmt->errorInfo());
             }
@@ -172,7 +172,7 @@ class Product extends DataFetcher
             $query = "SELECT * FROM product WHERE id = :productId";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
-            $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+            $stmt->setFetchMode(PDO::FETCH_INTO, new Product());
             if (!$stmt->execute()) {
                 throw new PDOException($stmt->errorInfo());
             }

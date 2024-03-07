@@ -47,7 +47,7 @@ Auth::requireLogin();
                             </div>
                             <button type="button" id="submit-change-img" class="btn btn-primary">Change Avatar</button>
                         </form>
-                        <form action="" id="change-info" enctype="multipart/form-data">
+                        <form action="" id="update-user-info" enctype="multipart/form-data">
                             <!-- First Name -->
                             <div class="mb-3">
                                 <label for="firstName" class="form-label">First Name:</label>
@@ -61,7 +61,7 @@ Auth::requireLogin();
                             <!-- Phone Number -->
                             <div class="mb-3">
                                 <label for="phoneNumber" class="form-label">Phone Number:</label>
-                                <input type="tel" id="phoneNumber" class="form-control" value="<?php echo $_SESSION['phoneNumber'] ?>" disabled readonly>
+                                <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" <?php echo isset($_SESSION['phoneNumber']) ? "disabled" : "" ?> value="<?php echo isset($_SESSION['phoneNumber']) ? $_SESSION['phoneNumber'] : ""  ?>">
                             </div>
                             <!-- Email -->
                             <div class="mb-3">
@@ -71,29 +71,29 @@ Auth::requireLogin();
                             <!-- Address -->
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address:</label>
-                                <textarea id="address" class="form-control" rows="3"><?php echo $_SESSION['address'] ?></textarea>
+                                <textarea name="address" id="address" class="form-control" rows="3"><?php echo isset($_SESSION['address']) ? $_SESSION['address'] : "" ?></textarea>
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="changeInfo()">Change Address</button>
+                            <button type="submit" class="btn btn-primary">Update Info</button>
                         </form>
                         <!-- Change Password Form -->
-                        <form id="changePasswordForm" enctype="multipart/form-data">
+                        <form id="change-user-password" method="POST" action="" enctype="multipart/form-data">
                             <h5>Change Password</h5>
                             <!-- Current Password -->
                             <div class="mb-3">
-                                <label for="currentPassword" class="form-label">Current Password:</label>
-                                <input type="password" id="currentPassword" class="form-control" required>
+                                <label for="current-password" class="form-label">Current Password:</label>
+                                <input type="password" id="current-password" name="currentPassword" class="form-control">
                             </div>
                             <!-- New Password -->
                             <div class="mb-3">
-                                <label for="newPassword" class="form-label">New Password:</label>
-                                <input type="password" id="newPassword" class="form-control" required>
+                                <label for="new-password" class="form-label">New Password:</label>
+                                <input type="password" id="new-password" name="newPassword" class="form-control">
                             </div>
                             <!-- Confirm New Password -->
                             <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirm New Password:</label>
-                                <input type="password" id="confirmPassword" class="form-control" required>
+                                <label for="confirm-password" class="form-label">Confirm New Password:</label>
+                                <input type="password" id="confirm-password" name="confirmPassword" class="form-control">
                             </div>
-                            <button type="button" class="btn btn-primary" onclick="changePassword()">Change Password</button>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
                         </form>
                     </div>
                 </div>
@@ -110,6 +110,9 @@ Auth::requireLogin();
         const submitBtnImage = $("#submit-change-img");
         const userImageBtn = $(".user__dropdown__image");
         const userImageChange = $(".img-user");
+
+        const formUpdateUser = $("#update-user-info");
+        const formChangePassword = $("#change-user-password");
 
         const uploadImage = async function(formData) {
             try {
@@ -130,9 +133,10 @@ Auth::requireLogin();
             }
         }
 
+        // update user image
         submitBtnImage.click(async function() {
             const currFile = $("#newAvatar")[0].files;
-            if(currFile.length === 0) return;
+            if (currFile.length === 0) return;
             const formData = new FormData();
 
             formData.append("file", currFile[0]);
@@ -148,6 +152,138 @@ Auth::requireLogin();
                 }, 1000);
             } else {
                 toastr.error(message, "Error");
+            }
+        })
+
+        jQuery.validator.addMethod("valid_phone", function(value) {
+            const regex = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
+            return value.trim().match(regex);
+        });
+
+        formUpdateUser.validate({
+            rules: {
+                phoneNumber: {
+                    required: true,
+                    valid_phone: true
+                },
+                address: {
+                    required: true,
+                    minlength: 2
+                },
+            },
+            messages: {
+                phoneNumber: {
+                    required: "Please enter your phone number",
+                    valid_phone: "Please enter a valid phone number"
+                },
+                address: {
+                    required: "Please enter your address"
+                },
+            }
+        })
+
+        // update user information
+        formUpdateUser.submit(async function(event) {
+            event.preventDefault();
+
+            const data =
+                $("#phoneNumber").attr("disabled") ? {
+                    address: $("#address").val()
+                } : {
+                    phoneNumber: $("#phoneNumber").val(),
+                    address: $("#address").val()
+                }
+
+            console.log(data);
+
+            try {
+                const updateUserResponse = await $.ajax({
+                    method: "POST",
+                    url: "actions/update-info.php",
+                    data: data,
+                })
+
+                const {
+                    status,
+                    message
+                } = JSON.parse(updateUserResponse);
+
+                if (status) {
+                    toastr.success(message, "Update User");
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    toastr.warning(message, "Update User");
+                }
+
+            } catch (error) {
+                toastr.error(error.message, "Update User");
+            }
+        })
+
+
+        // change user password
+        formChangePassword.validate({
+            rules: {
+                currentPassword: {
+                    required: true,
+                    minlength: 6,
+                },
+                newPassword: {
+                    required: true,
+                    minlength: 6,
+                },
+                confirmPassword: {
+                    required: true,
+                    minlength: 6,
+                    equalTo: "#new-password",
+                },
+            },
+            messages: {
+                currentPassword: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 6 characters long",
+                },
+                newPassword: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 6 characters long",
+                },
+                confirmPassword: {
+                    required: "Please provide a password",
+                    minlength: "Your password must be at least 6 characters long",
+                    equalTo: "Please enter the same password as above",
+                },
+            },
+        });
+
+        formChangePassword.submit(async function(event) {
+            event.preventDefault();
+
+            const currentPassword = $("#current-password").val();
+            const newPassword = $("#new-password").val();
+            const confirmPassword = $("#confirm-password").val();
+            if (newPassword != confirmPassword) return;
+
+            const passwordData = {
+                oldPassword: currentPassword,
+                newPassword: newPassword
+            }
+            try {
+                const updatePasswordResponse = await $.ajax({
+                    method: "POST",
+                    url: "actions/change-password.php",
+                    data: passwordData
+                })
+
+                const {
+                    status,
+                    message
+                } = JSON.parse(updatePasswordResponse);
+
+                status ? toastr.success(message, "Update Password") : toastr.error(message, "Update Password");
+            } catch (error) {
+                toastr.error(error.message, "Invalid password");
             }
         })
     })

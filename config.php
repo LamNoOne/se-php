@@ -11,7 +11,7 @@ if (!defined('DB_PASS')) define('DB_PASS', "");
 /**
  * Define APP URL
  */
-if (!defined("APP_URL")) define("APP_URL", "http://localhost");
+if (!defined("APP_URL")) define("APP_URL", "http://localhost/se-php");
 
 /**
  * Define action methods
