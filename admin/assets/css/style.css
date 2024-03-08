@@ -159,6 +159,12 @@ a.text-linear-hover:hover {
 	border-color: var(--error-validate-color);
 }
 
+.form-group #categoryId-error {
+	position: absolute;
+	bottom: -27px;
+	z-index: 10;
+}
+
 form textarea.error,
 form input.error {
 	border: 1px solid var(--error-validate-color) !important;
@@ -1983,6 +1989,7 @@ a:hover {
 }
 .form-group {
 	margin-bottom: 25px;
+	position: relative;
 }
 .form-group label {
 	margin-bottom: 8px;
@@ -4203,7 +4210,11 @@ div#global-loader .whirly-loader:not(:required) {
 }
 .select2-container--focus .select2-selection--single {
 	background: #fff !important;
-	border-color: #ff9f43;
+	border-color: #000;
+}
+.select2-container:hover .select2-selection--single {
+	background: #fff !important;
+	border-color: #000;
 }
 span.select2-container.select2-container--default.select2-container--open {
 	z-index: 9999;
