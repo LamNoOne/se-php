@@ -99,7 +99,7 @@ if (!$product) {
       </div>
     </div>
     <div>
-      <a class="btn btn-submit" href="<?php echo APP_URL . "/admin/edit-product?id=$product->id" ?>">
+      <a class="btn btn-submit" href="<?php echo "edit-product.php?id=$product->id" ?>">
         Go To Edit
       </a>
       <a class="btn btn-cancel" href="javascript:history.back()">Back</a>
