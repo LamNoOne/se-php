@@ -35,7 +35,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Category</label>
-                    <select name="category" class="select">
+                    <select name="categoryId" class="select">
                       <option value="">Choose Category</option>
                       <?php foreach ($categories as $category) : ?>
                         <option value="<?php echo $category->id ?>">
@@ -54,7 +54,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Quantity</label>
-                    <input type="number" name="quantity" />
+                    <input type="number" name="stockQuantity" />
                   </div>
                 </div>
               </div>
@@ -208,7 +208,7 @@ $categories = Category::getAllCategories($conn);
           })
 
           if (response.status) {
-            window.location.replace(response.redirectUrl)
+            window.location.replace(response.data.redirectUrl)
           } else {
             toastr.error(response.message)
           }

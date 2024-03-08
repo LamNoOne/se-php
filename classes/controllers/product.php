@@ -24,35 +24,13 @@ class Product extends DataFetcher
     public $updatedAt;
 
     public function __construct(
-        $categoryId = null,
-        $name = null,
-        $imageUrl = null,
-        $description = null,
-        $screen = null,
-        $operatingSystem = null,
-        $processor = null,
-        $ram = null,
-        $storageCapacity = null,
-        $weight = null,
-        $batteryCapacity = null,
-        $color = null,
-        $price = null,
-        $stockQuantity = null
+        $fields = []
     ) {
-        $this->categoryId = $categoryId;
-        $this->name = $name;
-        $this->imageUrl = $imageUrl;
-        $this->description = $description;
-        $this->screen = $screen;
-        $this->operatingSystem = $operatingSystem;
-        $this->processor = $processor;
-        $this->ram = $ram;
-        $this->storageCapacity = $storageCapacity;
-        $this->weight = $weight;
-        $this->batteryCapacity = $batteryCapacity;
-        $this->color = $color;
-        $this->price = $price;
-        $this->stockQuantity = $stockQuantity;
+        foreach ($fields as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
     }
 
     private function validate()
@@ -66,7 +44,7 @@ class Product extends DataFetcher
         if (!$requiredRule) {
             return [
                 'status' => false,
-                'message' => 'Missing required fields'
+                'message' => $this->name
             ];
         }
         return [
