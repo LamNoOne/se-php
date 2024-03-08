@@ -73,5 +73,8 @@ function generateSQLConditions(
 function deleteFileByURL($url)
 {
     $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];
-    return unlink($pathToDelete);
+    if (file_exists($pathToDelete)) {
+        unlink($pathToDelete);
+        return;
+    }
 }
