@@ -396,6 +396,8 @@ body {
   height: 100%;
   display: flex;
   align-items: center; }
+  #header .main-header .search-bar-container .search-item {
+    cursor: pointer; }
   #header .main-header .search-bar-container .search-box {
     position: absolute;
     top: 3.6rem;

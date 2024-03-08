@@ -186,6 +186,7 @@
         const searchInput = $("#input-search");
         const searchBox = $("#search-box");
         const searchBoxLayout = $("#search-box-layout");
+        const formSearch = $("#form-search");
 
         function html([first, ...strings], ...values) {
             return values.reduce(
@@ -201,9 +202,9 @@
         }) {
             return html `
             <li>
-                <a href="#" class="d-flex justify-content-start product-container">
-                    <p class="product-name m-0">${item?.description}</p>
-                </a>
+                <div class="d-flex justify-content-start search-item product-container">
+                    <p class="product-name search-item-text m-0">${item?.description}</p>
+                </div>
             </li>
         `;
         }
@@ -265,6 +266,18 @@
                         products: searchResult
                     }));
                 }
+
+                $(".search-item-text").get().forEach((el) => {
+                    el.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        window.location.href = `<?php echo APP_URL; ?>/product?search=${el.textContent}`;
+                    })
+                })
+
+                formSearch.on("submit", function(e) {
+                    e.preventDefault();
+                    window.location.href = `<?php echo APP_URL;?>/product?search=${searchInput.val()}`;
+                })
             } catch (error) {
                 toastr.error(error.message, "Error")
             }

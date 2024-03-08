@@ -45,7 +45,7 @@ class DataFetcher extends QueryBuilder
             $options = $this->queryBuilder->validateQueryOptions($options);
             // Build and execute the fetch data with limit and offset
             $sql = $this->queryBuilder->buildSqlQuery($table, $options);
-            // print($sql);
+
             $stmt = $this->queryBuilder->executeQuery($sql, $options);
             // print_r($stmt);
             $data = $stmt->fetchAll(PDO::FETCH_OBJ);

@@ -102,7 +102,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
                             <nav class="navbar navbar-expand-lg navbar-light w-100">
                                 <div class="container-fluid p-0">
-                                    <a class="navbar-brand d-sm-none d-xl-block" href="#">
+                                    <a class="navbar-brand d-sm-none d-xl-block" href="<?php echo APP_URL; ?>">
                                         <img src="<?php echo APP_URL; ?>/assets/img/logo.svg" alt="logo" />
                                     </a>
                                     <button class="navbar-toggler mb-3" id="button-header-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -247,9 +247,9 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                     <div class="col" id="main-header-mechanism">
                         <div class="main-header__mechanism h-100 d-flex gap-4 align-items-center justify-content-end">
                             <div class="search-bar-container flex-grow-1">
-                                <form class="input-group d-flex">
-                                    <input type="search" id="input-search" class="form-control" style="border-radius: 0.375rem;">
-                                    <button type="submit" class="btn btn-primary" style="position: absolute; right: 0; top: 0; z-index: 9999; bottom: 0;">
+                                <form action="" id="form-search" method="GET" class="input-group d-flex">
+                                    <input type="search" name="search" id="input-search" class="form-control" style="border-radius: 0.375rem;">
+                                    <button type="submit" class="btn btn-primary" id="search-submit" style="position: absolute; right: 0; top: 0; z-index: 9999; bottom: 0;">
                                         <i class="fas fa-search"></i>
                                     </button>
                                 </form>

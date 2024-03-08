@@ -14,7 +14,7 @@ if (!empty($_GET)) {
         // Check if the value contains commas
         if ($key !== 'page' && $key !== 'orderby') {
             // if the value contains commas
-            if (strpos($value, ',') !== false) {
+            if (strpos($value, ',')) {
                 // convert comma string to array
                 $_values = array_map('trim', explode(',', $value));
                 if ($key === 'price') {
@@ -24,6 +24,11 @@ if (!empty($_GET)) {
 
                 $parsedParams = [...$parsedParams, createFilter($key, $_values, "IN")];
             } else {
+                if ($key === 'search') {
+                    // $parsedParams = [...$parsedParams, createFilter("`product`.name", "%$value%", "LIKE")];
+                    $parsedParams = [...$parsedParams, createFilter("`product`.description", "%$value%", "LIKE")];
+                    continue;
+                }
                 // If it doesn't contain commas, use the value as is
                 $parsedParams = [...$parsedParams, createFilter($key, $value)];
             }
@@ -55,7 +60,6 @@ if (!empty($_GET)) {
         // Apply filters
         $selectors['filters'] = $parsedParams;
 
-        // print_r($selectors);
         // Get product object
         $selectedProducts = Product::getAllProductsByCondition($conn, $selectors);
 
@@ -64,6 +68,8 @@ if (!empty($_GET)) {
         // Get total pages
         $allPages = $selectedProducts['totalPage'];
     }
+
+    $allCategories = Category::getAllCategories($conn);
 } else {
     // If url is not valid
     redirect(APP_URL);
@@ -101,13 +107,9 @@ if (!empty($_GET)) {
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '1') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=1">Smartphone</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '2') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=2">Laptop</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '3') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=3">Accessory</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '4') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=4">Studio</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '5') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '6') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '7') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
+                                <?php foreach($allCategories as $category) : ?>
+                                    <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=<?php echo $category->id; ?>"><?php echo $category->name; ?></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
 
