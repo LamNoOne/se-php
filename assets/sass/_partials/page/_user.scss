@@ -92,6 +92,21 @@
             color           : white;
             font-size       : 0.875rem;
             font-family     : Poppins;
+
+            &:hover {
+                background-color: $secondary_color;
+            }
+        }
+
+        .btn-watch-detail {
+            font-size    : 0.875rem;
+            font-family  : Poppins;
+            border-radius: 0.25rem;
+
+            &:hover {
+                text-decoration : underline !important;
+                background-color: rgba(0, 0, 0, 0.025);
+            }
         }
     }
 }

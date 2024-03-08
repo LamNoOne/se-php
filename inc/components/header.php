@@ -100,7 +100,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                 <div class="row">
                     <div class="col-sm-2 col-lg-5 col-xl-6" id="main-header-menu">
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
-                            <nav class="navbar navbar-expand-lg navbar-light w-100">
+                            <nav class="navbar navbar-header navbar-expand-lg navbar-light bg-white w-100">
                                 <div class="container-fluid p-0">
                                     <a class="navbar-brand d-sm-none d-xl-block" href="<?php echo APP_URL; ?>">
                                         <img src="<?php echo APP_URL; ?>/assets/img/logo.svg" alt="logo" />

@@ -267,10 +267,10 @@
                     }));
                 }
 
-                $(".search-item-text").get().forEach((el) => {
+                $(".search-item").get().forEach((el) => {
                     el.addEventListener("click", function(e) {
                         e.preventDefault();
-                        window.location.href = `<?php echo APP_URL; ?>/product?search=${el.textContent}`;
+                        window.location.href = `<?php echo APP_URL; ?>/product?search=${$(el).find(".search-item-text").text()}`;
                     })
                 })
 

@@ -14,6 +14,7 @@
 
             .search-box {
                 position        : absolute;
+                z-index         : 9999;
                 top             : 3.6rem;
                 left            : 0;
                 width           : 100%;
@@ -82,7 +83,7 @@
             }
 
             .search-box-layout {
-                z-index         : -1;
+                z-index         : 10;
                 background-color: rgba(0, 0, 0, 0.15);
                 position        : fixed;
                 top             : 0;

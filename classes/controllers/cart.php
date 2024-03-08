@@ -40,6 +40,25 @@ class Cart
         return $cartId;
     }
 
+    public static function createCartFromOrder($conn, $orderId)
+    {
+        try {
+            $createOrderStatement = "CALL createCartFromOrder(:p_orderId, @p_cartId, @p_errorMessage)";
+            $stmt = $conn->prepare($createOrderStatement);
+            $stmt->bindValue(':p_orderId', $orderId, PDO::PARAM_INT);
+            $status = $stmt->execute();
+            if (!$status) {
+                throw new PDOException("Can not execute query");
+            }
+
+            $stmt = $conn->query("SELECT @p_cartId as cartId, @p_errorMessage as errorMessage");
+            $result = $stmt->fetch(PDO::FETCH_OBJ);
+            return Message::messageData(true, "Create cart successfully", $result);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function updateCart($conn, $userId, $cartData)
     {
         try {
@@ -151,7 +170,7 @@ class Cart
         }
     }
 
-    public static function getProductDetailFromCart($conn, $userId, $productId) : array | object
+    public static function getProductDetailFromCart($conn, $userId, $productId): array | object
     {
         try {
             $cartId = static::getCartId($conn, $userId);

@@ -400,6 +400,7 @@ body {
     cursor: pointer; }
   #header .main-header .search-bar-container .search-box {
     position: absolute;
+    z-index: 9999;
     top: 3.6rem;
     left: 0;
     width: 100%;
@@ -445,7 +446,7 @@ body {
           font-weight: 500;
           text-decoration: line-through; }
   #header .main-header .search-bar-container .search-box-layout {
-    z-index: -1;
+    z-index: 10;
     background-color: rgba(0, 0, 0, 0.15);
     position: fixed;
     top: 0;
@@ -1757,6 +1758,15 @@ body {
       color: white;
       font-size: 0.875rem;
       font-family: Poppins; }
+      #customer-manager .order-item .btn-order-detail:hover {
+        background-color: #144bb8; }
+    #customer-manager .order-item .btn-watch-detail {
+      font-size: 0.875rem;
+      font-family: Poppins;
+      border-radius: 0.25rem; }
+      #customer-manager .order-item .btn-watch-detail:hover {
+        text-decoration: underline !important;
+        background-color: rgba(0, 0, 0, 0.025); }
 
 #product-detail {
   margin-top: 7rem;

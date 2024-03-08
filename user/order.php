@@ -68,7 +68,10 @@ $allPages = $allOrdersData['totalPage'];
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
-                                <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
+                                <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
+                                    <button data-index="<?php echo $orders->id; ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Repurchase</button>
+                                    <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-watch-detail border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
+                                </div>
                             </div>
                         </li>
                     <?php endforeach; ?>
@@ -85,6 +88,37 @@ $allPages = $allOrdersData['totalPage'];
 <script src="<?php echo APP_URL; ?>/assets/pagination/pagination.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
 <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
+
+<script>
+    // Create cart from existed order
+    $(document).ready(function() {
+        const allOrderBtnRepurchase = $(".btn-order-detail").get();
+        console.log(allOrderBtnRepurchase)
+        allOrderBtnRepurchase.forEach(function(el) {
+            el.addEventListener("click", async function(e) {
+                e.preventDefault();
+                const orderId = $(this).data("index");
+
+                try {
+                    const repurchaseResponse = await $.ajax({
+                        method: "POST",
+                        url: "actions/repurchase.php",
+                        data: {
+                            orderId
+                        }
+                    })
+                    const {
+                        status,
+                        message
+                    } = JSON.parse(repurchaseResponse);
+                    status ? window.location.href = "<?php echo APP_URL; ?>/cart" : toastr.error(message, "Error Repurchase");
+                } catch (error) {
+                    toastr.error(error.message, "Error");
+                }
+            })
+        })
+    })
+</script>
 <script>
     const selector = {};
     const baseUrl = "<?php echo APP_URL; ?>/user/order.php";
