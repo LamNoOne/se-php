@@ -9,7 +9,7 @@ class UploadFile
      * @param string $fieldName The name of the field containing the file to upload.
      *
      * @return array An associative array containing the upload status and message:
-     * - 'status': A boolean indicating the upload status (true for success, false for failure).
+     * - 'status': A code that indicating the file upload status (0 - UPLOAD_ERR_OK: upload file successfully).
      * - 'message': A string describing the upload result.
      * - 'url': (Optional) The URL of the uploaded file, available if upload is successful.
      */
