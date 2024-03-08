@@ -47,7 +47,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Category</label>
-                    <select name="category" class="select">
+                    <select name="categoryId" class="select">
                       <option value="">Choose Category</option>
                       <?php foreach ($categories as $category) : ?>
                         <option value="<?php echo $category->id ?>" <?php
@@ -70,7 +70,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Quantity</label>
-                    <input type="number" name="quantity" value="<?php echo $product->stockQuantity ?>" />
+                    <input type="number" name="stockQuantity" value="<?php echo $product->stockQuantity ?>" />
                   </div>
                 </div>
               </div>
@@ -212,11 +212,13 @@ $categories = Category::getAllCategories($conn);
       try {
         event.preventDefault()
         if ($('#form').valid()) {
+          const searchParams = new URLSearchParams(window.location.search)
           const formData = new FormData($(this)[0])
+          formData.append('id', searchParams.get('id'))
 
           const response = await $.ajax({
             url: 'actions/edit-product.php',
-            type: 'PATCH',
+            type: 'POST',
             dataType: 'json',
             data: formData,
             contentType: false,
@@ -224,7 +226,7 @@ $categories = Category::getAllCategories($conn);
           })
 
           if (response.status) {
-            window.location.replace(response.redirectUrl)
+            window.location.replace(response.data.redirectUrl)
           } else {
             toastr.error(response.message)
           }

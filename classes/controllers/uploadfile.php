@@ -17,17 +17,17 @@ class UploadFile
     {
         try {
             if (empty($_FILES)) {
-                return Message::message(false, 'Cannot upload files');
+                return Message::message(UPLOAD_ERR_NO_FILE, 'No files was uploaded');
             }
 
             $rs = Errorfileupload::err($_FILES[$fieldName]['error']);
-            if ($rs != 'OK') {
-                return Message::message(false, $rs);
+            if ($rs['status'] != UPLOAD_ERR_OK) {
+                return Message::message($rs['status'], $rs['message']);
             }
 
             $fileMaxSize = FILE_MAX_SIZE;
             if ($_FILES[$fieldName]['size'] > $fileMaxSize) {
-                return Message::message(false, 'File too large, must smaller than: ' .  $fileMaxSize);
+                return Message::message(UPLOAD_ERR_FORM_SIZE, 'File too large, must smaller than: ' .  $fileMaxSize);
             }
 
             // limit file image type
@@ -37,7 +37,7 @@ class UploadFile
             // file upload will store in tmp_name
             $file_mime_type = finfo_file($fileinfo, $_FILES[$fieldName]['tmp_name']);
             if (!in_array($file_mime_type, $mime_types)) {
-                return Message::message(false, 'Invalid file type, file must be: ' . implode('; ', FILE_TYPE));
+                return Message::message(UPLOAD_ERR_EXTENSION, 'Invalid file type, file must be: ' . implode('; ', FILE_TYPE));
             }
 
             // standardize image before upload to server
@@ -65,13 +65,13 @@ class UploadFile
 
             if (move_uploaded_file($fileTmp, $fileToHost)) {
                 return [
-                    ...Message::message(true, 'Upload file successfully'),
+                    ...Message::message(UPLOAD_ERR_OK, 'Upload file successfully'),
                     'url' => $uploadedFileUrl
                 ];
             }
-            return Message::message(false, 'Upload file failed');
+            return Message::message(UPLOAD_ERR_CANT_WRITE, 'Upload file failed');
         } catch (Exception $e) {
-            return Message::message(false, $e->getMessage());
+            return Message::message(UPLOAD_ERR_CANT_WRITE, $e->getMessage());
         }
     }
 }

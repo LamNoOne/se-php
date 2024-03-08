@@ -156,12 +156,30 @@ class Product extends DataFetcher
         }
     }
 
-    public static function updateProduct($conn, $userId)
-    {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+    public static function updateProduct(
+        $conn,
+        $id,
+        $dataToUpdate = []
+    ) {
+        try {
+            $sql = "UPDATE `product` SET ";
+            foreach ($dataToUpdate as $key => $value) {
+                $sql .= "`$key` = '$value', ";
+            }
+            $sql = rtrim($sql, ', ');
+            $sql .= " WHERE id = $id";
+            $stmt = $conn->prepare($sql);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Product');
+            if ($stmt->execute()) {
+                return [
+                    ...Message::message(true, 'Update product successfully'),
+                    'product' => $stmt->fetch()
+                ];
+            }
+            return Message::message(false, 'Update product failed');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
     public static function deleteProduct($conn, $userId)
