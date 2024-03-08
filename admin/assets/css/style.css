@@ -5529,8 +5529,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	-webkit-text-fill-color: transparent !important;
 	font-weight: 700;
 	font-size: 25px;
-	letter-spacing: 1px;
-	text-shadow: var(--box-shadow);
+	letter-spacing: 2px;
 }
 
 .page-header h4 {
@@ -5539,8 +5538,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	-webkit-text-fill-color: transparent !important;
 	font-weight: 500;
 	font-size: 14px;
-	letter-spacing: 1px;
-	text-shadow: var(--box-shadow);
+	letter-spacing: 2px;
 }
 
 @media (max-width: 575px) {
