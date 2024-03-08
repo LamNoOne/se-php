@@ -144,7 +144,7 @@ $categories = Category::getAllCategories($conn);
           </div>
           <div class="col-lg-12 mt-5">
             <button type="submit" class="btn btn-submit me-2">Submit</button>
-            <button class="btn btn-cancel">Cancel</button>
+            <a href="products.php" class="btn btn-cancel">Cancel</a>
           </div>
       </div>
     </div>
