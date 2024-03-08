@@ -638,6 +638,21 @@ $(document).ready(function () {
 			previewImage.classList.remove('active')
 			image.style.display = 'none'
 		}
+
+		const handleHasImage = () => {
+			const imageUrl = image.src
+			if (imageUrl) {
+				const urlObject = new URL(imageUrl)
+				const imagePath = urlObject.pathname
+				const imageNameArray = imagePath.split('/')
+				const imageName = imageNameArray[imageNameArray.length - 1]
+
+				fileName.innerText = imageName
+				previewImage.classList.add('active')
+				image.style.display = 'block'
+			}
+		}
+		handleHasImage()
 	}
 	previewImage()
 })

@@ -5,6 +5,18 @@ if (!isset($conn)) {
   $conn = require_once dirname(__DIR__) . '/inc/db.php';
 }
 
+if ($_SERVER['REQUEST_METHOD'] !== 'GET' || !isset($_GET['id'])) {
+  header('Location: products.php');
+  return;
+}
+
+$productId = $_GET['id'];
+$product = Product::getProductByIdForAdmin($conn, $productId);
+if (!$product) {
+  header('Location: 404.php');
+  return;
+}
+
 $categories = Category::getAllCategories($conn);
 
 ?>
@@ -15,8 +27,8 @@ $categories = Category::getAllCategories($conn);
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Add Product</h3>
-        <h4>Create new product</h4>
+        <h3>Edit Product</h3>
+        <h4>Update your product</h4>
       </div>
     </div>
 
@@ -29,7 +41,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Product Name</label>
-                    <input type="text" name="name" autofocus />
+                    <input type="text" name="name" value="<?php echo $product->name ?>" />
                   </div>
                 </div>
                 <div class="col-lg-12 col-sm-6 col-12">
@@ -38,7 +50,11 @@ $categories = Category::getAllCategories($conn);
                     <select name="category" class="select">
                       <option value="">Choose Category</option>
                       <?php foreach ($categories as $category) : ?>
-                        <option value="<?php echo $category->id ?>">
+                        <option value="<?php echo $category->id ?>" <?php
+                                                                    if ($category->id === $product->categoryId) {
+                                                                      echo 'selected';
+                                                                    }
+                                                                    ?>>
                           <?php echo $category->name ?>
                         </option>
                       <?php endforeach; ?>
@@ -48,13 +64,13 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Price</label>
-                    <input type="number" name="price" />
+                    <input type="number" name="price" value="<?php echo $product->price ?>" />
                   </div>
                 </div>
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Quantity</label>
-                    <input type="number" name="quantity" />
+                    <input type="number" name="quantity" value="<?php echo $product->stockQuantity ?>" />
                   </div>
                 </div>
               </div>
@@ -64,49 +80,49 @@ $categories = Category::getAllCategories($conn);
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Screen</label>
-                    <input type="text" name="screen" />
+                    <input type="text" name="screen" value="<?php echo $product->screen ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Operating System</label>
-                    <input type="text" name="operatingSystem" />
+                    <input type="text" name="operatingSystem" value="<?php echo $product->operatingSystem ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Processor</label>
-                    <input type="text" name="processor" />
+                    <input type="text" name="processor" value="<?php echo $product->processor ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>RAM</label>
-                    <input type="number" name="ram" />
+                    <input type="number" name="ram" value="<?php echo $product->ram ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Storage Capacity</label>
-                    <input type="number" name="storageCapacity" />
+                    <input type="number" name="storageCapacity" value="<?php echo $product->storageCapacity ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Weight</label>
-                    <input type="number" name="weight" />
+                    <input type="number" name="weight" value="<?php echo $product->weight ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Battery Capacity</label>
-                    <input type="number" name="batteryCapacity" />
+                    <input type="number" name="batteryCapacity" value="<?php echo $product->batteryCapacity ?>" />
                   </div>
                 </div>
                 <div class="col-lg-6 col-sm-6 col-12">
                   <div class="form-group">
                     <label>Color</label>
-                    <input type="text" name="color" />
+                    <input type="text" name="color" value="<?php echo $product->color ?>" />
                   </div>
                 </div>
               </div>
@@ -114,7 +130,7 @@ $categories = Category::getAllCategories($conn);
             <div class="col-lg-12">
               <div class="form-group">
                 <label>Description</label>
-                <textarea class="form-control" name="description"></textarea>
+                <textarea class="form-control" name="description"><?php echo $product->description ?></textarea>
               </div>
             </div>
             <div class="col-lg-12">
@@ -123,7 +139,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="preview-image-wrapper mx-auto">
                   <div class="preview-image">
                     <div class="image">
-                      <img src="">
+                      <img src="<?php echo $product->imageUrl ?>">
                     </div>
                     <div class="content">
                       <div class="icon">
@@ -199,8 +215,8 @@ $categories = Category::getAllCategories($conn);
           const formData = new FormData($(this)[0])
 
           const response = await $.ajax({
-            url: 'actions/add-product.php',
-            type: 'POST',
+            url: 'actions/edit-product.php',
+            type: 'PATCH',
             dataType: 'json',
             data: formData,
             contentType: false,
@@ -214,6 +230,7 @@ $categories = Category::getAllCategories($conn);
           }
         }
       } catch (error) {
+        console.log(error);
         toastr.error('Something went wrong')
       }
     })

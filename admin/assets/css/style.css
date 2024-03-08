@@ -5530,6 +5530,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	font-weight: 700;
 	font-size: 25px;
 	letter-spacing: 2px;
+	text-transform: capitalize;
 }
 
 .page-header h4 {
