@@ -575,101 +575,123 @@ $(document).ready(function () {
 			}
 		}
 	)
-
-	const previewImage = () => {
-		const inputFile = document.querySelector(
-			'.preview-image-wrapper .input-file'
-		)
-		const chooseFileBtn = document.querySelector(
-			'.preview-image-wrapper .choose-file-btn'
-		)
-		const cancelBtn = document.querySelector(
-			'.preview-image-wrapper .preview-image .cancel-btn'
-		)
-		const image = document.querySelector('.preview-image-wrapper img')
-		const fileName = document.querySelector(
-			'.preview-image-wrapper .preview-image .file-name'
-		)
-		const previewImage = document.querySelector(
-			'.preview-image-wrapper .preview-image'
-		)
-
-		if (
-			!inputFile ||
-			!chooseFileBtn ||
-			!cancelBtn ||
-			!image ||
-			!fileName ||
-			!previewImage
-		) {
-			return
-		}
-
-		chooseFileBtn.onclick = function (event) {
-			event.preventDefault()
-			inputFile.click()
-		}
-
-		inputFile.onchange = function () {
-			const file = this.files[0]
-			if (file) {
-				const src = URL.createObjectURL(file)
-				image.src = src
-				image.style.display = 'block'
-
-				const patternRegex =
-					/[^\\/:*?"<>|\r\n]*[^\s\\/:*?"<>|\r\n]+\.[a-zA-Z0-9]+/
-				const match = inputFile.value?.match(patternRegex)
-				fileName.innerText = match ? match[0] : null
-
-				previewImage.classList.add('active')
-			} else {
-				image.src = ''
-				fileName.innerText = ''
-				previewImage.classList.remove('active')
-				image.style.display = 'none'
-			}
-		}
-
-		cancelBtn.onclick = function () {
-			inputFile.value = ''
-			image.src = ''
-			fileName.innerText = ''
-			previewImage.classList.remove('active')
-			image.style.display = 'none'
-		}
-
-		const handleHasImage = () => {
-			const imageUrl = image.src
-			if (imageUrl) {
-				const urlObject = new URL(imageUrl)
-				const imagePath = urlObject.pathname
-				const imageNameArray = imagePath.split('/')
-				const imageName = imageNameArray[imageNameArray.length - 1]
-
-				fileName.innerText = imageName
-				previewImage.classList.add('active')
-				image.style.display = 'block'
-			}
-		}
-		handleHasImage()
-	}
-	previewImage()
 })
 
 /**
  * CUSTOM
  */
-// replace error image with default image
-$('img').each(function () {
-	const imgSrc = $(this).attr('src')
-	if (imgSrc === '') {
+const handleDefaultImage = () => {
+	$('img').each(function () {
+		const imgSrc = $(this).attr('src')
+		if (imgSrc === '') {
+			return
+		}
+		const img = new Image()
+		img.src = imgSrc
+
+		img.onerror = () => {
+			$(this).attr('src', 'assets/img/no-image.png')
+		}
+	})
+}
+
+const previewImage = () => {
+	const inputFile = document.querySelector('.preview-image-wrapper .input-file')
+	const inputUrl = document.querySelector('.preview-image-wrapper .input-url')
+	const chooseFileBtn = document.querySelector(
+		'.preview-image-wrapper .choose-file-btn'
+	)
+	const cancelBtn = document.querySelector(
+		'.preview-image-wrapper .preview-image .cancel-btn'
+	)
+	const image = document.querySelector('.preview-image-wrapper img')
+	const fileName = document.querySelector(
+		'.preview-image-wrapper .preview-image .file-name'
+	)
+	const previewImage = document.querySelector(
+		'.preview-image-wrapper .preview-image'
+	)
+
+	if (
+		!inputFile ||
+		!chooseFileBtn ||
+		!cancelBtn ||
+		!image ||
+		!fileName ||
+		!previewImage
+	) {
 		return
 	}
-	const img = new Image()
-	img.src = imgSrc
 
-	img.onerror = () => {
-		$(this).attr('src', 'assets/img/no-image.png')
+	chooseFileBtn.onclick = function (event) {
+		event.preventDefault()
+
+		inputFile.click()
 	}
-})
+
+	inputFile.onchange = function () {
+		const file = this.files[0]
+		if (file) {
+			const src = URL.createObjectURL(file)
+			image.src = src
+			image.style.display = 'block'
+
+			const patternRegex =
+				/[^\\/:*?"<>|\r\n]*[^\s\\/:*?"<>|\r\n]+\.[a-zA-Z0-9]+/
+			const match = inputFile.value?.match(patternRegex)
+			fileName.innerText = match ? match[0] : null
+
+			previewImage.classList.add('active')
+		} else {
+			image.src = ''
+			fileName.innerText = ''
+			previewImage.classList.remove('active')
+			image.style.display = 'none'
+		}
+	}
+
+	cancelBtn.onclick = function () {
+		inputFile.value = ''
+		image.src = ''
+		fileName.innerText = ''
+		previewImage.classList.remove('active')
+		image.style.display = 'none'
+	}
+
+	const handleInitImage = () => {
+		const imageUrl = inputUrl.value
+		if (imageUrl) {
+			const urlObject = new URL(imageUrl)
+			const imagePath = urlObject.pathname
+			const imageNameArray = imagePath.split('/')
+			const imageName = imageNameArray[imageNameArray.length - 1]
+
+			fetch(imageUrl)
+				.then((response) => {
+					if (!response.ok) {
+						image.src = 'assets/img/no-image.png'
+						image.style.display = 'block'
+						fileName.innerText = 'No image'
+						previewImage.classList.add('active')
+						return Promise.reject()
+					}
+					return response.blob()
+				})
+				.then((blob) => {
+					const file = new File([blob], imageName, { type: 'image/jpeg' })
+					const dt = new DataTransfer()
+					dt.items.add(file)
+					inputFile.files = dt.files
+					inputFile.onchange()
+				})
+				.catch(() => {})
+		}
+	}
+
+	if (inputUrl) {
+		handleInitImage()
+	}
+}
+
+handleDefaultImage()
+previewImage()

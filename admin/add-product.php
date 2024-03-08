@@ -53,7 +53,7 @@ $categories = Category::getAllCategories($conn);
                 </div>
                 <div class="col-lg-12 col-sm-6 col-12">
                   <div class="form-group">
-                    <label>Quantity</label>
+                    <label>Stock Quantity</label>
                     <input type="number" name="stockQuantity" />
                   </div>
                 </div>
@@ -123,7 +123,7 @@ $categories = Category::getAllCategories($conn);
                 <div class="preview-image-wrapper mx-auto">
                   <div class="preview-image">
                     <div class="image">
-                      <img src="">
+                      <img>
                     </div>
                     <div class="content">
                       <div class="icon">
@@ -135,8 +135,8 @@ $categories = Category::getAllCategories($conn);
                       <i class="fas fa-times"></i>
                     </div>
                     <p class="file-name">File name here</p>
+                    <input name="image" class="input-file" type="file">
                   </div>
-                  <input name="image" class="input-file" type="file">
                   <button class="choose-file-btn">Choose a image</button>
                 </div>
               </div>
@@ -163,14 +163,14 @@ $categories = Category::getAllCategories($conn);
         name: {
           required: true
         },
-        category: {
+        categoryId: {
           required: true
         },
         price: {
           required: true,
           number: true
         },
-        quantity: {
+        stockQuantity: {
           required: true,
           number: true
         },
