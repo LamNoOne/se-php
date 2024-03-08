@@ -17,7 +17,7 @@ class QueryBuilder extends Validation
      * @param mixed $options
      * Validate options is an array, merge with default options if it's valid
      */
-    protected function validateQueryOptions($options)
+    protected function validateQueryOptions($options) : mixed
     {
         // Validate the query options
         return $this->validation->validateQueryOptions($options);
