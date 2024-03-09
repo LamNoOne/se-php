@@ -4,50 +4,64 @@ session_start();
 require_once dirname(dirname(__DIR__)) . '/inc/init.php';
 $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
 require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
+/*
 
+// Handle UI and edit product action
+
+- choose image -> currentImageUrl = '', image not empty ---> REPLACE
+- cancel image and choose image -> currentImageUrl = '', image not empty ---> REPLACE
+
+- not cancel image, not choose imshr -> currentImageUrl = '' -> DO NOTHING
+
+- cancel -> currentImageUrl = '' ---> DELETE: develop in the future
+
+*/
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!isset($_POST['id'])) {
     return throwStatusMessage(Message::message(false, 'ID is required'));
   }
 
   $id = $_POST['id'];
+  $currentImageUrl = $_POST['currentImageUrl'];
 
   $foundProduct = Product::getProductById($conn, $id);
   if (!$foundProduct) {
     return throwStatusMessage(Message::message(false, 'Something went wrong'));
   }
 
-  $uploadResult = UploadFile::process('image');
+  $uploadResult = null;
+  if ($currentImageUrl === '') {
+    $uploadResult = UploadFile::process('image');
+  }
 
+  // update product in db
+  $dataToUpdate = [...$_POST];
+  unset($dataToUpdate['id']);
+  unset($dataToUpdate['currentImageUrl']);
   if (
-    $uploadResult['status'] === UPLOAD_ERR_OK
-    || $uploadResult['status'] === UPLOAD_ERR_NO_FILE
+    $uploadResult !== null
+    && $uploadResult['status'] === UPLOAD_ERR_OK
   ) {
-
-    $dataToUpdate = [...$_POST];
-    if ($uploadResult['status'] !== UPLOAD_ERR_NO_FILE) {
-      $dataToUpdate['imageUrl'] = $uploadResult['url'];
-    }
-    unset($dataToUpdate['id']);
-
-    $updateProductResult = Product::updateProduct($conn, $id, $dataToUpdate);
-
-    if ($updateProductResult['status']) {
-      deleteFileByURL($foundProduct->imageUrl);
-      $message = Message::messageData(
-        $updateProductResult['status'],
-        $updateProductResult['message'],
-        ['redirectUrl' => APP_URL . '/admin/products.php']
-      );
-      throwStatusMessage($message);
-    } else {
-      if ($uploadResult['status'] !== UPLOAD_ERR_NO_FILE) {
-        deleteFileByURL($uploadResult['url']);
-      }
-      throwStatusMessage($updateProductResult);
-    }
+    $dataToUpdate['imageUrl'] = $uploadResult['url'];
+  }
+  $updateProductResult = Product::updateProduct($conn, $id, $dataToUpdate);
+  if ($updateProductResult['status']) {
+    deleteFileByURL($foundProduct->imageUrl); // delete old file
+    $message = Message::messageData(
+      $updateProductResult['status'],
+      $updateProductResult['message'],
+      ['redirectUrl' => APP_URL . '/admin/products.php']
+    );
+    throwStatusMessage($message);
     return;
   }
-  throwStatusMessage($uploadResult);
-  return;
+
+  // delete new file was uploaded
+  if (
+    $uploadResult !== null
+    && $uploadResult['status'] === UPLOAD_ERR_OK
+  ) {
+    deleteFileByURL($uploadResult['url']);
+  }
+  throwStatusMessage($updateProductResult);
 }

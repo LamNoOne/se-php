@@ -597,7 +597,9 @@ const handleDefaultImage = () => {
 
 const previewImage = () => {
 	const inputFile = document.querySelector('.preview-image-wrapper .input-file')
-	const inputUrl = document.querySelector('.preview-image-wrapper .input-url')
+	const currentImageUrl = document.querySelector(
+		'.preview-image-wrapper .current-image-url'
+	)
 	const chooseFileBtn = document.querySelector(
 		'.preview-image-wrapper .choose-file-btn'
 	)
@@ -623,49 +625,35 @@ const previewImage = () => {
 		return
 	}
 
-	chooseFileBtn.onclick = function (event) {
-		event.preventDefault()
-
-		inputFile.click()
-	}
-
-	inputFile.onchange = function () {
-		const file = this.files[0]
-		if (file) {
-			const src = URL.createObjectURL(file)
-			image.src = src
-			image.style.display = 'block'
-
-			const patternRegex =
-				/[^\\/:*?"<>|\r\n]*[^\s\\/:*?"<>|\r\n]+\.[a-zA-Z0-9]+/
-			const match = inputFile.value?.match(patternRegex)
-			fileName.innerText = match ? match[0] : null
-
-			previewImage.classList.add('active')
+	const showPreviewImage = (blobOrFile) => {
+		if (blobOrFile.name) {
+			fileName.innerText = blobOrFile.name
+			currentImageUrl.value = '' // fix choose image
 		} else {
-			image.src = ''
-			fileName.innerText = ''
-			previewImage.classList.remove('active')
-			image.style.display = 'none'
+			const urlObject = new URL(currentImageUrl.value)
+			const imagePath = urlObject.pathname
+			const imageNameArray = imagePath.split('/')
+			const imageName = imageNameArray[imageNameArray.length - 1]
+			fileName.innerText = imageName
 		}
+		const src = URL.createObjectURL(blobOrFile)
+		image.src = src
+		image.style.display = 'block'
+		previewImage.classList.add('active')
 	}
 
-	cancelBtn.onclick = function () {
+	const clearPreviewImage = () => {
 		inputFile.value = ''
 		image.src = ''
+		currentImageUrl.value = ''
 		fileName.innerText = ''
 		previewImage.classList.remove('active')
 		image.style.display = 'none'
 	}
 
 	const handleInitImage = () => {
-		const imageUrl = inputUrl.value
+		const imageUrl = currentImageUrl.value
 		if (imageUrl) {
-			const urlObject = new URL(imageUrl)
-			const imagePath = urlObject.pathname
-			const imageNameArray = imagePath.split('/')
-			const imageName = imageNameArray[imageNameArray.length - 1]
-
 			fetch(imageUrl)
 				.then((response) => {
 					if (!response.ok) {
@@ -678,17 +666,31 @@ const previewImage = () => {
 					return response.blob()
 				})
 				.then((blob) => {
-					const file = new File([blob], imageName, { type: 'image/jpeg' })
-					const dt = new DataTransfer()
-					dt.items.add(file)
-					inputFile.files = dt.files
-					inputFile.onchange()
+					showPreviewImage(blob)
 				})
 				.catch(() => {})
 		}
 	}
 
-	if (inputUrl) {
+	chooseFileBtn.onclick = function (event) {
+		event.preventDefault()
+		inputFile.click()
+	}
+
+	inputFile.onchange = function () {
+		const file = this.files[0]
+		if (file) {
+			showPreviewImage(file)
+		} else {
+			clearPreviewImage()
+		}
+	}
+
+	cancelBtn.onclick = function () {
+		clearPreviewImage()
+	}
+
+	if (currentImageUrl) {
 		handleInitImage()
 	}
 }

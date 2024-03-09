@@ -128,7 +128,7 @@ a.text-linear-hover:hover {
 	bottom: 0;
 	left: 0;
 	width: 0px;
-	border: none !important;
+	border: none
 }
 
 .preview-image-wrapper .preview-image #image-error {

@@ -152,7 +152,7 @@ $categories = Category::getAllCategories($conn);
                     </div>
                     <p class="file-name">File name here</p>
                     <input name="image" class="input-file" type="file">
-                    <input class="input-url" value="<?php echo $product->imageUrl ?>" type="hidden">
+                    <input name="currentImageUrl" class="current-image-url" value="<?php echo $product->imageUrl ?>" type="hidden">
                   </div>
                   <button class="choose-file-btn">Choose a image</button>
                 </div>
@@ -230,7 +230,6 @@ $categories = Category::getAllCategories($conn);
           }
         }
       } catch (error) {
-        console.log(error);
         toastr.error('Something went wrong')
       }
     })
