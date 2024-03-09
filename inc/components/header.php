@@ -97,15 +97,15 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
         </div>
         <div class="main-header">
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-2 col-lg-5 col-xl-6" id="main-header-menu">
+                <div class="row align-items-center">
+                    <div class="d-none d-sm-block col-2 col-lg-5 col-xl-6" id="main-header-menu">
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
                             <nav class="navbar navbar-header navbar-expand-lg navbar-light bg-white w-100">
                                 <div class="container-fluid p-0">
-                                    <a class="navbar-brand d-sm-none d-xl-block" href="<?php echo APP_URL; ?>">
+                                    <a class="d-none d-lg-block navbar-brand d-sm-none d-xl-block" href="<?php echo APP_URL; ?>">
                                         <img src="<?php echo APP_URL; ?>/assets/img/logo.svg" alt="logo" />
                                     </a>
-                                    <button class="navbar-toggler mb-3" id="button-header-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <button class="navbar-toggler" id="button-header-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                         <span class="navbar-toggler-icon"></span>
                                     </button>
                                     <div class="collapse navbar-collapse" id="navbarSupportedContent">

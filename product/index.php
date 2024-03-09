@@ -77,7 +77,7 @@ if (!empty($_GET)) {
 ?>
 
 <div id="main-content" class="main-content">
-    <div id="promotion-slider">
+    <div id="promotion-slider" class="d-none d-sm-block">
         <div class="container">
             <div class="row">
                 <div class="single-promotion position-relative">
@@ -102,12 +102,12 @@ if (!empty($_GET)) {
         <!-- Description product page and control button sort, grid layout -->
         <div class="container">
             <div class="row">
-                <div class="col-2">
+                <div class="col-2 d-none d-sm-block">
                     <div class="product-filter">
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <?php foreach($allCategories as $category) : ?>
+                                <?php foreach ($allCategories as $category) : ?>
                                     <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=<?php echo $category->id; ?>"><?php echo $category->name; ?></a></li>
                                 <?php endforeach; ?>
                             </ul>
@@ -135,10 +135,10 @@ if (!empty($_GET)) {
                                     <input type="checkbox" value="MacOS" name="operatingSystem" id="macOS" /><label for="macOS">MacOS</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="Logitech" name="operatingSystem" id="logitech" /><label for="logitech">Logitech</label>
+                                    <input type="checkbox" value="iOS" name="operatingSystem" id="apple" /><label for="apple">iSO</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="Apple" name="operatingSystem" id="apple" /><label for="apple">Apple</label>
+                                    <input type="checkbox" value="Logitech" name="operatingSystem" id="logitech" /><label for="logitech">Logitech</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
                                     <input type="checkbox" value="Windows" name="operatingSystem" id="windows" /><label for="windows">Windows</label>
@@ -189,9 +189,9 @@ if (!empty($_GET)) {
                         </div>
                     </div>
                 </div>
-                <div class="col-10">
-                    <div class="row position-relative mb-5">
-                        <div class="col">
+                <div class="col-12 col-sm-10">
+                    <div class="row position-relative mb-5 d-none d-sm-block">
+                        <div class="col d-none d-sm-flex">
                             <div class="page-product-desc d-flex align-items-center">
                                 <p class="m-0">Items <span>1</span>-<span>35</span> of <span>61</span></p>
                             </div>
@@ -213,44 +213,54 @@ if (!empty($_GET)) {
                         </div>
                     </div>
                     <div class="row">
-                        <?php foreach ($allProducts as $product) : ?>
-                            <div class="mb-2 col col-sm-6 col-lg-4 col-xl-3">
-                                <div class="card-product-detail" data-index="<?php echo $product->id; ?>">
-                                    <div class="item-status d-flex">
-                                        <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                        <span class="true">&nbsp;in stock</span>
-                                    </div>
-                                    <div class="image-container">
-                                        <img class="object-fit-contain" src="<?php echo $product->imageUrl; ?>" alt="cpu" />
-                                    </div>
-                                    <div class="evaluation d-flex align-items-center">
-                                        <div class="star-check d-flex">
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star"></span>
+                        <?php if (!empty($allProducts)) : ?>
+                            <?php foreach ($allProducts as $product) : ?>
+                                <div class="mb-2 col-6 col-lg-4 col-xl-3">
+                                    <div class="card-product-detail" data-index="<?php echo $product->id; ?>">
+                                        <div class="item-status d-flex">
+                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
+                                            <span class="true">&nbsp;in stock</span>
                                         </div>
-                                        <div class="star-review">
-                                            <span>Reviews (4)</span>
+                                        <div class="image-container">
+                                            <img class="object-fit-contain" src="<?php echo $product->imageUrl; ?>" alt="cpu" />
                                         </div>
-                                    </div>
-                                    <div class="title-container">
-                                        <p class="product-title">
-                                            <?php echo $product->description; ?>
-                                        </p>
-                                    </div>
-                                    <div class="price-container d-flex flex-column align-items-start">
-                                        <span class="old-price">$<?php echo $product->price; ?></span>
-                                        <span class="new-price">$<?php echo $product->price; ?></span>
+                                        <div class="evaluation d-flex align-items-center">
+                                            <div class="star-check d-flex">
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <div class="star-review">
+                                                <span>Reviews (4)</span>
+                                            </div>
+                                        </div>
+                                        <div class="title-container">
+                                            <p class="product-title">
+                                                <?php echo $product->description; ?>
+                                            </p>
+                                        </div>
+                                        <div class="price-container d-flex flex-column align-items-start">
+                                            <span class="old-price">$<?php echo $product->price; ?></span>
+                                            <span class="new-price">$<?php echo $product->price; ?></span>
+                                        </div>
                                     </div>
                                 </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <div class="search-no-result d-flex flex-column justify-content-center align-items-center">
+                                <h3 class="m-0 search-no-result__title">Search No Result</h3>
+                                <p class="m-0 search-no-result__desc">We're sorry. We cannot find any matches for your search term.</p>
+                                <i class="search-no-result__icon fa-solid fa-magnifying-glass"></i>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
+                    <?php if(!empty($allProducts)) : ?>
                     <div class="row">
                         <div id="pagination" class="py-3"></div>
                     </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

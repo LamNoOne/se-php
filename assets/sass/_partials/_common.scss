@@ -12,6 +12,10 @@ body {
     height          : -webkit-fit-content;
     height          : -moz-fit-content;
     height          : fit-content;
+
+    #main-content {
+        margin-top: 7rem;
+    }
 }
 
 .checked {
