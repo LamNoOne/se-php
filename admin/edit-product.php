@@ -30,6 +30,9 @@ $categories = Category::getAllCategories($conn);
         <h3>Edit Product</h3>
         <h4>Update your product</h4>
       </div>
+      <div class="page-btn">
+        <a data-id="<?php echo $product->id ?>" id="delete-btn" class="btn btn-danger" href="javascript:void(0)">Delete</a>
+      </div>
     </div>
 
     <div class="card">
@@ -235,6 +238,37 @@ $categories = Category::getAllCategories($conn);
       } catch (error) {
         toastr.error('Something went wrong')
       }
+    })
+
+    $('#delete-btn').on('click', function() {
+      const id = $(this).data('id')
+      Swal
+        .fire(sweetalertDeleteConfirmConfig(
+          'Delete This Product?',
+          'This action cannot be reverted. Are you sure?'
+        ))
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: 'actions/delete-product.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  id
+                },
+              })
+
+              if (response.status) {
+                window.location.replace(response.data.redirectUrl)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
     })
   })
 </script>

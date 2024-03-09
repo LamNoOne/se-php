@@ -23,6 +23,9 @@ if (!$product) {
         <h3>Product Details</h3>
         <h4>Full details of a product</h4>
       </div>
+      <div class="page-btn">
+        <a data-id="<?php echo $product->id ?>" id="delete-btn" class="btn btn-danger" href="javascript:void(0)">Delete</a>
+      </div>
     </div>
 
     <div class="row g-5">
@@ -98,8 +101,8 @@ if (!$product) {
         </div>
       </div>
     </div>
-    <div>
-      <a class="btn btn-submit" href="<?php echo "edit-product.php?id=$product->id" ?>">
+    <div class="d-flex gap-3">
+      <a class="btn btn-primary" href="<?php echo "edit-product.php?id=$product->id" ?>">
         Go To Edit
       </a>
       <a class="btn btn-cancel" href="javascript:history.back()">Back</a>
@@ -108,3 +111,38 @@ if (!$product) {
 </div>
 
 <?php require_once "./inc/components/footer.php" ?>;
+
+<script>
+  $(document).ready(function() {
+    $('#delete-btn').on('click', function() {
+      const id = $(this).data('id')
+      Swal
+        .fire(sweetalertDeleteConfirmConfig(
+          'Delete This Product?',
+          'This action cannot be reverted. Are you sure?'
+        ))
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: 'actions/delete-product.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  id
+                },
+              })
+
+              if (response.status) {
+                window.location.replace(response.data.redirectUrl)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
+  })
+</script>

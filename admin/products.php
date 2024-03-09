@@ -176,7 +176,7 @@ $products = Product::getAllProductsForAdmin($conn);
 
 <?php require_once "./inc/components/footer.php" ?>;
 
-<script defer>
+<script>
   $(document).ready(function() {
     $('table tbody').on('click', '#delete-btn', function() {
       const id = $(this).data('id')
