@@ -160,9 +160,9 @@ $products = Product::getAllProductsForAdmin($conn);
                     <a class="me-3" href="<?php echo "edit-product.php?id=$product->id" ?>">
                       <img src="assets/img/icons/edit.svg" alt="img" />
                     </a>
-                    <a class="confirm-text" href="javascript:void(0);">
+                    <button data-id="<?php echo $product->id ?>" id="delete-btn" href="javascript:void(0);">
                       <img src="assets/img/icons/delete.svg" alt="img" />
-                    </a>
+                    </button>
                   </td>
                 </tr>
               <?php endforeach; ?>
@@ -175,3 +175,38 @@ $products = Product::getAllProductsForAdmin($conn);
 </div>
 
 <?php require_once "./inc/components/footer.php" ?>;
+
+<script defer>
+  $(document).ready(function() {
+    $('table tbody').on('click', '#delete-btn', function() {
+      const id = $(this).data('id')
+      Swal
+        .fire(sweetalertDeleteConfirmConfig(
+          'Delete Product?',
+          'This action cannot be reverted. Are you sure?'
+        ))
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: 'actions/delete-product.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  id
+                },
+              })
+
+              if (response.status) {
+                window.location.replace(response.data.redirectUrl)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
+  })
+</script>

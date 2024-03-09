@@ -156,16 +156,28 @@ class Product extends DataFetcher
             }
             return Message::message(false, 'Update product failed');
         } catch (Exception $e) {
-            return Message::message(false, $e->getMessage());
+            return Message::message(false, 'Update product failed');
         }
     }
 
-    public static function deleteProduct($conn, $userId)
+    public static function deleteProduct($conn, $id)
     {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+        try {
+            $query = "DELETE FROM product WHERE id = $id";
+
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if ($stmt->execute()) {
+                return Message::messageData(
+                    true,
+                    'Delete product successfully',
+                    ['product' => $stmt->fetch()]
+                );
+            }
+            return Message::messageData(true, 'Delete product failed');
+        } catch (Exception $e) {
+            return Message::messageData(true, 'Delete product failed');
+        }
     }
 
     /**
@@ -258,7 +270,7 @@ class Product extends DataFetcher
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            return Message::message(false, "Can not get all products" . $e->getMessage());
+            return Message::message(false, 'Get all products failed');
         }
     }
 
@@ -278,7 +290,7 @@ class Product extends DataFetcher
             }
             return $stmt->fetch();
         } catch (Exception $e) {
-            return Message::message(false, "Can not get product by id" . $e->getMessage());
+            return Message::message(false, 'Get product by id failed');
         }
     }
 }

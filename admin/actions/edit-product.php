@@ -18,7 +18,7 @@ require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
 */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   if (!isset($_POST['id'])) {
-    return throwStatusMessage(Message::message(false, 'ID is required'));
+    return throwStatusMessage(Message::message(false, '"id" is required'));
   }
 
   $id = $_POST['id'];
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $foundProduct = Product::getProductById($conn, $id);
   if (!$foundProduct) {
-    return throwStatusMessage(Message::message(false, 'Something went wrong'));
+    return throwStatusMessage(Message::message(false, 'Product not found'));
   }
 
   $uploadResult = null;

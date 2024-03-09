@@ -35,6 +35,43 @@ a.text-linear-hover:hover {
 	text-shadow: var(--box-shadow);
 }
 
+.btn-danger {
+	background: #ea1529;
+	color: #fff;
+}
+.btn-danger:hover {
+	background: #c91022;
+	color: #fff;
+}
+
+/* Sweetalert2 */
+.swal2-container {
+	align-items: start !important;
+	padding: 0;
+}
+.swal2-container .swal2-popup {
+	margin: 0 !important;
+	top: 120px;
+}
+.swal2-actions {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 18px;
+	padding: 0;
+}
+.swal2-container .swal2-header {
+	align-items: start;
+	padding: 0;
+}
+.swal2-container .swal2-title {
+	font-size: 18px !important;
+}
+.swal2-container .swal2-content {
+	padding: 0;
+	text-align: start;
+	font-size: 16px;
+}
+
 /* Preview image */
 .preview-image-wrapper {
 	height: 350px;
@@ -137,6 +174,8 @@ a.text-linear-hover:hover {
 	left: 0;
 	margin-bottom: 0;
 }
+
+/* sweetalert2 */
 
 /* individual */
 #category-error + .select2-container--default .select2-selection--single {
@@ -1364,15 +1403,8 @@ div#global-loader,
 	}
 }
 .btn-submit {
-	min-width: 120px;
 	background: var(--primary-color);
 	color: #fff;
-	font-size: 14px;
-	font-weight: 700;
-	padding: 14px 10px;
-	-webkit-transition: all 0.2s ease;
-	-ms-transition: all 0.2s ease;
-	transition: all 0.2s ease;
 }
 .btn-submit:hover {
 	color: #fff;
@@ -1384,18 +1416,11 @@ div#global-loader,
 	}
 }
 .btn-cancel {
-	min-width: 120px;
-	background: #637381;
+	background: #7b7b7b;
 	color: #fff;
-	font-size: 14px;
-	font-weight: 700;
-	padding: 14px 10px;
-	-webkit-transition: all 0.5s ease;
-	-ms-transition: all 0.5s ease;
-	transition: all 0.5s ease;
 }
 .btn-cancel:hover {
-	background: #424b52;
+	background: #696969;
 	color: #fff;
 }
 @media (max-width: 991px) {
@@ -2453,12 +2478,6 @@ body[data-layout-mode='dark'] .alertify .ajs-content .ajs-input {
 	font-size: 14px;
 	font-weight: 700;
 	text-transform: uppercase;
-}
-.swal2-actions button {
-	margin-right: 10px;
-}
-.swal2-title {
-	font-size: 22px !important;
 }
 .timeline {
 	position: relative;
@@ -5687,9 +5706,6 @@ span.select2-container.select2-container--default.select2-container--open {
 	position: absolute;
 	top: 8px;
 	left: 6px;
-}
-.swal2-actions .swal2-confirm {
-	margin-right: 10px;
 }
 .wordset ul li {
 	margin: 0 10px;
