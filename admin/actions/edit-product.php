@@ -11,9 +11,9 @@ require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
 - choose image -> currentImageUrl = '', image not empty ---> REPLACE
 - cancel image and choose image -> currentImageUrl = '', image not empty ---> REPLACE
 
-- not cancel image, not choose image -> currentImageUrl = '' -> DO NOTHING
+- cancel -> currentImageUrl = '', image is empty ---> DELETE: develop in the future
 
-- cancel -> currentImageUrl = '' ---> DELETE: develop in the future
+- not cancel image, not choose image -> currentImageUrl != '' -> DO NOTHING
 
 */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -32,6 +32,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $uploadResult = null;
   if ($currentImageUrl === '') {
     $uploadResult = UploadFile::process('image');
+  }
+
+  // shoot error notification
+  if (
+    $uploadResult !== null
+    && $uploadResult['status'] !== UPLOAD_ERR_OK
+  ) {
+    if ($uploadResult['status'] === UPLOAD_ERR_NO_FILE) {
+      throwStatusMessage(Message::message(false, 'Image is required'));
+      return;
+    }
+    throwStatusMessage(Message::message(false, $uploadResult['message']));
+    return;
   }
 
   // update product in db

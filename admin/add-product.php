@@ -166,6 +166,9 @@ $categories = Category::getAllCategories($conn);
         categoryId: {
           required: true
         },
+        image: {
+          required: true
+        },
         price: {
           required: true,
           number: true
@@ -173,9 +176,6 @@ $categories = Category::getAllCategories($conn);
         stockQuantity: {
           required: true,
           number: true
-        },
-        image: {
-          required: true
         },
         ram: {
           number: true

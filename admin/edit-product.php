@@ -183,6 +183,9 @@ $categories = Category::getAllCategories($conn);
         categoryId: {
           required: true
         },
+        image: {
+          required: true
+        },
         price: {
           required: true,
           number: true

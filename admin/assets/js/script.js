@@ -635,6 +635,12 @@ const previewImage = () => {
 			const imageNameArray = imagePath.split('/')
 			const imageName = imageNameArray[imageNameArray.length - 1]
 			fileName.innerText = imageName
+
+			// add image into input type file
+			const file = new File([blobOrFile], imageName, { type: 'image/jpeg' })
+			const dt = new DataTransfer()
+			dt.items.add(file)
+			inputFile.files = dt.files
 		}
 		const src = URL.createObjectURL(blobOrFile)
 		image.src = src
