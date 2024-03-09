@@ -160,9 +160,9 @@ $products = Product::getAllProductsForAdmin($conn);
                     <a class="me-3" href="<?php echo "edit-product.php?id=$product->id" ?>">
                       <img src="assets/img/icons/edit.svg" alt="img" />
                     </a>
-                    <button data-id="<?php echo $product->id ?>" id="delete-btn" href="javascript:void(0);">
+                    <a data-id="<?php echo $product->id ?>" id="delete-btn" href="javascript:void(0);">
                       <img src="assets/img/icons/delete.svg" alt="img" />
-                    </button>
+                    </a>
                   </td>
                 </tr>
               <?php endforeach; ?>
