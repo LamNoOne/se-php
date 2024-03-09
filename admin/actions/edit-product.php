@@ -11,7 +11,7 @@ require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
 - choose image -> currentImageUrl = '', image not empty ---> REPLACE
 - cancel image and choose image -> currentImageUrl = '', image not empty ---> REPLACE
 
-- not cancel image, not choose imshr -> currentImageUrl = '' -> DO NOTHING
+- not cancel image, not choose image -> currentImageUrl = '' -> DO NOTHING
 
 - cancel -> currentImageUrl = '' ---> DELETE: develop in the future
 
