@@ -2,7 +2,7 @@
 
 class Validator
 {
-  public static function validateRequired($formData, $fields)
+  public static function required($formData, $fields)
   {
     $status = true; // default validate success
     $errorMessages = [];
@@ -20,7 +20,7 @@ class Validator
     return ['status' => $status, 'message' => implode('. ', $errorMessages)];
   }
 
-  public static function validateInteger($formData, $fields)
+  public static function integer($formData, $fields)
   {
     $status = true; // default validate success
     $errorMessages = [];
@@ -41,7 +41,7 @@ class Validator
     return ['status' => $status, 'message' => implode('. ', $errorMessages)];
   }
 
-  public static function validateUrl($formData, $fields)
+  public static function url($formData, $fields)
   {
     $status = true; // default validate success
     $errorMessages = [];

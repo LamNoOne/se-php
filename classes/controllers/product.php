@@ -49,7 +49,7 @@ class Product extends DataFetcher
 
     private static function validate($formData)
     {
-        $result = Validator::validateRequired($formData, [
+        $result = Validator::required($formData, [
             'categoryId',
             'name',
             'imageUrl',
@@ -60,7 +60,7 @@ class Product extends DataFetcher
             return Message::message(false, $result['message']);
         }
 
-        $result = Validator::validateInteger($formData, [
+        $result = Validator::integer($formData, [
             'categoryId',
             'ram',
             'storageCapacity',
@@ -72,7 +72,7 @@ class Product extends DataFetcher
             return Message::message(false, $result['message']);
         }
 
-        $result = Validator::validateUrl($formData, [
+        $result = Validator::url($formData, [
             'imageUrl'
         ]);
         if (!$result['status']) {
