@@ -72,6 +72,13 @@ class Product extends DataFetcher
             return Message::message(false, $result['message']);
         }
 
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
         $result = Validator::url($formData, [
             'imageUrl'
         ]);
@@ -105,6 +112,44 @@ class Product extends DataFetcher
 
         $result = Validator::url($formData, [
             'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateGetById($formData)
+    {
+        $result = Validator::required($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateDelete($formData)
+    {
+        $result = Validator::required($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'id'
         ]);
         if (!$result['status']) {
             return Message::message(false, $result['message']);
@@ -207,6 +252,11 @@ class Product extends DataFetcher
     public static function deleteProduct($conn, $id)
     {
         try {
+            $validateResult = Product::validateDelete(['id' => $id]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
             $query = "DELETE FROM product WHERE id = $id";
 
             $stmt = $conn->prepare($query);
@@ -314,13 +364,18 @@ class Product extends DataFetcher
         }
     }
 
-    public static function getProductByIdForAdmin($conn, $productId)
+    public static function getProductByIdForAdmin($conn, $id)
     {
         try {
+            $validateResult = Product::validateDelete(['id' => $id]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
             $query = "
                 SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
                 FROM product p JOIN category c on p.categoryId = c.id
-                WHERE p.id = $productId
+                WHERE p.id = $id
             ";
 
             $stmt = $conn->prepare($query);
