@@ -47,7 +47,7 @@ class Product extends DataFetcher
         return $copiedFields;
     }
 
-    private static function validate($formData)
+    private static function validateCreate($formData)
     {
         $result = Validator::required($formData, [
             'categoryId',
@@ -82,6 +82,37 @@ class Product extends DataFetcher
         return Message::message(true, 'Validate successfully');
     }
 
+    private static function validateUpdate($formData)
+    {
+        $result = Validator::integer($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::url($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
     public static function paginationQuery($query, $limit, $offset)
     {
         if (!isset($limit)) {
@@ -97,7 +128,7 @@ class Product extends DataFetcher
     public function createProduct($conn)
     {
         try {
-            $validateResult = Product::validate(get_object_vars($this));
+            $validateResult = Product::validateCreate(get_object_vars($this));
             if (!$validateResult['status']) {
                 return Message::message(false, $validateResult['message']);
             }
@@ -144,6 +175,11 @@ class Product extends DataFetcher
             $dataToUpdate = array_map(function ($value) {
                 return $value === '' ? null : $value;
             }, $dataToUpdate);
+
+            $validateResult = Product::validateUpdate($dataToUpdate);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
 
             // create dynamic update statement
             $sql = "UPDATE `product` SET ";
