@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   // update product in db
-  $dataToUpdate = [...$_POST];
+  $dataToUpdate = $_POST;
   unset($dataToUpdate['id']);
   unset($dataToUpdate['currentImageUrl']);
   if (
@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   ) {
     $dataToUpdate['imageUrl'] = $uploadResult['url'];
   }
+
   $updateProductResult = Product::updateProduct($conn, $id, $dataToUpdate);
+
   if ($updateProductResult['status']) {
     deleteFileByURL($foundProduct->imageUrl); // delete old file
     $message = Message::messageData(

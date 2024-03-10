@@ -140,23 +140,31 @@ class Product extends DataFetcher
         $dataToUpdate = []
     ) {
         try {
+            // normalize before update
+            $dataToUpdate = array_map(function ($value) {
+                return $value === '' ? null : $value;
+            }, $dataToUpdate);
+
+            // create dynamic update statement
             $sql = "UPDATE `product` SET ";
             foreach ($dataToUpdate as $key => $value) {
-                $sql .= "`$key` = '$value', ";
+                if ($value === null) {
+                    $sql .= "`$key` = NULL, ";
+                } else {
+                    $sql .= "`$key` = '$value', ";
+                }
             }
             $sql = rtrim($sql, ', ');
             $sql .= " WHERE id = $id";
+
             $stmt = $conn->prepare($sql);
             $stmt->setFetchMode(PDO::FETCH_CLASS, 'Product');
             if ($stmt->execute()) {
-                return [
-                    ...Message::message(true, 'Update product successfully'),
-                    'product' => $stmt->fetch()
-                ];
+                return Message::message(true, 'Update product successfully');
             }
             return Message::message(false, 'Update product failed');
         } catch (Exception $e) {
-            return Message::message(false, 'Update product failed');
+            return Message::message(false, $e->getMessage());
         }
     }
 
@@ -168,11 +176,7 @@ class Product extends DataFetcher
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if ($stmt->execute()) {
-                return Message::messageData(
-                    true,
-                    'Delete product successfully',
-                    ['product' => $stmt->fetch()]
-                );
+                return Message::message(true, 'Delete product successfully');
             }
             return Message::messageData(true, 'Delete product failed');
         } catch (Exception $e) {
