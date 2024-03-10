@@ -1,5 +1,6 @@
 <?php require_once "../inc/components/header.php"; ?>
 <?php require_once "../inc/init.php"; ?>
+<?php require_once "../inc/utils.php"; ?>
 
 <?php
 Auth::requireLogin();
@@ -68,9 +69,16 @@ $allPages = $allOrdersData['totalPage'];
                                         </li>
                                     <?php endforeach; ?>
                                 </ul>
-                                <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
-                                    <button data-index="<?php echo $orders->id; ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Repurchase</button>
-                                    <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-watch-detail border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span style="background-color: <?php echo getStatus($orders->status); ?>;" class="order-status border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Status: <?php echo $orders->status; ?></span>
+                                    <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
+                                        <button data-index="<?php echo $orders->id; ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Repurchase</button>
+                                        <?php if (!$orders->transaction_id) : ?>
+                                            <a href="<?php echo APP_URL; ?>/payment?orderId=<?php echo $orders->id; ?>" class="continue-payment align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Continue Payment</a>
+                                        <?php else : ?>
+                                            <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-watch-detail border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </li>

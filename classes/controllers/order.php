@@ -234,11 +234,11 @@ class Order extends DataFetcher
     {
         try {
             $queryOrder = [
-                'fields' => 'O.id, P.transaction_id, O.orderStatusId, O.shipAddress, O.phoneNumber, OS.name, O.createdAt, O.updatedAt',
+                'fields' => 'O.id, P.transaction_id, O.orderStatusId, O.shipAddress, O.phoneNumber, OS.name AS status, O.createdAt, O.updatedAt',
                 'joins' => [
                     ['type' => 'INNER', 'table' => '`user` AS U', 'on' => 'U.id = O.userId'],
                     ['type' => 'INNER', 'table' => '`orderstatus` AS OS', 'on' => 'OS.id = O.orderStatusId'],
-                    ['type' => 'INNER', 'table' => '`payment` AS P', 'on' => 'P.order_id = O.id'],
+                    ['type' => 'LEFT', 'table' => '`payment` AS P', 'on' => 'P.order_id = O.id'],
                 ],
                 'filters' => [
                     ['column' => 'U.id', 'operator' => NULL, 'alias' => 'userId', 'value' => $userId]

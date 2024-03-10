@@ -78,3 +78,41 @@ function deleteFileByURL($url)
         return;
     }
 }
+
+// Handle get order status
+
+function pendingStatus()
+{
+    return "#ea5455";
+}
+
+function paidStatus()
+{
+    return "#28c76f";
+}
+
+function deliveringStatus()
+{
+    return "#28c76f";
+}
+
+function deliveredStatus()
+{
+    return "#28c76f";
+}
+
+function getStatusController()
+{
+    return [
+        "paid" => "paidStatus",
+        "pending" => "pendingStatus",
+        "delivering" => "deliveringStatus",
+        "delivered" => "deliveredStatus"
+    ];
+}
+
+
+function getStatus($status)
+{
+    return getStatusController()[strtolower($status)]();
+}
