@@ -16,8 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     return;
   }
 
-  // update product in db
-  $productFields = [...$_POST, 'imageUrl' => $uploadResult['url']];
+  $productFields = $_POST;
+  $productFields['imageUrl'] = $uploadResult['url'];
+  // delete fields that are not entered
+  $productFields = array_filter($productFields, function ($productField) {
+    return $productField !== '';
+  });
   $product = new Product($productFields);
 
   $createProductResult = $product->createProduct($conn);

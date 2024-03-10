@@ -17,17 +17,26 @@ class UploadFile
     {
         try {
             if (empty($_FILES)) {
-                return Message::message(UPLOAD_ERR_NO_FILE, 'No files was uploaded');
+                return [
+                    'status' => UPLOAD_ERR_NO_FILE,
+                    'message' => 'No files was uploaded'
+                ];
             }
 
             $rs = Errorfileupload::err($_FILES[$fieldName]['error']);
             if ($rs['status'] != UPLOAD_ERR_OK) {
-                return Message::message($rs['status'], $rs['message']);
+                return [
+                    'status' => $rs['status'],
+                    'message' => $rs['message']
+                ];
             }
 
             $fileMaxSize = FILE_MAX_SIZE;
             if ($_FILES[$fieldName]['size'] > $fileMaxSize) {
-                return Message::message(UPLOAD_ERR_FORM_SIZE, 'File too large, must smaller than: ' .  $fileMaxSize);
+                return [
+                    'status' => UPLOAD_ERR_FORM_SIZE,
+                    'message' => 'File too large, must smaller than: ' .  $fileMaxSize
+                ];
             }
 
             // limit file image type
@@ -37,7 +46,10 @@ class UploadFile
             // file upload will store in tmp_name
             $file_mime_type = finfo_file($fileinfo, $_FILES[$fieldName]['tmp_name']);
             if (!in_array($file_mime_type, $mime_types)) {
-                return Message::message(UPLOAD_ERR_EXTENSION, 'Invalid file type, file must be: ' . implode('; ', FILE_TYPE));
+                return [
+                    'status' => UPLOAD_ERR_EXTENSION,
+                    'message' => 'Invalid file type, file must be: ' . implode('; ', FILE_TYPE)
+                ];
             }
 
             // standardize image before upload to server
@@ -65,13 +77,20 @@ class UploadFile
 
             if (move_uploaded_file($fileTmp, $fileToHost)) {
                 return [
-                    ...Message::message(UPLOAD_ERR_OK, 'Upload file successfully'),
+                    'status' => UPLOAD_ERR_OK,
+                    'message' => 'Upload file successfully',
                     'url' => $uploadedFileUrl
                 ];
             }
-            return Message::message(UPLOAD_ERR_CANT_WRITE, 'Upload file failed');
+            return [
+                'status' => UPLOAD_ERR_CANT_WRITE,
+                'message' => 'Upload file failed'
+            ];
         } catch (Exception $e) {
-            return Message::message(UPLOAD_ERR_CANT_WRITE, $e->getMessage());
+            return [
+                'status' => UPLOAD_ERR_CANT_WRITE,
+                'message' => $e->getMessage()
+            ];
         }
     }
 }
