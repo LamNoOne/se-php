@@ -26,6 +26,8 @@ class Product extends DataFetcher
     public function __construct(
         $fields = []
     ) {
+        $fields = Product::removeBannedFields($fields);
+        $fields = deleteFieldsHasEmptyString($fields);
         foreach ($fields as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->{$key} = $value;
@@ -33,53 +35,51 @@ class Product extends DataFetcher
         }
     }
 
-    private function validate()
+    private static function removeBannedFields($fields)
     {
-
-        $requiredRule = $this->categoryId
-            && $this->name
-            && $this->imageUrl
-            && $this->price
-            && $this->stockQuantity;
-        if (!$requiredRule) {
-            return [
-                'status' => false,
-                'message' => $this->name
-            ];
+        $copiedFields = $fields;
+        $bannedFields = ['id', 'createdAt', 'updatedAt'];
+        foreach ($bannedFields as $bannedField) {
+            if (array_key_exists($bannedField, $copiedFields)) {
+                unset($copiedFields[$bannedField]);
+            }
         }
-        return [
-            'status' => true,
-            'message' => 'Valid'
-        ];
+        return $copiedFields;
+    }
 
-        // $numberRule = is_integer($this->categoryId)
-        //     && is_integer($this->ram)
-        //     && is_integer($this->storageCapacity)
-        //     && is_numeric($this->weight)
-        //     && is_integer($this->batteryCapacity)
-        //     && is_integer($this->price)
-        //     && is_integer($this->price);
-        // if (!$numberRule) {
-        //     return [
-        //         'status' => false,
-        //         'message' => 'There are some fields are not valid numbers'
-        //     ];
-        // }
+    private static function validate($formData)
+    {
+        $result = Validator::validateRequired($formData, [
+            'categoryId',
+            'name',
+            'imageUrl',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
 
-        // $notEmptyStringRule = !empty($this->name)
-        //     && !empty($this->imageUrl)
-        //     && !empty($this->description)
-        //     && !empty($this->screen)
-        //     && !empty($this->operatingSystem)
-        //     && !empty($this->processor)
-        //     && !empty($this->description)
-        //     && !empty($this->color);
-        // if (!$notEmptyStringRule) {
-        //     return [
-        //         'status' => false,
-        //         'message' => 'There are some fields are empty strings'
-        //     ];
-        // }
+        $result = Validator::validateInteger($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::validateUrl($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
     }
 
     public static function paginationQuery($query, $limit, $offset)
@@ -97,9 +97,9 @@ class Product extends DataFetcher
     public function createProduct($conn)
     {
         try {
-            $validateResult = $this->validate();
+            $validateResult = Product::validate(get_object_vars($this));
             if (!$validateResult['status']) {
-                throw new InvalidArgumentException($validateResult['message']);
+                return Message::message(false, $validateResult['message']);
             }
 
             $insert = "

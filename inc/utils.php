@@ -79,6 +79,22 @@ function deleteFileByURL($url)
     }
 }
 
+function checkFileExistsInLocalByURL($url)
+{
+    $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];
+    if (file_exists($pathToDelete)) {
+        return true;
+    }
+    return false;
+}
+
+function deleteFieldsHasEmptyString($array)
+{
+    return array_filter($array, function ($value) {
+        return $value !== '';
+    });
+}
+
 // Handle get order status
 
 function pendingStatus()
