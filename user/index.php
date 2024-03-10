@@ -4,6 +4,10 @@
 
 Auth::requireLogin();
 
+if (!isset($conn))
+    $conn = require_once "../inc/db.php";
+
+$user = User::getUserById($conn, $_SESSION['userId']);
 ?>
 
 <div id="customer-manager">
@@ -36,7 +40,7 @@ Auth::requireLogin();
                     <div class="card-header">Account Information</div>
                     <div class="card-body">
                         <!-- Avatar -->
-                        <img src="<?php echo $_SESSION['image'] ?>" alt="Avatar" id="avatar" class="img-thumbnail img-user object-fit-contain mb-3">
+                        <img src="<?php echo $user->imageUrl; ?>" alt="Avatar" id="avatar" class="img-thumbnail img-user object-fit-contain mb-3">
                         <!-- Change Avatar Form -->
                         <form id="changeAvatarForm" action="" method="" enctype="multipart/form-data">
                             <h5>Change Avatar</h5>
@@ -51,27 +55,27 @@ Auth::requireLogin();
                             <!-- First Name -->
                             <div class="mb-3">
                                 <label for="firstName" class="form-label">First Name:</label>
-                                <input type="text" id="firstName" class="form-control" value="<?php echo $_SESSION['firstName'] ?>" disabled readonly>
+                                <input type="text" id="firstName" class="form-control" value="<?php echo $user->firstName; ?>" disabled readonly>
                             </div>
                             <!-- Last Name -->
                             <div class="mb-3">
                                 <label for="lastName" class="form-label">Last Name:</label>
-                                <input type="text" id="lastName" class="form-control" value="<?php echo $_SESSION['lastName'] ?>" disabled readonly>
+                                <input type="text" id="lastName" class="form-control" value="<?php echo $user->lastName; ?>" disabled readonly>
                             </div>
                             <!-- Phone Number -->
                             <div class="mb-3">
                                 <label for="phoneNumber" class="form-label">Phone Number:</label>
-                                <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" <?php echo isset($_SESSION['phoneNumber']) ? "disabled" : "" ?> value="<?php echo isset($_SESSION['phoneNumber']) ? $_SESSION['phoneNumber'] : ""  ?>">
+                                <input type="tel" name="phoneNumber" id="phoneNumber" class="form-control" <?php echo isset($user->phoneNumber) ? "disabled" : "" ?> value="<?php echo isset($user->phoneNumber) ? $user->phoneNumber : ""  ?>">
                             </div>
                             <!-- Email -->
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email:</label>
-                                <input type="email" id="email" class="form-control" value="<?php echo $_SESSION['email'] ?>" disabled readonly>
+                                <input type="email" id="email" class="form-control" value="<?php echo $user->email ?>" disabled readonly>
                             </div>
                             <!-- Address -->
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address:</label>
-                                <textarea name="address" id="address" class="form-control" rows="3"><?php echo isset($_SESSION['address']) ? $_SESSION['address'] : "" ?></textarea>
+                                <textarea name="address" id="address" class="form-control" rows="3"><?php echo isset($user->address) ? $user->address : "" ?></textarea>
                             </div>
                             <button type="submit" class="btn btn-primary">Update Info</button>
                         </form>

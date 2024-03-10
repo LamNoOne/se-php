@@ -230,6 +230,20 @@ class User
         /**
          * Write your code here
          */
+        try {
+            $query = "SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
+                FROM `user` U join `role` R on U.roleId = R.id
+                WHERE U.id = :userId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
+            if (!$stmt->execute()) {
+                throw new PDOException("Can not execute query");
+            }
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
     public static function getUserByUsername($conn)
