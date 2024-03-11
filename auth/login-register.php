@@ -148,8 +148,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php require_once "../inc/components/footer.php"; ?>
-<!-- <script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script> -->
-<!-- <script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script> -->
+<script src="<?php echo APP_URL; ?>/js/header/dropdown.js"></script>
+<script src="<?php echo APP_URL; ?>/js/header/searchbar.js"></script>
 <script>
     $("#login-register-container").slick({
         slidesToShow: 1,
@@ -282,15 +282,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     data: formData,
                 })
 
-                const {
-                    status,
-                    message
-                } = JSON.parse(registerResponse);
+                const response = JSON.parse(registerResponse);
 
-                status ? toastr.success(message, "Register User") :
+                if (response.status) {
+                    const otpId = response.data.otp_id;
+                    const email = response.data.email
+                    window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}`);
+                } else {
                     toastr.warning(message, "User registration failed");
+                }
             } catch (error) {
-                toastr.error(message, "Registration error");
+                console.log(error)
             }
         })
     })

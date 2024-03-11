@@ -274,6 +274,10 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
 
             // repeat and get product id to array of product ids using map
             const product_cart = allCheckedBoxes.map(el => parseInt($(el).closest(".cart-item").data("index")))
+            if (!product_cart.length) {
+                toastr.warning("Please select at least one product to checkout");
+                return;
+            }
             // console.log(product_cart);
 
             try {
@@ -285,7 +289,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                     }
                 })
                 console.log(goCheckout);
-                window.location.href = "<?php echo APP_URL; ?>/checkout";
+                window.location.replace("<?php echo APP_URL; ?>/checkout");
             } catch (error) {
                 toastr.error(error, "Connection error");
             }

@@ -25,7 +25,7 @@ class User
         $address = null,
         $imageUrl = null,
         $roleId = 3,
-        $active = 1
+        $active = 0
     ) {
         $this->lastName = $lastName;
         $this->firstName = $firstName;
@@ -107,7 +107,9 @@ class User
             ]);
             if (!$status)
                 return Message::message(false, "Can not create user at this time");
-            return Message::message(true, "Create user successfully");
+
+            $userId = $conn->lastInsertId();
+            return Message::messageData(true, "Create user successfully", ['userId' => $userId]);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
@@ -117,7 +119,7 @@ class User
     {
         try {
             // define user data pattern
-            $userPattern = ['lastName', 'firstName', 'imageUrl', 'phoneNumber', 'address', 'username'];
+            $userPattern = ['lastName', 'firstName', 'imageUrl', 'phoneNumber', 'address', 'username', 'active'];
             // validate user data
             if (!Validation::validateData($userPattern, $userData)) {
                 throw new InvalidArgumentException('Invalid user data');
@@ -246,10 +248,21 @@ class User
         }
     }
 
-    public static function getUserByUsername($conn)
+    public static function getUserByEmail($conn, $email)
     {
-        /**
-         * Write your code here
-         */
+        try {
+            $query = "SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
+                FROM `user` U join `role` R on U.roleId = R.id
+                WHERE U.email = :email";
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
+            if (!$stmt->execute()) {
+                throw new PDOException("Can not execute query");
+            }
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 }

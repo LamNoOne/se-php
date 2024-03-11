@@ -19,20 +19,21 @@ class Mail
             //Create an instance; passing `true` enables exceptions
             $mail = new PHPMailer(true);
 
-            $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
-            $mail->isSMTP();                                            //Send using SMTP
-            $mail->Host       = MAIL_HOST;                     //Set the SMTP server to send through
+            // $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+            $mail->isSMTP();
+            $mail->Host       = MAIL_HOST;                   
             $mail->SMTPAuth   = true;
-            $mail->SMTPSecure  = MAIL_SMTP_SECURE; //Secure conection                   //Enable SMTP authentication
-            $mail->Username   = MAIL_USER;                     //SMTP username
-            $mail->Password   = MAIL_PASSWORD;                               //SMTP password
             // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;  
+            $mail->SMTPSecure  = MAIL_SMTP_SECURE;
+            $mail->Username   = MAIL_USER;
+            $mail->Password   = MAIL_PASSWORD;
             $mail->Priority    = 1; // Highest priority - Email priority (1 = High, 3 = Normal, 5 = low)          //Enable implicit TLS encryption
             $mail->Port       = MAIL_PORT;
             $mail->CharSet     = 'UTF-8';
             $mail->Encoding    = '8bit';
             $mail->Subject     = 'Email Using Gmail';
-            $mail->ContentType = 'text/html; charset=utf-8\r\n';                                //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+            $mail->ContentType = 'text/html; charset=utf-8\r\n';
+            //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
             //Recipients
             $mail->setFrom(MAIL_USER, 'SE Mailer');

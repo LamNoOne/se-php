@@ -4,25 +4,22 @@ require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(dirname(__DIR__)) . "/config.php";
 class OTP
 {
-
     public $id;
     public $userId;
     public $otpCode;
     public $otpStatus;
     public $createdAt;
 
-    public function __construct($id = null, $userId = null, $otpCode = null, $otpStatus = null, $createdAt = null)
+    public function __construct($userId = null, $otpCode = null, $otpStatus = true)
     {
-        $this->id = $id;
         $this->userId = $userId;
         $this->otpCode = $otpCode;
         $this->otpStatus = $otpStatus;
-        $this->createdAt = $createdAt;
     }
     public static function getOTP($conn, $otpId)
     {
         try {
-            $query = "SELECT * FROM otp WHERE otpId = :otpId";
+            $query = "SELECT * FROM otp WHERE id = :otpId";
             $stmt = $conn->prepare($query);
             $stmt->bindValue(":otpId", $otpId, PDO::PARAM_INT);
             $stmt->setFetchMode(PDO::FETCH_INTO, new OTP());
@@ -52,7 +49,7 @@ class OTP
         $difference = abs($now->getTimestamp() - $date->getTimestamp());
 
         // Check otp code equals and in time
-        return strval($otpCode) === strval($otpCodeOutside) && $difference > 0;
+        return strval($otpCode) === strval($otpCodeOutside) && $difference < OTP_EXPIRED_TIME;
     }
 
     public static function generateOTP()

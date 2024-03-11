@@ -218,11 +218,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
             // get product list
             const productList = new Array();
             <?php
-            if(empty($productSelectedCheckout)) :
-            foreach ($_SESSION['selected_products'] as $product) : ?>
-                productList.push('<?php echo $product ?>');
+            if (empty($productSelectedCheckout)) :
+                foreach ($_SESSION['selected_products'] as $product) : ?>
+                    productList.push('<?php echo $product ?>');
             <?php endforeach;
-                endif;
+            endif;
             ?>
 
             console.log(productList);
@@ -248,7 +248,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
                     toastr.success(result.message, "Create Order")
                     const orderId = result.data.orderId
                     setTimeout(() => {
-                        window.location.href = `<?php echo APP_URL; ?>/payment?orderId=${orderId}`
+                        window.location.replace(`<?php echo APP_URL; ?>/payment?orderId=${orderId}`);
                     }, 500)
                 } else {
                     toastr.warning(result.data.errorMessage, "Create Order")
@@ -267,7 +267,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
 
             // get product list
             const productCheckout = {
-                productId: "<?php echo isset($productId) ? $productId : 0?>",
+                productId: "<?php echo isset($productId) ? $productId : 0 ?>",
                 productQuantity: "<?php echo isset($productQuantity) ? $productQuantity : 0 ?>"
             }
 
@@ -294,7 +294,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
                     toastr.success(result.message, "Create Order")
                     const orderId = result.data.orderId
                     setTimeout(() => {
-                        window.location.href = `<?php echo APP_URL; ?>/payment?orderId=${orderId}`
+                        window.location.replace(`<?php echo APP_URL; ?>/payment?orderId=${orderId}`);
                     }, 500)
                 } else {
                     toastr.warning(result.data.errorMessage, "Create Order")
