@@ -344,7 +344,15 @@ class Product extends DataFetcher
         $paginator = []
     ) {
         try {
-            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
+            $search = [];
+            foreach ($filter as $column => $value) {
+                $search[] = [
+                    'table' => 'p',
+                    'column' => $column,
+                    'value' => $value
+                ];
+            }
+            $sqlConditions = generateSQLConditions($search, $sorter, $paginator);
             $query = "
                 SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
                 FROM product as p JOIN category as c on p.categoryId = c.id
@@ -360,6 +368,7 @@ class Product extends DataFetcher
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
+            return [$query, $e->getMessage()];
             return Message::message(false, 'Get all products failed');
         }
     }

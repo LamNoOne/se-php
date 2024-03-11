@@ -53,24 +53,24 @@ $(document).ready(function () {
 			responsive: { 0: { items: 2 }, 768: { items: 4 }, 1170: { items: 8 } }
 		})
 	}
-	if ($('.datanew').length > 0) {
-		$('.datanew').DataTable({
-			bFilter: true,
-			sDom: 'fBtlpi',
-			pagingType: 'numbers',
-			ordering: true,
-			language: {
-				search: ' ',
-				sLengthMenu: '_MENU_',
-				searchPlaceholder: 'Search...',
-				info: '_START_ - _END_ of _TOTAL_ items'
-			},
-			initComplete: (settings, json) => {
-				$('.dataTables_filter').appendTo('#tableSearch')
-				$('.dataTables_filter').appendTo('.search-input')
-			}
-		})
-	}
+	// if ($('.datanew').length > 0) {
+	// 	$('.datanew').DataTable({
+	// 		bFilter: true,
+	// 		sDom: 'fBtlpi',
+	// 		pagingType: 'numbers',
+	// 		ordering: true,
+	// 		language: {
+	// 			search: ' ',
+	// 			sLengthMenu: '_MENU_',
+	// 			searchPlaceholder: 'Search...',
+	// 			info: '_START_ - _END_ of _TOTAL_ items'
+	// 		},
+	// 		initComplete: (settings, json) => {
+	// 			$('.dataTables_filter').appendTo('#tableSearch')
+	// 			$('.dataTables_filter').appendTo('.search-input')
+	// 		}
+	// 	})
+	// }
 	function readURL(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader()

@@ -1,12 +1,4 @@
-<?php
-require_once  dirname(__DIR__) . "/inc/init.php";
-if (!isset($conn)) {
-  $conn = require_once dirname(__DIR__) . '/inc/db.php';
-}
-
-$products = Product::getAllProductsForAdmin($conn);
-
-?>
+<?php require_once  dirname(__DIR__) . "/inc/init.php"; ?>
 
 <?php require_once "./inc/components/header.php" ?>;
 
@@ -110,7 +102,7 @@ $products = Product::getAllProductsForAdmin($conn);
         </div>
 
         <div class="table-responsive">
-          <table class="table datanew">
+          <table class="table datanew" id="table">
             <thead>
               <tr>
                 <th>
@@ -119,7 +111,6 @@ $products = Product::getAllProductsForAdmin($conn);
                     <span class="checkmarks"></span>
                   </label>
                 </th>
-                <th>No</th>
                 <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
@@ -130,42 +121,6 @@ $products = Product::getAllProductsForAdmin($conn);
               </tr>
             </thead>
             <tbody>
-              <?php $count = 1 ?>
-              <?php foreach ($products as $product) : ?>
-                <tr>
-                  <td>
-                    <label class="checkboxs">
-                      <input type="checkbox" />
-                      <span class="checkmarks"></span>
-                    </label>
-                  </td>
-                  <td><?php echo $count++ ?></td>
-                  <td><?php echo $product->id ?></td>
-                  <td class="productimgname">
-                    <a href="<?php echo "product-details.php?id=$product->id" ?>" class="product-img">
-                      <img src="<?php echo $product->imageUrl ?>" alt="Product image" />
-                    </a>
-                    <a class="text-linear-hover" href="<?php echo "product-details.php?id=$product->id" ?>">
-                      <?php echo $product->name ?>
-                    </a>
-                  </td>
-                  <td><?php echo $product->price ?></td>
-                  <td><?php echo $product->stockQuantity ?></td>
-                  <td><?php echo $product->categoryName ?></td>
-                  <td><?php echo $product->createdAt ?></td>
-                  <td>
-                    <a class="me-3" href="<?php echo "product-details.php?id=$product->id" ?>">
-                      <img src="assets/img/icons/eye.svg" alt="img" />
-                    </a>
-                    <a class="me-3" href="<?php echo "edit-product.php?id=$product->id" ?>">
-                      <img src="assets/img/icons/edit.svg" alt="img" />
-                    </a>
-                    <a data-id="<?php echo $product->id ?>" id="delete-btn" href="javascript:void(0);">
-                      <img src="assets/img/icons/delete.svg" alt="img" />
-                    </a>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
             </tbody>
           </table>
         </div>
@@ -207,6 +162,98 @@ $products = Product::getAllProductsForAdmin($conn);
             toastr.error('Something went wrong')
           }
         })
+    })
+
+    const table = $('#table').DataTable({
+      serverSide: true,
+      bFilter: true,
+      sDom: 'fBtlpi',
+      pagingType: 'numbers',
+      ordering: true,
+      language: {
+        search: ' ',
+        sLengthMenu: '_MENU_',
+        searchPlaceholder: 'Search...',
+        info: '_START_ - _END_ of _TOTAL_ items'
+      },
+      ajax: {
+        url: 'actions/get-products.php',
+        type: 'GET',
+        data: function(d) {
+          return {
+            page: d.start / d.length + 1,
+            limit: d.length,
+            search: d.search.value,
+            draw: d.draw
+          }
+        },
+        dataFilter: function(data) {
+          const dataObj = jQuery.parseJSON(data);
+          return JSON.stringify({
+            draw: dataObj.draw,
+            recordsTotal: dataObj.totalItems,
+            recordsFiltered: dataObj.totalItems,
+            data: dataObj.items
+          });
+        }
+      },
+      columns: [{
+          render: function(data, type, row, meta) {
+            return `
+                <label class="checkboxs">
+                  <input data-id=${row.id} type="checkbox" />
+                  <span class="checkmarks"></span>
+                </label>
+              `
+          }
+        },
+        {
+          data: 'id'
+        },
+        {
+          render: function(data, type, row, meta) {
+            return `
+              <a href="product-details.php?id=${row.id}" class="product-img">
+                <img src="${row.imageUrl}" />
+              </a>
+              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+                ${row.name}
+              </a>
+            `
+          }
+        },
+        {
+          data: 'price'
+        },
+        {
+          data: 'stockQuantity'
+        },
+        {
+          data: 'categoryName'
+        },
+        {
+          data: 'createdAt'
+        },
+        {
+          render: function(data, type, row, meta) {
+            return `
+              <a class="me-3" href="product-details.php?id=${row.id}">
+                <img src="assets/img/icons/eye.svg" alt="img" />
+              </a>
+              <a class="me-3" href="edit-product.php?id=${row.id}">
+                <img src="assets/img/icons/edit.svg" alt="img" />
+              </a>
+              <a data-id="${row.id}" id="delete-btn" href="javascript:void(0);">
+                <img src="assets/img/icons/delete.svg" alt="img" />
+              </a>
+              `
+          }
+        },
+      ],
+      initComplete: (settings, json) => {
+        $('.dataTables_filter').appendTo('#tableSearch')
+        $('.dataTables_filter').appendTo('.search-input')
+      },
     })
   })
 </script>
