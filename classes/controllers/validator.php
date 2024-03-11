@@ -35,7 +35,7 @@ class Validator
     }
 
     if ($status) {
-      return ['status' => $status, 'Validate successfully'];
+      return ['status' => $status, 'message' => 'Validate successfully'];
     }
 
     return ['status' => $status, 'message' => implode('. ', $errorMessages)];
@@ -56,7 +56,7 @@ class Validator
     }
 
     if ($status) {
-      return ['status' => $status, 'Validate successfully'];
+      return ['status' => $status, 'message' => 'Validate successfully'];
     }
 
     return ['status' => $status, 'message' => implode('. ', $errorMessages)];
@@ -78,7 +78,7 @@ class Validator
     }
 
     if ($status) {
-      return ['status' => $status, 'Validate successfully'];
+      return ['status' => $status, 'message' => 'Validate successfully'];
     }
 
     return ['status' => $status, 'message' => implode('. ', $errorMessages)];

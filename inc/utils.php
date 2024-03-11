@@ -35,10 +35,14 @@ function generateSQLConditions(
     $whereCondition = '';
     if (!empty($filter)) {
         $filterConditions = [];
-        foreach ($filter as $column => $value) {
-            $filterConditions[] = "$column = $value";
+        foreach ($filter as $filterItem) {
+            if (!empty($filterItem['table']) && !empty($filterItem['column'])) {
+                $filterConditions[] = "{$filterItem['table']}.{$filterItem['column']} LIKE '%{$filterItem['value']}%'";
+            }
         }
-        $whereCondition = 'WHERE ' . implode(' AND ', $filterConditions);
+        if (!empty($filterConditions)) {
+            $whereCondition = 'WHERE ' . implode(' AND ', $filterConditions);
+        }
     }
 
     // handle sorter
