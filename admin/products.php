@@ -111,7 +111,6 @@
                     <span class="checkmarks"></span>
                   </label>
                 </th>
-                <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
@@ -176,6 +175,9 @@
         searchPlaceholder: 'Search...',
         info: '_START_ - _END_ of _TOTAL_ items'
       },
+      order: [
+        [5, 'asc']
+      ],
       ajax: {
         url: 'actions/get-products.php',
         type: 'GET',
@@ -184,6 +186,8 @@
             page: d.start / d.length + 1,
             limit: d.length,
             search: d.search.value,
+            sortBy: d.columns[d.order[0].column].name || 'createdAt',
+            order: d.order[0].dir || 'asc',
             draw: d.draw
           }
         },
@@ -197,6 +201,37 @@
           });
         }
       },
+      columnDefs: [{
+          targets: 0,
+          orderable: false,
+          searchable: false,
+        },
+        {
+          name: 'name',
+          targets: 1
+        },
+        {
+          name: 'price',
+          targets: 2
+        },
+        {
+          name: 'stockQuantity',
+          targets: 3
+        },
+        {
+          name: 'categoryId',
+          targets: 4
+        },
+        {
+          name: 'createdAt',
+          targets: 5
+        },
+        {
+          "targets": 6,
+          "orderable": false,
+          "searchable": false,
+        },
+      ],
       columns: [{
           render: function(data, type, row, meta) {
             return `
@@ -206,9 +241,6 @@
                 </label>
               `
           }
-        },
-        {
-          data: 'id'
         },
         {
           render: function(data, type, row, meta) {
@@ -253,6 +285,7 @@
       initComplete: (settings, json) => {
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
+
       },
     })
   })

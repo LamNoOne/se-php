@@ -339,36 +339,140 @@ class Product extends DataFetcher
 
     public static function getAllProductsForAdmin(
         $conn,
-        $filter = [],
-        $sorter = ['id' => 'ASC'],
-        $paginator = []
+        $search = '',
+        $pagination = [],
+        $sort =  ['sortBy' => 'id', 'order' => 'ASC']
     ) {
+        if (isset($pagination['offset']) && isset($pagination['limit'])) {
+            $paginationForGetSQL = [
+                'offset' => ":offset",
+                'limit' => ":limit"
+            ];
+        }
         try {
-            $search = [];
-            foreach ($filter as $column => $value) {
-                $search[] = [
-                    'table' => 'p',
-                    'column' => $column,
-                    'value' => $value
-                ];
-            }
-            $sqlConditions = generateSQLConditions($search, $sorter, $paginator);
-            $query = "
-                SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
-                FROM product as p JOIN category as c on p.categoryId = c.id
-                {$sqlConditions['where']}
-                {$sqlConditions['orderBy']}
-                {$sqlConditions['limit']}
-                {$sqlConditions['offset']}
-            ";
+            $query = getSQLQuery(
+                [
+                    [
+                        "table" => "product",
+                        "column" => "id"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "name"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "description"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "imageUrl"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "screen"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "operatingSystem"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "processor"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "ram"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "storageCapacity"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "weight"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "batteryCapacity"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "color"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "price"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "stockQuantity"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "createdAt"
+                    ],
+                    [
+                        "table" => "product",
+                        "column" => "updatedAt"
+                    ],
+                    [
+                        "table" => "category",
+                        "column" => "id",
+                        'as' => 'categoryId'
+                    ],
+                    [
+                        "table" => "category",
+                        "column" => "name",
+                        'as' => 'categoryName'
+                    ],
+                ],
+                [
+                    "tables" => [
+                        "product",
+                        "category",
+                    ],
+                    "on" => [
+                        [
+                            'table1' => 'product',
+                            'table2' => 'category',
+                            'column1' => 'categoryId',
+                            'column2' => 'id'
+                        ]
+                    ]
+                ],
+                [
+                    [
+                        'table' => 'product',
+                        'column' => 'name',
+                        'value' => ':value',
+                        'like' => true,
+                        'int' => false
+                    ]
+                ],
+                $paginationForGetSQL,
+                [
+                    'table' => 'product',
+                    'column' => $sort['sortBy'],
+                    'order' => $sort['order']
+                ]
+            );
+
             $stmt = $conn->prepare($query);
+
+            $stmt->bindValue(':value', '%' . $search . '%', PDO::PARAM_STR);
+            if (isset($pagination['offset']) && isset($pagination['limit'])) {
+                $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
+                $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
+            }
+
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            return [$query, $e->getMessage()];
+            return [$stmt, $e->getMessage()];
             return Message::message(false, 'Get all products failed');
         }
     }
