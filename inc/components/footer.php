@@ -1,4 +1,7 @@
 <footer id="footer" class="bg-black pt-5 mt-5">
+    <?php
+    require_once "loader.php";
+    ?>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -276,7 +279,7 @@
 
                 formSearch.on("submit", function(e) {
                     e.preventDefault();
-                    window.location.href = `<?php echo APP_URL;?>/product?search=${searchInput.val()}`;
+                    window.location.href = `<?php echo APP_URL; ?>/product?search=${searchInput.val()}`;
                 })
             } catch (error) {
                 toastr.error(error.message, "Error")

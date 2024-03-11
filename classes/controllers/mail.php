@@ -10,6 +10,7 @@ require dirname(dirname(__DIR__)) . '/vendor/mailer/src/PHPMailer.php';
 require dirname(dirname(__DIR__)) . '/vendor/mailer/src/SMTP.php';
 
 require_once dirname(__DIR__) . "/services/message.php";
+require_once dirname(dirname(__DIR__)) . "/config.php";
 class Mail
 {
     public static function sendEmail($email, $username, $subject, $body)
@@ -20,23 +21,23 @@ class Mail
 
             $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
             $mail->isSMTP();                                            //Send using SMTP
-            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+            $mail->Host       = MAIL_HOST;                     //Set the SMTP server to send through
             $mail->SMTPAuth   = true;
-            $mail->SMTPSecure  = "tls"; //Secure conection                   //Enable SMTP authentication
-            $mail->Username   = 'segroupdemo@gmail.com';                     //SMTP username
-            $mail->Password   = 'hngv jsge smvh ceqf';                               //SMTP password
+            $mail->SMTPSecure  = MAIL_SMTP_SECURE; //Secure conection                   //Enable SMTP authentication
+            $mail->Username   = MAIL_USER;                     //SMTP username
+            $mail->Password   = MAIL_PASSWORD;                               //SMTP password
             // $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;  
             $mail->Priority    = 1; // Highest priority - Email priority (1 = High, 3 = Normal, 5 = low)          //Enable implicit TLS encryption
-            $mail->Port       = 587;
+            $mail->Port       = MAIL_PORT;
             $mail->CharSet     = 'UTF-8';
             $mail->Encoding    = '8bit';
-            $mail->Subject     = 'Test Email Using Gmail';
+            $mail->Subject     = 'Email Using Gmail';
             $mail->ContentType = 'text/html; charset=utf-8\r\n';                                //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 
             //Recipients
-            $mail->setFrom('segroupdemo@gmail.com', 'SE Mailer');
+            $mail->setFrom(MAIL_USER, 'SE Mailer');
             $mail->addAddress($email, $username);     //Add a recipient
-            $mail->addReplyTo('segroupdemo@gmail.com', 'SE Information');
+            $mail->addReplyTo(MAIL_USER, 'SE Information');
 
             //Attachments
             // $mail->addAttachment('/var/tmp/file.tar.gz');         //Add attachments
