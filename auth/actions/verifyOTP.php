@@ -23,5 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!User::updateUser($conn, $user->id, ['active' => 1])['status'])
         return throwStatusMessage(Message::message(false, "Your account does not validate. Please try again"));
+
+    OTP::disableOtp($conn, $otp_id);
     return throwStatusMessage(Message::message(true, "OTP is verified, now you can log in"));
 }

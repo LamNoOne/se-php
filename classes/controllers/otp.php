@@ -7,12 +7,14 @@ class OTP
     public $id;
     public $userId;
     public $otpCode;
+    public $otpStatus;
     public $createdAt;
 
-    public function __construct($userId = null, $otpCode = null)
+    public function __construct($userId = null, $otpCode = null, $otpStatus = 1)
     {
         $this->userId = $userId;
         $this->otpCode = $otpCode;
+        $this->otpStatus = $otpStatus;
     }
     public static function getOTP($conn, $otpId)
     {
@@ -30,10 +32,28 @@ class OTP
         }
     }
 
+    public static function disableOtp($conn, $otpId)
+    {
+        try {
+            $query = "UPDATE otp SET otpStatus = 0 WHERE id = :otpId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':otpId', $otpId);
+            if (!$stmt->execute()) {
+                throw new Exception('Can not execute query');
+            }
+            return Message::message(true, "OTP status updated successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function verifyOTP($conn, $otpId, $otpCodeOutside)
     {
         $timezone = new DateTimeZone(TZ_DEFAULT);
         $otpCodeData = static::getOTP($conn, $otpId);
+
+        if (empty($otpCodeData)) return false;
+        if (!$otpCodeData->otpStatus) return false;
 
         $otpCode = $otpCodeData->otpCode;
         $createdTime = $otpCodeData->createdAt;
@@ -61,11 +81,12 @@ class OTP
     {
         try {
             $createOTPStatement =
-                "INSERT INTO otp (userId, otpCode) VALUES (:userId, :otpCode)";
+                "INSERT INTO otp (userId, otpCode, otpStatus) VALUES (:userId, :otpCode, :otpStatus)";
 
             $stmt = $conn->prepare($createOTPStatement);
             $stmt->bindParam(':userId', $this->userId);
             $stmt->bindParam(':otpCode', $this->otpCode);
+            $stmt->bindParam(':otpStatus', $this->otpStatus);
             if (!$stmt->execute())
                 return Message::message(false, "Could not create OTP");
             $otpId = $conn->lastInsertId();
