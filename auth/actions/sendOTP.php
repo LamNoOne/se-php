@@ -14,9 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $user = User::getUserByEmail($conn, $email);
 
-    if (is_array($user)) {
-        return throwStatusMessage(Message::message(false, $user['message']));
-    }
+    if (empty($user)) return throwStatusMessage(Message::message(false, "User not found"));
 
     $userId = $user->id;
     $email = $user->email;
@@ -39,6 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $responseEmail = Mail::sendEmail($email, $firstName . $lastName, $subject, $body);
 
-    if (!$responseEmail['status']) return throwStatusMessage(Message::message(false, 'Verify your email failed'));
-    return throwStatusMessage(Message::messageData(true, 'Create OTP successfully', ['email' => base64_encode($email), 'otp_id' => base64_encode($optResponse['data']['otpId'])]));
+    if (!$responseEmail['status']) return throwStatusMessage(Message::message(false, 'Send OTP failed'));
+    return throwStatusMessage(Message::messageData(true, 'Send OTP to email successfully', ['email' => base64_encode($email), 'otp_id' => base64_encode($optResponse['data']['otpId'])]));
 }

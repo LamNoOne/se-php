@@ -107,8 +107,8 @@ if (!empty($_GET)) {
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <?php foreach ($allCategories as $category) : ?>
-                                    <li class="category-item"><a class="" href="<?php echo APP_URL; ?>/product?categoryId=<?php echo $category->id; ?>"><?php echo $category->name; ?></a></li>
+                                <?php foreach ($allCategories as $key => $category) : ?>
+                                    <li class="category-item"><a class="<?php echo isset($_GET['categoryId']) && $key + 1 == $_GET['categoryId'] ? "active" : "" ?>" href="<?php echo APP_URL; ?>/product?categoryId=<?php echo $category->id; ?>"><?php echo $category->name; ?></a></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -256,10 +256,10 @@ if (!empty($_GET)) {
                             </div>
                         <?php endif; ?>
                     </div>
-                    <?php if(!empty($allProducts)) : ?>
-                    <div class="row">
-                        <div id="pagination" class="py-3"></div>
-                    </div>
+                    <?php if (!empty($allProducts)) : ?>
+                        <div class="row">
+                            <div id="pagination" class="py-3"></div>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>

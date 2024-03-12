@@ -8,16 +8,16 @@
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="title">Password Recovery</h3>
+                            <h3 class="title">OTP Email Recovery</h3>
                         </div>
                         <div class="card-body">
-                            <form method="POST" action="actions/resendOTP.php" id="form-recovery-password" class="d-flex flex-column gap-4">
+                            <form method="POST" action="actions/sendOTP.php" id="form-recovery-password" class="d-flex flex-column gap-4">
                                 <div class="form-group d-flex flex-column gap-3">
-                                    <label for="otp" class="fs-5">Enter Email:</label>
-                                    <input type="text" name="email" class="form-control" id="email" placeholder="Enter your email" required>
+                                    <label for="email" class="fs-5">Enter Email:</label>
+                                    <input type="email" name="email" class="form-control" id="email" placeholder="Enter your email" required>
                                 </div>
                                 <div class="form-group d-flex flex-column gap-3">
-                                    <button type="submit" class="btn btn-primary" id="verifyBtn">Send</button>
+                                    <button type="submit" class="btn btn-primary" id="sendEmail">Send</button>
                                 </div>
                             </form>
                         </div>
@@ -36,51 +36,36 @@
         $("#form-recovery-password").submit(async function(e) {
             e.preventDefault();
             const data = {
-                email: $("#email").val(),
+                email: btoa($("#email").val()),
             }
+            $("#sendEmail").html("Sending...");
 
             try {
-                const verifyOtpResponse = await $.ajax({
+                const sendOTPEmailResponse = await $.ajax({
                     method: "POST",
-                    url: "actions/resendOTP.php",
+                    url: "actions/sendOTP.php",
                     data
                 })
 
-                const {
-                    status,
-                    message
-                } = JSON.parse(verifyOtpResponse);
+                const response = JSON.parse(sendOTPEmailResponse);
 
-                status ? window.location.replace("<?php echo APP_URL; ?>/auth/login-register.php") : toastr.error(message, "Error");
-            } catch (error) {
-                toastr.error(error.message, "Error");
-            }
-        })
-
-        $("#resendBtn").click(async function(e) {
-            e.preventDefault();
-            const data = {
-                email: "<?php echo $email; ?>"
-            }
-            $("#resendBtn").html("Loading...")
-            try {
-                const resendOtpResponse = await $.ajax({
-                    method: "POST",
-                    url: "actions/resendOTP.php",
-                    data
-                })
-                $("#resendBtn").html("Resend")
-                const response = JSON.parse(resendOtpResponse);
                 if (response.status) {
                     const otpId = response.data.otp_id;
                     const email = response.data.email
-                    window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}`);
+                    const forgotPassword = btoa("<?php echo FORGOT_PASSWORD; ?>");
+                    toastr.success(response.message, "Email Sent");
+                    setTimeout(() => {
+                        window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}&forgot_password=${forgotPassword}`);
+                    }, 1500)
                 } else {
-                    toastr.warning(message, "User registration failed");
+                    toastr.error(response.message, "Error");
+                    $("#sendEmail").html("Send");
+
                 }
             } catch (error) {
                 toastr.error(error.message, "Error");
             }
         })
+        $("#sendEmail").html("Send");
     })
 </script>

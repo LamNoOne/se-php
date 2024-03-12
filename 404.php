@@ -1,3 +1,4 @@
+<?php require_once "inc/init.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,18 +11,18 @@
   <meta name="robots" content="noindex, nofollow">
   <title>Page Not Found - SE Shop PHP - Admin</title>
 
-  <link rel="shortcut icon" type="image/x-icon" href="admin/assets/img/favicon.jpg">
+  <link rel="shortcut icon" type="image/x-icon" href="<?php echo APP_URL;?>/admin/assets/img/favicon.jpg">
 
-  <link rel="stylesheet" href="admin/assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/css/bootstrap.min.css">
 
-  <link rel="stylesheet" href="admin/assets/css/animate.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/css/animate.css">
 
-  <link rel="stylesheet" href="admin/assets/css/dataTables.bootstrap4.min.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/css/dataTables.bootstrap4.min.css">
 
-  <link rel="stylesheet" href="admin/assets/plugins/fontawesome/css/fontawesome.min.css">
-  <link rel="stylesheet" href="admin/assets/plugins/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/plugins/fontawesome/css/fontawesome.min.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/plugins/fontawesome/css/all.min.css">
 
-  <link rel="stylesheet" href="admin/assets/css/style.css">
+  <link rel="stylesheet" href="<?php echo APP_URL;?>/admin/assets/css/style.css">
   <style>
     div#global-loader .whirly-loader:not(:required) {
       animation: whirly-loader 1.25s linear infinite;
@@ -220,20 +221,20 @@
       <h1>404</h1>
       <h3 class="h2 mb-3"><i class="fas fa-exclamation-circle"></i> Oops! Page not found!</h3>
       <p class="h4 font-weight-normal">The page you requested was not found.</p>
-      <a href="./" class="btn btn-primary">Back to Home</a>
+      <a href="<?php echo APP_URL; ?>" class="btn btn-primary">Back to Home</a>
     </div>
   </div>
 
 
-  <script src="admin/assets/js/jquery-3.6.0.min.js"></script>
+  <script src="<?php echo APP_URL; ?>/admin/assets/js/jquery-3.6.0.min.js"></script>
 
-  <script src="admin/assets/js/feather.min.js"></script>
+  <script src="<?php echo APP_URL; ?>/admin/assets/js/feather.min.js"></script>
 
-  <script src="admin/assets/js/jquery.slimscroll.min.js"></script>
+  <script src="<?php echo APP_URL; ?>/admin/assets/js/jquery.slimscroll.min.js"></script>
 
-  <script src="admin/assets/js/bootstrap.bundle.min.js"></script>
+  <script src="<?php echo APP_URL; ?>/admin/assets/js/bootstrap.bundle.min.js"></script>
 
-  <script src="admin/assets/js/script.js"></script>
+  <script src="<?php echo APP_URL; ?>/admin/assets/js/script.js"></script>
 </body>
 
 </html>

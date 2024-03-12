@@ -191,6 +191,30 @@ class User
         }
     }
 
+    public static function changeUserPasswordByEmail($conn, $email, $password)
+    {
+        try {
+            // check email is exists in database
+            $user = static::getUserByEmail($conn, $email);
+            if (empty($user))
+                throw new Exception("Email does not exist");
+
+            // change password
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            $query = "UPDATE user SET password=:password WHERE email=:email";
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(":password", $password_hash, PDO::PARAM_STR);
+            $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+            $status = $stmt->execute();
+            if (!$status) {
+                throw new PDOException("Can not execute query");
+            }
+            return Message::message(true, "Update password successfully");
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function deleteUser($conn, $adminId, $userId)
     {
         /**

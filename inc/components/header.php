@@ -119,25 +119,25 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                                         <div class="list-item">
                                                             <ul class="list-item__detail list-unstyled text-start">
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=3">Accessories</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=3">Accessories</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=4">Studio</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=4">Studio</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=5">Camera</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=5">Camera</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
                                                                 </li>
                                                             </ul>
                                                         </div>

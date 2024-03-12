@@ -7,14 +7,12 @@ class OTP
     public $id;
     public $userId;
     public $otpCode;
-    public $otpStatus;
     public $createdAt;
 
-    public function __construct($userId = null, $otpCode = null, $otpStatus = true)
+    public function __construct($userId = null, $otpCode = null)
     {
         $this->userId = $userId;
         $this->otpCode = $otpCode;
-        $this->otpStatus = $otpStatus;
     }
     public static function getOTP($conn, $otpId)
     {
@@ -36,6 +34,7 @@ class OTP
     {
         $timezone = new DateTimeZone(TZ_DEFAULT);
         $otpCodeData = static::getOTP($conn, $otpId);
+
         $otpCode = $otpCodeData->otpCode;
         $createdTime = $otpCodeData->createdAt;
 
@@ -62,12 +61,11 @@ class OTP
     {
         try {
             $createOTPStatement =
-                "INSERT INTO otp (userId, otpCode, otpStatus) VALUES (:userId, :otpCode, :otpStatus)";
+                "INSERT INTO otp (userId, otpCode) VALUES (:userId, :otpCode)";
 
             $stmt = $conn->prepare($createOTPStatement);
             $stmt->bindParam(':userId', $this->userId);
             $stmt->bindParam(':otpCode', $this->otpCode);
-            $stmt->bindParam(':otpStatus', $this->otpStatus);
             if (!$stmt->execute())
                 return Message::message(false, "Could not create OTP");
             $otpId = $conn->lastInsertId();

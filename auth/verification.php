@@ -5,6 +5,12 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
     // Get otpId endcode from the request
     $verification_token = $_GET['verification_token'];
     $email = $_GET['email'];
+    $forgot_password = '';
+
+    if (isset($_GET['forgot_password'])) {
+        if (base64_decode($_GET['forgot_password']) === FORGOT_PASSWORD)
+            $forgot_password = $_GET['forgot_password'];
+    }
 } else {
     redirect(APP_URL);
 }
@@ -45,8 +51,9 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
     $(document).ready(function() {
         $("#form-verify-otp").submit(async function(e) {
             e.preventDefault();
+            const email = "<?php echo $email; ?>";
             const data = {
-                email: "<?php echo $email; ?>",
+                email,
                 verification_token: "<?php echo $verification_token; ?>",
                 otp_code: $("#otp").val()
             }
@@ -63,7 +70,19 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
                     message
                 } = JSON.parse(verifyOtpResponse);
 
-                status ? window.location.replace("<?php echo APP_URL; ?>/auth/login-register.php") : toastr.error(message, "Error");
+                if (status) {
+                    const forgotPassword = "<?php echo $forgot_password; ?>"
+                    toastr.success("OTP is successfully verified", "OTP");
+                    setTimeout(() => {
+                        if (forgotPassword === '') {
+                            window.location.replace(`<?php echo APP_URL; ?>/auth/login-register.php`);
+                        } else {
+                            window.location.replace(`<?php echo APP_URL; ?>/auth/reset-password.php?email=${email}`);
+                        }
+                    }, 1500)
+                } else {
+                    toastr.error(message, "Error");
+                }
             } catch (error) {
                 toastr.error(error.message, "Error");
             }
@@ -78,7 +97,7 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
             try {
                 const resendOtpResponse = await $.ajax({
                     method: "POST",
-                    url: "actions/resendOTP.php",
+                    url: "actions/sendOTP.php",
                     data
                 })
                 $("#resendBtn").html("Resend")
@@ -86,9 +105,17 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
                 if (response.status) {
                     const otpId = response.data.otp_id;
                     const email = response.data.email
-                    window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}`);
+                    const forgotPassword = "<?php echo $forgot_password; ?>"
+                    toastr.success("Send OTP to email successfully", "Resend email")
+                    setTimeout(() => {
+                        if (forgotPassword === '') {
+                            window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}`);
+                        } else {
+                            window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}&forgot_password=${forgotPassword}`);
+                        }
+                    }, 1500)
                 } else {
-                    toastr.warning(message, "User registration failed");
+                    toastr.warning(response.message, "User registration failed");
                 }
             } catch (error) {
                 toastr.error(error.message, "Error");
