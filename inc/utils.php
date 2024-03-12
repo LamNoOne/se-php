@@ -186,6 +186,71 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
 //     ]
 // );
 
+/**
+$sort =  [
+        'table' => 'product',
+        'column' => 'createdAt',
+        'order' => 'ASC'
+    ]
+ */
+function getSQLPrepareStatement(
+    $conn,
+    $projection = [],
+    $join = [],
+    $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
+    $pagination = [],
+    $sort =  []
+) {
+    if (isset($pagination['offset']) && isset($pagination['limit'])) {
+        $paginationForGetSQL = [
+            'offset' => ":offset",
+            'limit' => ":limit"
+        ];
+    }
+
+    $selection = [];
+    $i = 1;
+    foreach ($filter as $$selection) {
+        $selection[] = [
+            'table' => 'product',
+            'column' => $$selection['field'],
+            'value' => ':value' . $i++,
+            'like' => $$selection['like'],
+            'int' => $$selection['int']
+        ];
+    }
+
+    $query = getSQLQuery(
+        $projection,
+        $join,
+        $selection,
+        $paginationForGetSQL,
+        $sort
+    );
+
+    $stmt = $conn->prepare($query);
+
+    $i = 1;
+    foreach ($filter as $filterItem) {
+        if ($filterItem['like']) {
+            $stmt->bindValue(':value' . $i++, '%' . $filterItem['value'] . '%', PDO::PARAM_STR);
+        } else {
+            if ($filterItem['int']) {
+                $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_STR);
+            }
+        }
+    }
+
+    if (isset($pagination['offset']) && isset($pagination['limit'])) {
+        $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
+    }
+
+    return $stmt;
+}
+
 function deleteFileByURL($url)
 {
     $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];

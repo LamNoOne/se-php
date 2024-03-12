@@ -339,6 +339,9 @@ class Product extends DataFetcher
         }
     }
 
+    /**
+     $pagination = ['limit' => 10, 'offset' => 0]
+     */
     public static function getAllProductsForAdmin(
         $conn,
         $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
@@ -346,26 +349,8 @@ class Product extends DataFetcher
         $sort =  ['sortBy' => 'id', 'order' => 'ASC']
     ) {
         try {
-            if (isset($pagination['offset']) && isset($pagination['limit'])) {
-                $paginationForGetSQL = [
-                    'offset' => ":offset",
-                    'limit' => ":limit"
-                ];
-            }
-
-            $selection = [];
-            $i = 1;
-            foreach ($filter as $$selection) {
-                $selection[] = [
-                    'table' => 'product',
-                    'column' => $$selection['field'],
-                    'value' => ':value' . $i++,
-                    'like' => $$selection['like'],
-                    'int' => $$selection['int']
-                ];
-            }
-
-            $query = getSQLQuery(
+            $stmt = getSQLPrepareStatement(
+                $conn,
                 [
                     [
                         "table" => "product",
@@ -456,35 +441,14 @@ class Product extends DataFetcher
                         ]
                     ]
                 ],
-                $selection,
-                $paginationForGetSQL,
+                $filter,
+                $pagination,
                 [
                     'table' => 'product',
                     'column' => $sort['sortBy'],
                     'order' => $sort['order']
                 ]
             );
-
-            $stmt = $conn->prepare($query);
-
-            $i = 1;
-            foreach ($filter as $filterItem) {
-                if ($filterItem['like']) {
-                    $stmt->bindValue(':value' . $i++, '%' . $filterItem['value'] . '%', PDO::PARAM_STR);
-                } else {
-                    if ($filterItem['int']) {
-                        $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_INT);
-                    } else {
-                        $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_STR);
-                    }
-                }
-            }
-
-            if (isset($pagination['offset']) && isset($pagination['limit'])) {
-                $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
-                $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
-            }
-
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');
