@@ -28,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $createProductResult['message'],
       [
         'redirectUrl' => APP_URL . '/admin/products.php',
-        'id' => $createProductResult['data']['id']
       ]
     );
     throwStatusMessage($response);

@@ -207,7 +207,7 @@ $categories = Category::getAllCategories($conn);
             processData: false,
           })
           if (response.status) {
-            localStorage.setItem('lastAddId', response.data.id);
+            sessionStorage.setItem('isLastPage', true);
             window.location.replace(response.data.redirectUrl)
           } else {
             toastr.error(response.message)

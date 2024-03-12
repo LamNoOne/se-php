@@ -150,65 +150,31 @@
       sDom: 'fBtlpi',
       pagingType: 'numbers',
       ordering: true,
-      searching: true,
-      // lengthMenu: [
-      //   [10, 25, 50, -1],
-      //   [10, 25, 50, 'All']
-      // ],
-      lengthChange: false,
-      stateSave: true,
+      lengthMenu: [
+        [10, 25, 50, -1],
+        [10, 25, 50, 'All']
+      ],
       language: {
         search: '',
-        // sLengthMenu: '_MENU_', // length change
+        sLengthMenu: '_MENU_',
         searchPlaceholder: 'Search...',
-        // info: '_START_ - _END_ of _TOTAL_ items'
-        info: ''
+        info: '_START_ - _END_ of _TOTAL_ items',
       },
-      order: [],
-      search: {
-        value: 'value'
-      },
+      order: [
+        [5, 'asc']
+      ],
       ajax: {
         url: 'actions/get-products.php',
         type: 'GET',
         data: function(d, settings) {
-          // handle first load
-          if (d.draw > 1) {
-            const page = d.start / d.length + 1
-            const limit = d.length
-            const sortBy = d.columns[d.order[0].column].name || DEFAULT_SORT_BY
-            const order = d.order[0].dir || DEFAULT_ORDER
-
-            const newParams = `?page=${page}&limit=${limit}&search=${d.search.value}&sortBy=${sortBy}&order=${order}`
-            const newUrl = window.location.origin + window.location.pathname + newParams
-            history.pushState(null, '', newUrl);
-          }
-
-          const searchParams = new URLSearchParams(window.location.search)
-          const page = searchParams.get('page') || DEFAULT_PAGE
-          const limit = searchParams.get('limit') || DEFAULT_LIMIT
-          const search = searchParams.get('search') || DEFAULT_SEARCH
-          const sortBy = searchParams.get('sortBy') || DEFAULT_SORT_BY
-          const order = searchParams.get('order') || DEFAULT_ORDER
-
-          const requestData = {
-            page: page || d.start / d.length + 1,
-            limit: limit || d.length,
-            search: search || d.search.value,
-            sortBy: sortBy || d.columns[d.order[0].column].name || 'createdAt',
-            order: order || d.order[0].dir || 'asc',
+          return {
+            page: d.start / d.length + 1,
+            limit: d.length,
+            search: d.search?.value,
+            sortBy: d.columns[d.order[0]?.column]?.name || 'createdAt',
+            order: d.order[0]?.dir || 'asc',
             draw: d.draw
           }
-
-          const lastAddId = localStorage.getItem('lastAddId')
-          if (lastAddId) {
-            requestData = {
-              ...requestData,
-              lastAddId
-            }
-          }
-
-          return requestData
         },
         dataFilter: function(data) {
           const dataObj = jQuery.parseJSON(data);
@@ -218,7 +184,7 @@
             recordsFiltered: dataObj.totalItems,
             data: dataObj.items
           });
-        }
+        },
       },
       columnDefs: [{
           targets: 0,
@@ -307,27 +273,12 @@
       },
     })
 
-    table.on('draw.dt', function(e, settings, data) {
-      $("#table_paginate li.paginate_button").removeClass("active");
-
-      // handle active last switch button after add items
-      if (localStorage.getItem('lastAddId')) {
-        $("#table_paginate li.paginate_button").last().addClass("active");
-        localStorage.removeItem('lastAddId');
-      }
-
-      // handle active switch page button
-      $('#table_paginate li.paginate_button').each(function() {
-        const that = this;
-        $(this).children().each(function() {
-          const pageNumber = parseInt($(this).text())
-          const searchParams = new URLSearchParams(window.location.search)
-          const currentPage = parseInt(searchParams.get('page')) || DEFAULT_PAGE;
-          if (pageNumber === currentPage) {
-            $(that).addClass('active')
-          }
-        })
-      })
-    })
+    // $('#table').on('init.dt', function() {
+    //   const isLastPage = Boolean(sessionStorage.getItem('isLastPage'))
+    //   sessionStorage.removeItem('isLastPage')
+    //   if (isLastPage) {
+    //     table.page('last').draw('page')
+    //   }
+    // })
   })
 </script>
