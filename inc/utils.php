@@ -115,17 +115,21 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
     foreach ($selection as $selectItem) {
         $compareOperator = '=';
         $selectValue = '';
-        if ($selectItem['like'] && !$selectItem['int']) {
-            $compareOperator = 'LIKE';
-            $selectValue = "{$selectItem['value']}";
-        } else if ($selectItem['int']) {
-            $selectValue = "{$selectItem['value']}";
+        if (isset($selectItem['like']) && isset($selectItem['int'])) {
+            if ($selectItem['like'] && !$selectItem['int']) {
+                $compareOperator = 'LIKE';
+                $selectValue = "{$selectItem['value']}";
+            } else if ($selectItem['int']) {
+                $selectValue = "{$selectItem['value']}";
+            }
         } else {
             $selectValue = "'{$selectItem['value']}'";
         }
         $selectClauses[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $selectValue";
     }
-    $sqlClauses[] = 'WHERE ' . implode(' AND ', $selectClauses);
+    if (!empty($selectClauses)) {
+        $sqlClauses[] = 'WHERE ' . implode(' AND ', $selectClauses);
+    }
 
     // handle order by clause
     $sqlClauses[] = "ORDER BY {$sort['table']}.{$sort['column']} {$sort['order']}";
@@ -138,53 +142,6 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
 
     return implode(' ', $sqlClauses);
 }
-
-// getSQLQuery(
-//     [
-//         [
-//             "table" => "product",
-//             "column" => "id"
-//         ],
-//         [
-//             "table" => "product",
-//             "column" => "name"
-//         ]
-//     ],
-//     [
-//         "tables" => [
-//             "product",
-//             "category",
-//             "user",
-//         ],
-//         "on" => [
-//             [
-//                 'table1' => 'product',
-//                 'table2' => 'category',
-//                 'column1' => 'categoryId',
-//                 'column2' => 'id'
-//             ],
-//             [
-//                 'table1' => 'product',
-//                 'table2' => 'user',
-//                 'column1' => 'createdBy',
-//                 'column2' => 'id'
-//             ]
-//         ]
-//     ],
-//     [
-//         [
-//             'table' => 'product',
-//             'column' => 'name',
-//             'value' => 'vn',
-//             'like' => true,
-//             'int' => false
-//         ]
-//     ],
-//     [
-//         'offset' => 0,
-//         'limit' => 10
-//     ]
-// );
 
 /**
 $sort =  [
@@ -201,6 +158,7 @@ function getSQLPrepareStatement(
     $pagination = [],
     $sort =  []
 ) {
+    $paginationForGetSQL = [];
     if (isset($pagination['offset']) && isset($pagination['limit'])) {
         $paginationForGetSQL = [
             'offset' => ":offset",
@@ -210,13 +168,13 @@ function getSQLPrepareStatement(
 
     $selection = [];
     $i = 1;
-    foreach ($filter as $$selection) {
+    foreach ($filter as $filterItem) {
         $selection[] = [
             'table' => 'product',
-            'column' => $$selection['field'],
+            'column' => $filterItem['field'],
             'value' => ':value' . $i++,
-            'like' => $$selection['like'],
-            'int' => $$selection['int']
+            'like' => isset($filterItem['like']) ? $filterItem['like'] : false,
+            'int' => isset($filterItem['int']) ? $filterItem['int'] : false
         ];
     }
 

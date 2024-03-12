@@ -9,7 +9,12 @@ $sorter = array(
 );
 
 $orders = Order::getAllOrders($conn, [], $sorter);
-$products = Product::getAllProductsForAdmin($conn, [], $sorter);
+$products = Product::getAllProductsForAdmin(
+  $conn,
+  [],
+  [],
+  ['sortBy' => 'createdAt', 'order' => 'DESC']
+);
 $customers = User::getAllUsers($conn, ['roleId' => 3], $sorter);
 $users = User::getAllUsers($conn, [], $sorter);
 
