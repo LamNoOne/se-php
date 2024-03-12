@@ -8,7 +8,9 @@ if (!isset($conn)) {
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $page = 1;
   $limit = 10;
-  $search = null;
+  $search = '';
+  $sortBy = 'createdAt';
+  $order = 'asc';
 
   $dataToValidate = $_GET;
 
@@ -31,17 +33,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['search'])) {
     $search = $_GET['search'];
   }
+  if (isset($_GET['sortBy'])) {
+    $sortBy = $_GET['sortBy'];
+  }
+  if (isset($_GET['order'])) {
+    $order = $_GET['order'];
+  }
+  if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+  }
+
+
+  $productsOfAllPage = Product::getAllProductsForAdmin(
+    $conn,
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ]
+  );
 
   $productsPerPage = Product::getAllProductsForAdmin(
     $conn,
-    ['name' => $search],
-    ['id' => 'ASC'],
-    ['page' => $page, 'limit' => $limit]
-  );
-  $productsOfAllPage = Product::getAllProductsForAdmin(
-    $conn,
-    ['name' => $search],
-    ['id' => 'ASC'],
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ],
+    ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
+    ['sortBy' => $sortBy, 'order' => $order],
   );
 
   $totalItems = count($productsOfAllPage);
