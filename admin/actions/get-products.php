@@ -51,12 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ]
   );
 
-  $totalItems = count($productsOfAllPage);
-  // page is last page when has add product
-  if ($lastAddId) {
-    $page = ceil($totalItems / $limit);
-  }
-
   $productsPerPage = Product::getAllProductsForAdmin(
     $conn,
     [
@@ -66,9 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ['sortBy' => $sortBy, 'order' => $order],
   );
 
+  $totalItems = count($productsOfAllPage);
+  $totalItemsPerPage = count($productsPerPage);
   $response = [
     'totalItems' =>  $totalItems,
     'items' => $productsPerPage,
+    'totalPages' => ceil($totalItems / $totalItemsPerPage)
   ];
 
   if (isset($_GET['draw'])) {

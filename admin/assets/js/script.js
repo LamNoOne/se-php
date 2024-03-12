@@ -596,77 +596,64 @@ const handleDefaultImage = () => {
 }
 
 const previewImage = () => {
-	const inputFile = document.querySelector('.preview-image-wrapper .input-file')
-	const currentImageUrl = document.querySelector(
-		'.preview-image-wrapper .current-image-url'
-	)
-	const chooseFileBtn = document.querySelector(
-		'.preview-image-wrapper .choose-file-btn'
-	)
-	const cancelBtn = document.querySelector(
-		'.preview-image-wrapper .preview-image .cancel-btn'
-	)
-	const image = document.querySelector('.preview-image-wrapper img')
-	const fileName = document.querySelector(
-		'.preview-image-wrapper .preview-image .file-name'
-	)
-	const previewImage = document.querySelector(
-		'.preview-image-wrapper .preview-image'
-	)
+	const inputFile = $('.preview-image-wrapper .input-file')
+	const currentImageUrl = $('.preview-image-wrapper .current-image-url')
+	const chooseFileBtn = $('.preview-image-wrapper .choose-file-btn')
+	const cancelBtn = $('.preview-image-wrapper .preview-image .cancel-btn')
+	const image = $('.preview-image-wrapper img')
+	const fileName = $('.preview-image-wrapper .preview-image .file-name')
+	const previewImage = $('.preview-image-wrapper .preview-image')
 
 	if (
-		!inputFile ||
-		!chooseFileBtn ||
-		!cancelBtn ||
-		!image ||
-		!fileName ||
-		!previewImage
+		!inputFile.length ||
+		!chooseFileBtn.length ||
+		!cancelBtn.length ||
+		!image.length ||
+		!fileName.length ||
+		!previewImage.length
 	) {
 		return
 	}
 
 	const showPreviewImage = (blobOrFile) => {
 		if (blobOrFile.name) {
-			fileName.innerText = blobOrFile.name
-			currentImageUrl.value = '' // fix choose image
+			fileName.text(blobOrFile.name)
+			currentImageUrl.val('')
 		} else {
-			const urlObject = new URL(currentImageUrl.value)
+			const urlObject = new URL(currentImageUrl.val())
 			const imagePath = urlObject.pathname
 			const imageNameArray = imagePath.split('/')
 			const imageName = imageNameArray[imageNameArray.length - 1]
-			fileName.innerText = imageName
+			fileName.text(imageName)
 
-			// add image into input type file
 			const file = new File([blobOrFile], imageName, { type: 'image/jpeg' })
 			const dt = new DataTransfer()
 			dt.items.add(file)
-			inputFile.files = dt.files
+			inputFile.prop('files', dt.files)
 		}
 		const src = URL.createObjectURL(blobOrFile)
-		image.src = src
-		image.style.display = 'block'
-		previewImage.classList.add('active')
+		image.attr('src', src).css('display', 'block')
+		previewImage.addClass('active')
 	}
 
 	const clearPreviewImage = () => {
-		inputFile.value = ''
-		image.src = ''
-		currentImageUrl.value = ''
-		fileName.innerText = ''
-		previewImage.classList.remove('active')
-		image.style.display = 'none'
+		inputFile.val('')
+		image.attr('src', '')
+		currentImageUrl.val('')
+		fileName.text('')
+		previewImage.removeClass('active')
+		image.css('display', 'none')
 	}
 
 	const handleInitImage = () => {
-		const imageUrl = currentImageUrl.value
+		const imageUrl = currentImageUrl.val()
 		if (imageUrl) {
 			fetch(imageUrl)
 				.then((response) => {
 					if (!response.ok) {
-						image.src = 'assets/img/no-image.png'
-						image.style.display = 'block'
-						fileName.innerText = 'No image'
-						previewImage.classList.add('active')
+						image.attr('src', 'assets/img/no-image.png').css('display', 'block')
+						fileName.text('No image')
+						previewImage.addClass('active')
 						return Promise.reject()
 					}
 					return response.blob()
@@ -678,25 +665,29 @@ const previewImage = () => {
 		}
 	}
 
-	chooseFileBtn.onclick = function (event) {
-		event.preventDefault()
-		inputFile.click()
-	}
+	$('.preview-image-wrapper').each(function () {
+		$(this)
+			.find('.choose-file-btn')
+			.click(function (event) {
+				event.preventDefault()
+				$(this).closest('.preview-image-wrapper').find('.input-file').click()
+			})
+	})
 
-	inputFile.onchange = function () {
+	inputFile.on('change', function () {
 		const file = this.files[0]
 		if (file) {
 			showPreviewImage(file)
 		} else {
 			clearPreviewImage()
 		}
-	}
+	})
 
-	cancelBtn.onclick = function () {
+	cancelBtn.on('click', function () {
 		clearPreviewImage()
-	}
+	})
 
-	if (currentImageUrl) {
+	if (currentImageUrl.length) {
 		handleInitImage()
 	}
 }
