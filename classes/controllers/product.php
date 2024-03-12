@@ -173,10 +173,10 @@ class Product extends DataFetcher
     public function createProduct($conn)
     {
         try {
-            $validateResult = Product::validateCreate(get_object_vars($this));
-            if (!$validateResult['status']) {
-                return Message::message(false, $validateResult['message']);
-            }
+            // $validateResult = Product::validateCreate(get_object_vars($this));
+            // if (!$validateResult['status']) {
+            //     return Message::message(false, $validateResult['message']);
+            // }
 
             $insert = "
                 INSERT INTO `product`(`categoryId`, `name`, `description`, `imageUrl`, `screen`, `operatingSystem`, `processor`, `ram`, `storageCapacity`, `weight`, `batteryCapacity`, `color`, `price`, `stockQuantity`)

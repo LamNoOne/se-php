@@ -28,7 +28,7 @@
               <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img" /></a>
             </div>
           </div>
-          <div class="wordset">
+          <!-- <div class="wordset">
             <ul>
               <li>
                 <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="assets/img/icons/pdf.svg" alt="img" /></a>
@@ -40,25 +40,16 @@
                 <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="assets/img/icons/printer.svg" alt="img" /></a>
               </li>
             </ul>
-          </div>
+          </div> -->
         </div>
 
-        <div class="card mb-0" id="filter_inputs">
+        <div class="card mb-2" id="filter_inputs">
           <div class="card-body pb-0">
             <div class="row">
               <div class="col-lg-12 col-sm-12">
                 <div class="row">
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group">
-                      <select class="select">
-                        <option>Choose Product</option>
-                        <option>Macbook pro</option>
-                        <option>Orange</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group">
+                  <div class="col-lg-2 col-sm-6 col-12">
+                    <div class="form-group m-3">
                       <select class="select">
                         <option>Choose Category</option>
                         <option>Computers</option>
@@ -66,32 +57,16 @@
                       </select>
                     </div>
                   </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group">
-                      <select class="select">
-                        <option>Choose Sub Category</option>
-                        <option>Computer</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group">
-                      <select class="select">
-                        <option>Brand</option>
-                        <option>N/D</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group">
+                  <div class="col-lg-2 col-sm-6 col-12">
+                    <div class="form-group m-3">
                       <select class="select">
                         <option>Price</option>
                         <option>150.00</option>
                       </select>
                     </div>
                   </div>
-                  <div class="col-lg-1 col-sm-6 col-12">
-                    <div class="form-group">
+                  <div class="col-lg col-sm-6 col-12">
+                    <div class="form-group m-3">
                       <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg" alt="img" /></a>
                     </div>
                   </div>
@@ -163,39 +138,73 @@
         })
     })
 
+    const DEFAULT_PAGE = 1
+    const DEFAULT_LIMIT = 10
+    const DEFAULT_SEARCH = ''
+    const DEFAULT_SORT_BY = 'createdAt'
+    const DEFAULT_ORDER = 'asc'
+
     const table = $('#table').DataTable({
       serverSide: true,
       bFilter: true,
       sDom: 'fBtlpi',
       pagingType: 'numbers',
       ordering: true,
+      searching: true,
+      // lengthMenu: [
+      //   [10, 25, 50, -1],
+      //   [10, 25, 50, 'All']
+      // ],
+      lengthChange: false,
+      stateSave: true,
       language: {
-        search: ' ',
-        sLengthMenu: '_MENU_',
+        search: '',
+        // sLengthMenu: '_MENU_', // length change
         searchPlaceholder: 'Search...',
-        info: '_START_ - _END_ of _TOTAL_ items'
+        // info: '_START_ - _END_ of _TOTAL_ items'
+        info: ''
       },
-      order: [
-        [5, 'asc']
-      ],
+      order: [],
+      search: {
+        value: 'value'
+      },
       ajax: {
         url: 'actions/get-products.php',
         type: 'GET',
-        data: function(d) {
-          let requestData = {
-            page: d.start / d.length + 1,
-            limit: d.length,
-            search: d.search.value,
-            sortBy: d.columns[d.order[0].column].name || 'createdAt',
-            order: d.order[0].dir || 'asc',
+        data: function(d, settings) {
+          // handle first load
+          if (d.draw > 1) {
+            const page = d.start / d.length + 1
+            const limit = d.length
+            const sortBy = d.columns[d.order[0].column].name || DEFAULT_SORT_BY
+            const order = d.order[0].dir || DEFAULT_ORDER
+
+            const newParams = `?page=${page}&limit=${limit}&search=${d.search.value}&sortBy=${sortBy}&order=${order}`
+            const newUrl = window.location.origin + window.location.pathname + newParams
+            history.pushState(null, '', newUrl);
+          }
+
+          const searchParams = new URLSearchParams(window.location.search)
+          const page = searchParams.get('page') || DEFAULT_PAGE
+          const limit = searchParams.get('limit') || DEFAULT_LIMIT
+          const search = searchParams.get('search') || DEFAULT_SEARCH
+          const sortBy = searchParams.get('sortBy') || DEFAULT_SORT_BY
+          const order = searchParams.get('order') || DEFAULT_ORDER
+
+          const requestData = {
+            page: page || d.start / d.length + 1,
+            limit: limit || d.length,
+            search: search || d.search.value,
+            sortBy: sortBy || d.columns[d.order[0].column].name || 'createdAt',
+            order: order || d.order[0].dir || 'asc',
             draw: d.draw
           }
 
-          const lastAddId = JSON.parse(localStorage.getItem('lastAddId')) || {}
-          if (lastAddId.product) {
+          const lastAddId = localStorage.getItem('lastAddId')
+          if (lastAddId) {
             requestData = {
               ...requestData,
-              id: lastAddId.product
+              lastAddId
             }
           }
 
@@ -237,9 +246,9 @@
           targets: 5
         },
         {
-          "targets": 6,
-          "orderable": false,
-          "searchable": false,
+          targets: 6,
+          orderable: false,
+          searchable: false,
         },
       ],
       columns: [{
@@ -295,8 +304,30 @@
       initComplete: (settings, json) => {
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
-
       },
+    })
+
+    table.on('draw.dt', function(e, settings, data) {
+      $("#table_paginate li.paginate_button").removeClass("active");
+
+      // handle active last switch button after add items
+      if (localStorage.getItem('lastAddId')) {
+        $("#table_paginate li.paginate_button").last().addClass("active");
+        localStorage.removeItem('lastAddId');
+      }
+
+      // handle active switch page button
+      $('#table_paginate li.paginate_button').each(function() {
+        const that = this;
+        $(this).children().each(function() {
+          const pageNumber = parseInt($(this).text())
+          const searchParams = new URLSearchParams(window.location.search)
+          const currentPage = parseInt(searchParams.get('page')) || DEFAULT_PAGE;
+          if (pageNumber === currentPage) {
+            $(that).addClass('active')
+          }
+        })
+      })
     })
   })
 </script>
