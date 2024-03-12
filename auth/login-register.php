@@ -275,13 +275,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 password: $("#password-register").val(),
             }
 
+            $("#submit-register").html("Loading...");
+
             try {
                 const registerResponse = await $.ajax({
                     method: "POST",
                     url: "actions/register.php",
                     data: formData,
                 })
-
                 const response = JSON.parse(registerResponse);
 
                 if (response.status) {
