@@ -5648,7 +5648,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	background: var(--primary-color);
 }
 .table-top {
-	margin-bottom: 25px;
+	margin-bottom: 12px;
 }
 @media (max-width: 575px) {
 	.table-top {

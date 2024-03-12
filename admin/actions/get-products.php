@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $search = '';
   $sortBy = 'createdAt';
   $order = 'asc';
+  $lastAddId = null;
 
   $dataToValidate = $_GET;
 
@@ -39,10 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['order'])) {
     $order = $_GET['order'];
   }
-  if (isset($_GET['id'])) {
-    $id = $_GET['id'];
+  if (isset($_GET['lastAddId'])) {
+    $lastAddId = $_GET['lastAddId'];
   }
-
 
   $productsOfAllPage = Product::getAllProductsForAdmin(
     $conn,
@@ -50,6 +50,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
       ['field' => 'name', 'value' => $search, 'like' => true],
     ]
   );
+
+  $totalItems = count($productsOfAllPage);
+  // page is last page when has add product
+  if ($lastAddId) {
+    $page = ceil($totalItems / $limit);
+  }
 
   $productsPerPage = Product::getAllProductsForAdmin(
     $conn,
@@ -60,12 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     ['sortBy' => $sortBy, 'order' => $order],
   );
 
-  $totalItems = count($productsOfAllPage);
   $response = [
     'totalItems' =>  $totalItems,
     'items' => $productsPerPage,
-    'page' => (int) $page,
-    'totalPages' => ceil($totalItems / $limit)
   ];
 
   if (isset($_GET['draw'])) {
