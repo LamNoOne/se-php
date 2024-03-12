@@ -13,7 +13,6 @@
 <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.min.js"></script>
 <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.config.js"></script>
 <script src="<?php echo APP_URL; ?>/assets/jquery/jquery.validate.min.js"></script>
-<script src="assets/js/config.js"></script>
 <script src="assets/js/script.js"></script>
 </body>
 

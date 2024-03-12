@@ -404,6 +404,7 @@ $categories = Category::getAllCategories($conn);
 
     // handle render products to table
     const table = $('#table').DataTable({
+      processing: true,
       serverSide: true,
       bFilter: true,
       sDom: 'fBtlpi',
@@ -417,7 +418,7 @@ $categories = Category::getAllCategories($conn);
         search: '',
         sLengthMenu: '_MENU_',
         searchPlaceholder: 'Search...',
-        info: '_START_ - _END_ of _TOTAL_ items',
+        info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
         [5, 'asc']
@@ -732,10 +733,18 @@ $categories = Category::getAllCategories($conn);
     $('#table tbody').on('click', '#delete-btn', function() {
       const id = $(this).data('id')
       Swal
-        .fire(sweetalertDeleteConfirmConfig(
-          'Delete Product?',
-          'This action cannot be reverted. Are you sure?'
-        ))
+        .fire({
+          title: 'Delete Product?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
         .then(async function(result) {
           try {
             if (result.isConfirmed) {
