@@ -182,7 +182,7 @@
         url: 'actions/get-products.php',
         type: 'GET',
         data: function(d) {
-          return {
+          let requestData = {
             page: d.start / d.length + 1,
             limit: d.length,
             search: d.search.value,
@@ -190,6 +190,16 @@
             order: d.order[0].dir || 'asc',
             draw: d.draw
           }
+
+          const lastAddId = JSON.parse(localStorage.getItem('lastAddId')) || {}
+          if (lastAddId.product) {
+            requestData = {
+              ...requestData,
+              id: lastAddId.product
+            }
+          }
+
+          return requestData
         },
         dataFilter: function(data) {
           const dataObj = jQuery.parseJSON(data);

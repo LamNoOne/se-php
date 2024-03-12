@@ -39,16 +39,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   if (isset($_GET['order'])) {
     $order = $_GET['order'];
   }
+  if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+  }
+
+
+  $productsOfAllPage = Product::getAllProductsForAdmin(
+    $conn,
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ]
+  );
 
   $productsPerPage = Product::getAllProductsForAdmin(
     $conn,
-    $search,
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ],
     ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
     ['sortBy' => $sortBy, 'order' => $order],
-  );
-  $productsOfAllPage = Product::getAllProductsForAdmin(
-    $conn,
-    $search
   );
 
   $totalItems = count($productsOfAllPage);

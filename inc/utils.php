@@ -118,6 +118,8 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
         if ($selectItem['like'] && !$selectItem['int']) {
             $compareOperator = 'LIKE';
             $selectValue = "{$selectItem['value']}";
+        } else if ($selectItem['int']) {
+            $selectValue = "{$selectItem['value']}";
         } else {
             $selectValue = "'{$selectItem['value']}'";
         }

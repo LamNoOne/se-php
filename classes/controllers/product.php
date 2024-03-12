@@ -204,7 +204,9 @@ class Product extends DataFetcher
                 throw new InvalidArgumentException('Add product failed');
             }
 
-            return Message::message(true, 'Add product successfully');
+            return Message::messageData(true, 'Add product successfully', [
+                'id' => $conn->lastInsertId()
+            ]);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
@@ -339,17 +341,30 @@ class Product extends DataFetcher
 
     public static function getAllProductsForAdmin(
         $conn,
-        $search = '',
+        $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
         $pagination = [],
         $sort =  ['sortBy' => 'id', 'order' => 'ASC']
     ) {
-        if (isset($pagination['offset']) && isset($pagination['limit'])) {
-            $paginationForGetSQL = [
-                'offset' => ":offset",
-                'limit' => ":limit"
-            ];
-        }
         try {
+            if (isset($pagination['offset']) && isset($pagination['limit'])) {
+                $paginationForGetSQL = [
+                    'offset' => ":offset",
+                    'limit' => ":limit"
+                ];
+            }
+
+            $selection = [];
+            $i = 1;
+            foreach ($filter as $$selection) {
+                $selection[] = [
+                    'table' => 'product',
+                    'column' => $$selection['field'],
+                    'value' => ':value' . $i++,
+                    'like' => $$selection['like'],
+                    'int' => $$selection['int']
+                ];
+            }
+
             $query = getSQLQuery(
                 [
                     [
@@ -441,15 +456,7 @@ class Product extends DataFetcher
                         ]
                     ]
                 ],
-                [
-                    [
-                        'table' => 'product',
-                        'column' => 'name',
-                        'value' => ':value',
-                        'like' => true,
-                        'int' => false
-                    ]
-                ],
+                $selection,
                 $paginationForGetSQL,
                 [
                     'table' => 'product',
@@ -460,7 +467,19 @@ class Product extends DataFetcher
 
             $stmt = $conn->prepare($query);
 
-            $stmt->bindValue(':value', '%' . $search . '%', PDO::PARAM_STR);
+            $i = 1;
+            foreach ($filter as $filterItem) {
+                if ($filterItem['like']) {
+                    $stmt->bindValue(':value' . $i++, '%' . $filterItem['value'] . '%', PDO::PARAM_STR);
+                } else {
+                    if ($filterItem['int']) {
+                        $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_INT);
+                    } else {
+                        $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_STR);
+                    }
+                }
+            }
+
             if (isset($pagination['offset']) && isset($pagination['limit'])) {
                 $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
                 $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);

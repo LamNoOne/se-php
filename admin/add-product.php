@@ -206,8 +206,12 @@ $categories = Category::getAllCategories($conn);
             contentType: false,
             processData: false,
           })
-
           if (response.status) {
+            const lastAddId = JSON.parse(localStorage.getItem('lastAddId'));
+            localStorage.setItem('lastAddProductId', JSON.stringify({
+              ...lastAddId,
+              product: response.data.id
+            }));
             window.location.replace(response.data.redirectUrl)
           } else {
             toastr.error(response.message)
