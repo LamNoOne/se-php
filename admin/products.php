@@ -396,11 +396,15 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     const DEFAULT_SORT_BY = 'createdAt'
     const DEFAULT_ORDER = 'asc'
 
-    const clearForm = (modalId) => {
-      $(modalId).modal('hide');
-      $(this).find('input, textarea, select').val('')
-      $(this).find('.preview-image img').prop('src', '').hide();
-      $(this).find('select').html('')
+    const clearForm = (modal, form) => {
+      const previewImage = form.find('.preview-image')
+      const fileName = previewImage.find('.file-name')
+      modal.modal('hide');
+      form.find('input, textarea, select').val('')
+      form.find('.preview-image img').prop('src', '').hide();
+      form.find('select').html('')
+      previewImage.removeClass('active');
+      fileName.text('');
     }
 
     // handle render products to table
@@ -639,10 +643,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           } else {
             toastr.error('Add product failed')
           }
-          clearForm(addProductModalId);
+          clearForm(addProductModal, addProductForm);
         }
       } catch (error) {
-        clearForm(addProductModalId);
+        clearForm(addProductModal, addProductForm);
         toastr.error('Something went wrong')
       }
     })
@@ -746,10 +750,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           } else {
             toastr.error('Edit product failed')
           }
-          clearForm(editProductModalId);
+          clearForm(editProductModal, editProductForm);
         }
       } catch (error) {
-        clearForm(editProductModalId);
+        clearForm(editProductModal, editProductForm);
         toastr.error('Something went wrong')
       }
     })
