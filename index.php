@@ -1,5 +1,6 @@
 <?php require_once "inc/components/header.php"; ?>
 <?php require_once "inc/utils.php"; ?>
+
 <?php
 if (!isset($conn))
     $conn = require_once "inc/db.php";

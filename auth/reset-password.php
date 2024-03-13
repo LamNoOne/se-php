@@ -24,7 +24,7 @@ if ($_GET['email']) {
                                     <label for="password" class="fs-6">New Password:</label>
                                     <input type="password" name="password" class="form-control" id="password" placeholder="Enter your password" required>
                                     <label for="confirm_password" class="fs-6">Confirm Password:</label>
-                                    <input type="confirm_password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Confirm your password" required>
+                                    <input type="password" name="confirm_password" class="form-control" id="confirm_password" placeholder="Confirm your password" required>
                                 </div>
                                 <div class="form-group d-flex flex-column gap-3">
                                     <button type="submit" class="btn btn-primary" id="reset_password">Reset Password</button>

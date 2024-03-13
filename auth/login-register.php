@@ -140,6 +140,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <a class="login-question" href="#">Already have an account?</a>
                         <button class="login-form__submit-container__submit">Sign In</button>
                     </div>
+                    <a href="<?php echo filter_var($gClient->createAuthUrl(), FILTER_SANITIZE_URL) ?>" class="google-auth mt-4 text-decoration-none d-flex justify-content-center align-items-center py-2 px-1 bg-white gap-4">
+                        <img src="<?php echo APP_URL; ?>/assets/img/google.svg" alt="google">
+                        <p class="p-0 m-0 text-decoration-none text-dark fs-6">Continue with Google</p>
+                    </a>
                 </div>
             </div>
             <div class="d-sm-none d-lg-block col-lg-1"></div>

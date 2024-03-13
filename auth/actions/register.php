@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
 
-    $user = new User($lastName, $firstName, $username, $email, $password);
+    $user = new User($firstName, $lastName , $username, $email, $password);
     $userResponse = $user->createUser($conn);
 
     if (empty($userResponse['data']['userId']))

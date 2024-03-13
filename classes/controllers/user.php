@@ -2,7 +2,8 @@
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
 require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
-class User
+require_once dirname(__DIR__) . "/controllers/oauth.php";
+class User extends OAuth
 {
     public $lastName;
     public $firstName;
@@ -16,19 +17,19 @@ class User
     public $active;
 
     public function __construct(
-        $lastName = null,
         $firstName = null,
+        $lastName = null,
         $username = null,
         $email = null,
         $password = null,
+        $imageUrl = null,
         $phoneNumber = null,
         $address = null,
-        $imageUrl = null,
         $roleId = 3,
         $active = 0
     ) {
-        $this->lastName = $lastName;
         $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
@@ -59,32 +60,75 @@ class User
         }
     }
 
+    public static function OAuthenticate($conn, $oData = array())
+    {
+        try {
+            if (empty($oData) || empty($oData['email'])) throw new Exception("No oAuth user data");
+            $user = static::getUserByEmail($conn, $oData['email']);
+            $userId = empty($user) ? static::signUpOAuth($conn, $oData) : $userId = static::signInOAuth($conn, $user->id, $oData);
+            if (empty($userId)) throw new Exception("Can not authenticate user");
+            return static::getUserById($conn, $userId);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+
+    public static function signUpOAuth($conn, $data)
+    {
+        try {
+            $user = new User(
+                $data['firstName'],
+                $data['lastName'],
+                $data['username'],
+                $data['email'],
+                $data['password'] ?? null,
+                $data['imageUrl'],
+                $data['$phoneNumber'] ?? null,
+                $data['$address'] ?? null,
+                $data['$roleId'] ?? 3,
+                $data['$active'] ?? 1
+            );
+
+            $userResponse = $user->createUser($conn);
+            if (!$userResponse['status']) throw new Exception("User creation failed");
+            $userId = $userResponse['data']['userId'];
+
+            $oauth = new OAuth($data['oauthId'], $userId, $data['oauthProvider']);
+            if (!$oauth->register($conn)) throw new Exception("User registration failed");
+
+            return $userId;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public static function signInOAuth($conn, $userId, $data)
+    {
+        try {
+            $oauth = OAuth::getOauth($conn, $data['oauthId'], $data['oauthProvider']);
+            if (empty($oauth)) {
+                $oauthRegister = new OAuth($data['oauthId'], $userId, $data['oauthProvider']);
+                if (!$oauthRegister->register($conn)) throw new Exception("User registration failed");
+            }
+            return $userId;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public function createUser($conn)
     {
         try {
 
             // check whether user is already exists in database
-            $query = "SELECT * FROM user WHERE email=:email LIMIT 1";
-            $stmt = $conn->prepare($query);
-            $stmt->bindValue(":email", $this->email, PDO::PARAM_STR);
-            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
-            if (!$stmt->execute())
-                throw new PDOException("Cannot execute query");
-            $stmt->execute();
-            $user = $stmt->fetch();
-            if (!empty($user))
+            $userByEmail = static::getUserByEmail($conn, $this->email);
+            if (!empty($userByEmail))
                 return Message::message(false, "Email is already taken");
 
             // check whether username is already taken
-            $query = "SELECT * FROM user WHERE username=:username LIMIT 1";
-            $stmt = $conn->prepare($query);
-            $stmt->bindValue(":username", $this->username, PDO::PARAM_STR);
-            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
-            if (!$stmt->execute())
-                throw new PDOException("Cannot execute query");
-            $stmt->execute();
-            $user = $stmt->fetch();
-            if (!empty($user))
+            $userByUsername = static::getUserByUsername($conn, $this->username);
+            if (!empty($userByUsername))
                 return Message::message(false, "Username is already taken");
 
             // create user
@@ -92,7 +136,7 @@ class User
                 user (lastName, firstName, imageUrl, phoneNumber, email, address, username, password, active) 
                 VALUES (:lastName, :firstName, :imageUrl, :phoneNumber, :email, :address, :username, :password, :active)";
             $stmt = $conn->prepare($insertStmt);
-            $password_hash = password_hash($this->password, PASSWORD_DEFAULT);
+            $password_hash = $this->password ? password_hash($this->password, PASSWORD_DEFAULT) : null;
             // $stmt->bindValue(":password", $password_hash, PDO::PARAM_STR);
             $status = $stmt->execute([
                 ":lastName" => $this->lastName,
@@ -280,6 +324,24 @@ class User
                 WHERE U.email = :email";
             $stmt = $conn->prepare($query);
             $stmt->bindValue(":email", $email, PDO::PARAM_STR);
+            $stmt->setFetchMode(PDO::FETCH_INTO, new User());
+            if (!$stmt->execute()) {
+                throw new PDOException("Can not execute query");
+            }
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function getUserByUsername($conn, $username)
+    {
+        try {
+            $query = "SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
+                FROM `user` U join `role` R on U.roleId = R.id
+                WHERE U.username = :username";
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(":username", $username, PDO::PARAM_STR);
             $stmt->setFetchMode(PDO::FETCH_INTO, new User());
             if (!$stmt->execute()) {
                 throw new PDOException("Can not execute query");

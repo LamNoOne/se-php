@@ -3,10 +3,61 @@ require_once dirname(__DIR__) . "/init.php";
 ?>
 
 <?php
+/**
+ * Handle Google OAuth
+ */
+
+if (isset($_GET['code'])) {
+    $gClient->fetchAccessTokenWithAuthCode($_GET['code']);
+    $_SESSION['token'] = $gClient->getAccessToken();
+    header('Location: ' . filter_var(GOOGLE_REDIRECT_URL, FILTER_SANITIZE_URL));
+}
+
+if (isset($_SESSION['token'])) {
+    $gClient->setAccessToken($_SESSION['token']);
+}
+
+if ($gClient->getAccessToken()) {
+    if (!isset($conn))
+        $conn = require_once dirname(__DIR__) . "/db.php";
+    // Get user profile data from google 
+    $gpUserProfile = $google_oauthV2->userinfo->get();
+
+    // Initialize google data
+    $gpUserData = array();
+    $gpUserData['oauthId'] = !empty($gpUserProfile['id']) ? $gpUserProfile['id'] : '';
+    $gpUserData['firstName'] = !empty($gpUserProfile['givenName']) ? $gpUserProfile['givenName'] : '';
+    $gpUserData['lastName'] = !empty($gpUserProfile['familyName']) ? $gpUserProfile['familyName'] : '';
+    $gpUserData['email'] = !empty($gpUserProfile['email']) ? $gpUserProfile['email'] : '';
+    $gpUserData['username'] = !empty($gpUserProfile['email']) ? $gpUserProfile['email'] : '';
+    $gpUserData['imageUrl'] = !empty($gpUserProfile['picture']) ? $gpUserProfile['picture'] : '';
+
+    // Insert or update user data to the database 
+    $gpUserData['oauthProvider'] = 'google';
+
+    $user = User::OAuthenticate($conn, $gpUserData);
+    Auth::login();
+    $_SESSION['username'] = $user->username;
+    $_SESSION['firstName'] = $user->firstName;
+    $_SESSION['lastName'] = $user->lastName;
+    $_SESSION['email'] = $user->email;
+    $_SESSION['userId'] = $user->id;
+    $_SESSION['image'] = $user->imageUrl;
+    if ($user->phoneNumber !== NULL) {
+        $_SESSION['phoneNumber'] = $user->phoneNumber;
+    }
+    if ($user->address !== NULL) {
+        $_SESSION['address'] = $user->address;
+    }
+}
+?>
+
+<?php
 // set default value for cart quantity
 $cartQuantity = 0;
 if (Auth::isLoggedIn()) {
-    $conn = require_once dirname(__DIR__) . '/db.php';
+    if (!isset($conn))
+        $conn = require_once dirname(__DIR__) . '/db.php';
     $cartDetail = Cart::getCartDetailByUserId($conn, $_SESSION['userId']);
     $cartQuantity = count($cartDetail['data']);
 }

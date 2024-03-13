@@ -40,7 +40,7 @@ $user = User::getUserById($conn, $_SESSION['userId']);
                     <div class="card-header">Account Information</div>
                     <div class="card-body">
                         <!-- Avatar -->
-                        <img src="<?php echo $user->imageUrl; ?>" alt="Avatar" id="avatar" class="img-thumbnail img-user object-fit-contain mb-3">
+                        <img src="<?php echo isset($user->imageUrl) ? $user->imageUrl : APP_URL . "/assets/img/no-image.png"; ?>" alt="Avatar" id="avatar" class="img-thumbnail img-user object-fit-contain mb-3">
                         <!-- Change Avatar Form -->
                         <form id="changeAvatarForm" action="" method="" enctype="multipart/form-data">
                             <h5>Change Avatar</h5>
@@ -85,7 +85,7 @@ $user = User::getUserById($conn, $_SESSION['userId']);
                             <!-- Current Password -->
                             <div class="mb-3">
                                 <label for="current-password" class="form-label">Current Password:</label>
-                                <input type="password" id="current-password" name="currentPassword" class="form-control">
+                                <input type="password" placeholder="If you use google auth, you don't need to fill it" id="current-password" name="currentPassword" class="form-control">
                             </div>
                             <!-- New Password -->
                             <div class="mb-3">
@@ -230,10 +230,6 @@ $user = User::getUserById($conn, $_SESSION['userId']);
         // change user password
         formChangePassword.validate({
             rules: {
-                currentPassword: {
-                    required: true,
-                    minlength: 6,
-                },
                 newPassword: {
                     required: true,
                     minlength: 6,
@@ -245,10 +241,6 @@ $user = User::getUserById($conn, $_SESSION['userId']);
                 },
             },
             messages: {
-                currentPassword: {
-                    required: "Please provide a password",
-                    minlength: "Your password must be at least 6 characters long",
-                },
                 newPassword: {
                     required: "Please provide a password",
                     minlength: "Your password must be at least 6 characters long",
