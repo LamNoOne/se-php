@@ -48,7 +48,9 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               </a>
             </div>
             <div class="search-input">
-              <a class="btn btn-searchset"><img src="assets/img/icons/search-white.svg" alt="img" /></a>
+              <a class="btn btn-searchset">
+                <i class="fas fa-search"></i>
+              </a>
             </div>
           </div>
           <!-- <div class="wordset">
@@ -100,8 +102,8 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         </div>
 
         <div class="table-responsive">
-          <table class="table datanew" id="table">
-            <thead>
+          <table class="table" id="table">
+            <thead class="table-light">
               <tr>
                 <th>
                   <label class="checkboxs">
@@ -399,6 +401,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
 
     // handle render products to table
     const table = tableEle.DataTable({
+      autoWidth: true,
       processing: true,
       serverSide: true,
       bFilter: true,
@@ -486,12 +489,14 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <a href="product-details.php?id=${row.id}" class="product-img">
-                <img src="${row.imageUrl}" />
-              </a>
-              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
-                ${row.name}
-              </a>
+              <div class="productimgname">
+                <a href="product-details.php?id=${row.id}" class="product-img">
+                  <img src="${row.imageUrl}" />
+                </a>
+                <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+                  ${row.name}
+                </a>
+              </div>
             `
           }
         },
@@ -510,18 +515,18 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-3" href="product-details.php?id=${row.id}">
-                <img src="assets/img/icons/eye.svg" alt="img" />
+              <a class="me-2 action" href="product-details.php?id=${row.id}">
+                <img class="action-icon" src="assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
-                class="me-3 edit-product-button"
+                class="me-2 edit-product-button action"
                 data-id="${row.id}"
                 href="javascript:void(0)"
               >
-                <img src="assets/img/icons/edit.svg" alt="img" />
+                <img class="action-icon" src="assets/img/icons/edit.svg" alt="img" />
               </a>
-              <a data-id="${row.id}" id="delete-btn" href="javascript:void(0)">
-                <img src="assets/img/icons/delete.svg" alt="img" />
+              <a class="action" data-id="${row.id}" id="delete-btn" href="javascript:void(0)">
+                <img class="action-icon" src="assets/img/icons/delete.svg" alt="img" />
               </a>
               `
           }
