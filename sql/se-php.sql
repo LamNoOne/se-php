@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 12, 2024 at 04:15 AM
+-- Generation Time: Mar 13, 2024 at 03:49 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -202,7 +202,8 @@ INSERT INTO `cart` (`id`, `userId`, `createdAt`, `updatedAt`) VALUES
 (2, 2, '2024-02-26 05:52:49', '2024-02-26 05:52:49'),
 (19, 21, '2024-03-06 03:36:06', '2024-03-06 03:36:06'),
 (20, 22, '2024-03-06 03:58:40', '2024-03-06 03:58:40'),
-(41, 43, '2024-03-12 01:59:23', '2024-03-12 01:59:23');
+(45, 47, '2024-03-13 11:49:56', '2024-03-13 11:49:56'),
+(47, 49, '2024-03-13 14:12:18', '2024-03-13 14:12:18');
 
 -- --------------------------------------------------------
 
@@ -217,6 +218,13 @@ CREATE TABLE `cartdetail` (
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `updatedAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `cartdetail`
+--
+
+INSERT INTO `cartdetail` (`cartId`, `productId`, `quantity`, `createdAt`, `updatedAt`) VALUES
+(2, 5, 1, '2024-03-12 03:30:50', '2024-03-12 03:30:50');
 
 -- --------------------------------------------------------
 
@@ -244,6 +252,28 @@ INSERT INTO `category` (`id`, `name`, `description`, `createdAt`, `updatedAt`) V
 (5, 'Camera', 'Camera', '2023-11-26 07:45:51', '2023-11-26 07:45:51'),
 (6, 'PC', 'PC, Monitor', '2023-11-26 07:46:07', '2023-11-27 09:29:35'),
 (7, 'TV', 'Television', '2023-11-26 07:46:22', '2023-11-30 18:01:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oauth`
+--
+
+CREATE TABLE `oauth` (
+  `id` int(10) NOT NULL,
+  `userId` int(10) UNSIGNED NOT NULL,
+  `oauth_provider` enum('google','facebook','twitter','linkedin') NOT NULL DEFAULT 'google',
+  `oauth_uid` varchar(50) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updatedAt` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Dumping data for table `oauth`
+--
+
+INSERT INTO `oauth` (`id`, `userId`, `oauth_provider`, `oauth_uid`, `createdAt`, `updatedAt`) VALUES
+(2, 49, 'google', '106532501609063407994', '2024-03-13 14:12:18', '2024-03-13 14:12:18');
 
 -- --------------------------------------------------------
 
@@ -421,13 +451,6 @@ CREATE TABLE `otp` (
   `otpStatus` tinyint(1) NOT NULL DEFAULT 1,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `otp`
---
-
-INSERT INTO `otp` (`id`, `userId`, `otpCode`, `otpStatus`, `createdAt`) VALUES
-(1, 43, '915768', 1, '2024-03-12 01:59:23');
 
 -- --------------------------------------------------------
 
@@ -1205,7 +1228,7 @@ CREATE TABLE `user` (
   `email` varchar(50) NOT NULL,
   `address` varchar(100) DEFAULT NULL,
   `username` varchar(40) NOT NULL,
-  `password` varchar(200) NOT NULL,
+  `password` varchar(200) DEFAULT NULL,
   `createdAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `updatedAt` timestamp NOT NULL DEFAULT current_timestamp(),
   `active` tinyint(1) DEFAULT 1
@@ -1220,7 +1243,8 @@ INSERT INTO `user` (`id`, `roleId`, `lastName`, `firstName`, `imageUrl`, `phoneN
 (2, 1, 'Dac', 'Lam', 'http://localhost/se-php/uploads/10f-9.png', '0832038769', 'admin@gmail.com', 'Ben Tre City', 'daclam', '$2y$10$lv5S.6RGSVrjpvraIL4C3.EchaG2RATyYWN5T9Dvff1cJkH/zeYmm', '2023-12-02 13:37:21', '2023-12-02 13:40:40', 1),
 (21, 3, 'trannguyen', 'daclam', 'http://localhost/uploads/10f-8.png', NULL, 'daclam@gmail.com', NULL, 'daclam123', '$2y$10$FLDs7XBsGlKKaCznx1dWW.8bftXnM.O1LDvYEVNzBYiCwEq9yxoTK', '2024-03-06 03:36:06', '2024-03-06 03:36:06', 1),
 (22, 3, 'halo', 'halo', 'http://localhost/se-php/uploads/10f-8.png', '0934581249', 'halo@gmail.com', 'SAI GON TOWER', 'halohalo', '$2y$10$groqtaBNN.enRmCZxIQ3febO4mh.o9bXK3XwsA6mzFKlbBM4jb6ay', '2024-03-06 03:58:40', '2024-03-06 03:58:40', 1),
-(43, 3, 'Lam', 'DAc', NULL, NULL, 'trannguyendaclam@gmail.com', NULL, 'trannguyendaclam', '$2y$10$fK2.cTojsol53jg1ZAQ8SuKtrXyn90EqLUwK4Bu9Voi0xniZEB5IW', '2024-03-12 01:59:23', '2024-03-12 01:59:23', 1);
+(47, 3, 'lma', 'Dac', NULL, NULL, 'daclamtrannguyen@gmail.com', NULL, 'daclamtrannguyen@gmail.com', '$2y$10$bldvjc7WGUVexAbAnYvDje4IHgMknAjo5qB.D2AH/VLHqumwcvyyO', '2024-03-13 11:49:56', '2024-03-13 11:49:56', 1),
+(49, 3, 'Tran Nguyen', 'Dac Lam', 'https://lh3.googleusercontent.com/a/ACg8ocKj99zproUKAWgVWrj29_us7q6lpU3-oyYPtQiseoAz8iA=s96-c', NULL, 'trannguyendaclam@gmail.com', NULL, 'trannguyendaclam@gmail.com', NULL, '2024-03-13 14:12:18', '2024-03-13 14:12:18', 1);
 
 --
 -- Triggers `user`
@@ -1256,6 +1280,13 @@ ALTER TABLE `cartdetail`
 ALTER TABLE `category`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `oauth`
+--
+ALTER TABLE `oauth`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
 
 --
 -- Indexes for table `order`
@@ -1326,13 +1357,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
   MODIFY `id` tinyint(3) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `oauth`
+--
+ALTER TABLE `oauth`
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `order`
@@ -1344,7 +1381,7 @@ ALTER TABLE `order`
 -- AUTO_INCREMENT for table `otp`
 --
 ALTER TABLE `otp`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment`
@@ -1362,7 +1399,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- Constraints for dumped tables
@@ -1380,6 +1417,12 @@ ALTER TABLE `cart`
 ALTER TABLE `cartdetail`
   ADD CONSTRAINT `CartDetail_ibfk_1` FOREIGN KEY (`cartId`) REFERENCES `cart` (`id`),
   ADD CONSTRAINT `CartDetail_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`id`);
+
+--
+-- Constraints for table `oauth`
+--
+ALTER TABLE `oauth`
+  ADD CONSTRAINT `oauth_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`);
 
 --
 -- Constraints for table `order`
