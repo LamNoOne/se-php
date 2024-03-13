@@ -5,12 +5,10 @@
 	--error-validate-color: red;
 	--box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 24px;
 }
-
 /* linear-gradient(to right, #8e2de2, #4a00e0) */
 
 /* Custom */
-
-/* common */
+/* COMMON */
 .text-linear {
 	background: var(--primary-color) !important;
 	background-clip: text !important;
@@ -177,9 +175,35 @@ a.text-linear-hover:hover {
 	margin-bottom: 0;
 }
 
-/* sweetalert2 */
+/* selection */
+.select2-container--default .select2-results__option[aria-selected='true'] {
+	background: var(--primary-color);
+	color: #fff;
+}
 
-/* individual */
+/* modal */
+.modal .modal-content {
+	border-radius: 5px;
+}
+
+.modal .modal-header h1 {
+	background: var(--primary-color) !important;
+	background-clip: text !important;
+	-webkit-text-fill-color: transparent !important;
+	font-weight: 700;
+	font-size: 25px;
+	letter-spacing: 2px;
+	text-transform: capitalize;
+}
+
+.modal .modal-header,
+.modal .modal-body,
+.modal .modal-footer {
+	padding-left: 32px;
+	padding-right: 32px;
+}
+
+/* INDIVIDUAL */
 #category-error + .select2-container--default .select2-selection--single {
 	border: 1px solid var(--error-validate-color) !important;
 }
