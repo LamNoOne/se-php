@@ -1,7 +1,6 @@
 <?php
 require_once  dirname(__DIR__) . "/inc/init.php";
 $conn = require_once dirname(__DIR__) . '/inc/db.php';
-$categories = Category::getAllCategories($conn);
 ?>
 
 <?php require_once "./inc/components/header.php" ?>;
@@ -36,8 +35,8 @@ $categories = Category::getAllCategories($conn);
         <h3>Product List</h3>
         <h4>Manage your products</h4>
       </div>
-      <div class="page-btn">
-        <button href="add-product.php" class="btn btn-added box-shadow" data-bs-target="#addProductModal" data-bs-toggle="modal">
+      <div id="openProductModalButton" class="page-btn">
+        <button href="add-product.php" class="btn btn-added box-shadow">
           <img src="assets/img/icons/plus.svg" alt="img" class="me-1" />
           Add New Product
         </button>
@@ -153,11 +152,6 @@ $categories = Category::getAllCategories($conn);
               <div class="form-group">
                 <label>Category</label>
                 <select name="categoryId" class="select">
-                  <?php foreach ($categories as $category) : ?>
-                    <option value="<?php echo $category->id ?>">
-                      <?php echo $category->name ?>
-                    </option>
-                  <?php endforeach; ?>
                 </select>
               </div>
             </div>
@@ -402,6 +396,13 @@ $categories = Category::getAllCategories($conn);
     const DEFAULT_SORT_BY = 'createdAt'
     const DEFAULT_ORDER = 'asc'
 
+    const clearForm = (modalId) => {
+      $(modalId).modal('hide');
+      $(this).find('input, textarea, select').val('')
+      $(this).find('.preview-image img').prop('src', '').hide();
+      $(this).find('select').html('')
+    }
+
     // handle render products to table
     const table = $('#table').DataTable({
       processing: true,
@@ -544,6 +545,37 @@ $categories = Category::getAllCategories($conn);
     const addProductForm = $(addProductFormId)
     const addProductModal = $(addProductModalId)
     const addProductFormSubmitButton = $(addProductModalId + ' .modal-footer button[type="submit"]')
+    const categorySelect = $(addProductFormId + ' select[name="categoryId"]')
+    $('#openProductModalButton').click(async function() {
+      try {
+        const response = await $.ajax({
+          url: 'actions/get-categories.php',
+          type: 'GET',
+          dataType: 'json',
+        })
+        if (response.status) {
+          const categories = response.data.categories
+          categories.forEach((category, index) => {
+            let selectedAttr = '';
+            if (index === 0) {
+              selectedAttr = 'selected'
+            }
+            categorySelect.append(`
+              <option value="${category.id}" ${selectedAttr}>
+                ${category.name}
+              </option>
+            `)
+          })
+          const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addProductModal'))
+          modal.show()
+        } else {
+          toastr.error('Something went wrong')
+        }
+      } catch (error) {
+        console.log(error);
+        toastr.error('Something went wrong')
+      }
+    });
     addProductFormSubmitButton.click(function() {
       addProductForm.submit()
     })
@@ -581,12 +613,6 @@ $categories = Category::getAllCategories($conn);
       },
     })
     addProductForm.submit(async function(event) {
-      const clearForm = () => {
-        $(addProductModalId).modal('hide');
-        $(this).find('input, textarea, select').val('')
-        $(this).find('select').prop('selectedIndex', 0)
-        $(this).find('.preview-image img').prop('src', '').hide();
-      }
       try {
         event.preventDefault()
         if ($(this).valid()) {
@@ -613,10 +639,10 @@ $categories = Category::getAllCategories($conn);
           } else {
             toastr.error('Add product failed')
           }
-          clearForm();
+          clearForm(addProductModalId);
         }
       } catch (error) {
-        clearForm();
+        clearForm(addProductModalId);
         toastr.error('Something went wrong')
       }
     })
