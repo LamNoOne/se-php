@@ -276,11 +276,6 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               <div class="form-group">
                 <label>Category</label>
                 <select name="categoryId" class="select">
-                  <?php foreach ($categories as $category) : ?>
-                    <option value="<?php echo $category->id ?>">
-                      <?php echo $category->name ?>
-                    </option>
-                  <?php endforeach; ?>
                 </select>
               </div>
             </div>
@@ -549,7 +544,6 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     const addProductForm = $(addProductFormId)
     const addProductModal = $(addProductModalId)
     const addProductFormSubmitButton = $(addProductModalId + ' .modal-footer button[type="submit"]')
-    const categorySelect = $(addProductFormId + ' select[name="categoryId"]')
     $('#openProductModalButton').click(async function() {
       try {
         const response = await $.ajax({
@@ -559,6 +553,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         })
         if (response.status) {
           const categories = response.data.categories
+          const categorySelect = addProductForm.find('select[name="categoryId"]')
           categories.forEach((category, index) => {
             let selectedAttr = '';
             if (index === 0) {
@@ -659,16 +654,27 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     $('#table tbody').on('click', '.edit-product-button', async function(event) {
       try {
         const id = $(this).data('id')
-        const response = await $.ajax({
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editProductModal'))
+
+        const getProduct = $.ajax({
           url: `actions/get-product-by-id.php?id=${id}`,
           type: 'GET',
           dataType: 'json'
         })
-        if (response.status) {
-          const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editProductModal'))
-          modal.show();
+        const getCategories = $.ajax({
+          url: `actions/get-categories.php`,
+          type: 'GET',
+          dataType: 'json'
+        })
+        const [getProductResponse, getCategoriesResponse] = await Promise.all([
+          getProduct, getCategories
+        ])
 
-          const product = response.data.product;
+        if (getProductResponse.status) {
+          const product = getProductResponse.data.product;
+          const categories = getCategoriesResponse.data.categories
+          const categorySelect = editProductForm.find('select[name="categoryId"]')
+
           editProductForm.attr('data-id', product.id)
           editProductForm.find('input[name="name"]').val(product.name)
           editProductForm.find('input[name="price"]').val(product.price)
@@ -687,10 +693,24 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
             'border': 'none'
           })
           editProductForm.find('input[name="currentImageUrl"]').val(product.imageUrl)
+          categories.forEach((category) => {
+            let selectedAttr = '';
+            if (category.id === product.categoryId) {
+              selectedAttr = 'selected'
+            }
+            categorySelect.append(`
+              <option value="${category.id}" ${selectedAttr}>
+                ${category.name}
+              </option>
+            `)
+          })
+
+          modal.show();
         } else {
           toastr.error('Something went wrong')
         }
       } catch (error) {
+        console.log(error);
         toastr.error('Something went wrong')
       }
     })
