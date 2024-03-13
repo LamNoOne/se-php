@@ -724,12 +724,6 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       },
     })
     editProductForm.submit(async function(event) {
-      const clearForm = () => {
-        $('#editProductModal').modal('hide');
-        $(this).find('input, textarea, select').val('')
-        $(this).find('select').prop('selectedIndex', 0)
-        $(this).find('.preview-image img').prop('src', '').hide();
-      }
       try {
         event.preventDefault()
         if ($(this).valid()) {
@@ -752,10 +746,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           } else {
             toastr.error('Edit product failed')
           }
-          clearForm();
+          clearForm(editProductModalId);
         }
       } catch (error) {
-        clearForm();
+        clearForm(editProductModalId);
         toastr.error('Something went wrong')
       }
     })
