@@ -5,29 +5,6 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
 
 <?php require_once "./inc/components/header.php" ?>;
 
-<style>
-  .modal .modal-content {
-    border-radius: 5px;
-  }
-
-  .modal .modal-header h1 {
-    background: var(--primary-color) !important;
-    background-clip: text !important;
-    -webkit-text-fill-color: transparent !important;
-    font-weight: 700;
-    font-size: 25px;
-    letter-spacing: 2px;
-    text-transform: capitalize;
-  }
-
-  .modal .modal-header,
-  .modal .modal-body,
-  .modal .modal-footer {
-    padding-left: 32px;
-    padding-right: 32px;
-  }
-</style>
-
 <div class="page-wrapper">
   <div class="content">
     <div class="page-header">
