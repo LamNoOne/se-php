@@ -35,6 +35,11 @@ a.text-linear-hover:hover {
 	text-shadow: var(--box-shadow);
 }
 
+.btn.disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
 .btn-danger {
 	background: #ea1529;
 	color: #fff;

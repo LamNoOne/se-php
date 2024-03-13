@@ -405,19 +405,46 @@ $(document).ready(function () {
 	$(document).on('click', '.mail-important', function () {
 		$(this).find('i.fa').toggleClass('fa-star').toggleClass('fa-star-o')
 	})
+
+	/* HANDLE CHECKBOX */
 	var selectAllItems = '#select-all'
-	var checkboxItem = ':checkbox'
+	var checkboxItem = ':checkbox:not([id="select-all"])'
+	const toggleDeleteBySelectBtn = () => {
+		var numberCheckedItems = $(checkboxItem + ':checked').length
+		var deleteBySelectBtn = $('#deleteBySelectBtn')
+		numberCheckedItems === 0
+			? deleteBySelectBtn.addClass('disabled')
+			: deleteBySelectBtn.removeClass('disabled')
+	}
+	toggleDeleteBySelectBtn()
+	// handle when clicking to select all
 	$(selectAllItems).click(function () {
-		if (this.checked) {
-			$(checkboxItem).each(function () {
-				this.checked = true
-			})
-		} else {
-			$(checkboxItem).each(function () {
-				this.checked = false
-			})
+		$(checkboxItem).prop('checked', this.checked)
+		toggleDeleteBySelectBtn()
+	})
+	// handle when clicking on the child checkbox
+	$('table tbody').on('click', checkboxItem, function () {
+		var numberCheckBoxItems = $(checkboxItem).length
+		var numberCheckedItems = $(checkboxItem + ':checked').length
+		$(selectAllItems).prop(
+			'checked',
+			numberCheckBoxItems === numberCheckedItems
+		)
+		toggleDeleteBySelectBtn()
+	})
+	// handle when adding <tr> tags to tbody
+	var tbody = document.querySelector('table tbody')
+	var observer = new MutationObserver(function (mutationsList, observer) {
+		for (var mutation of mutationsList) {
+			// unchecked for selectAllItems input checkbox
+			if (mutation.type === 'childList' && $(selectAllItems).is(':checked')) {
+				$(selectAllItems).prop('checked', false)
+				toggleDeleteBySelectBtn()
+			}
 		}
 	})
+	observer.observe(tbody, { childList: true, subtree: true })
+
 	if ($('[data-bs-toggle="tooltip"]').length > 0) {
 		var tooltipTriggerList = [].slice.call(
 			document.querySelectorAll('[data-bs-toggle="tooltip"]')

@@ -209,6 +209,17 @@ function getSQLPrepareStatement(
     return $stmt;
 }
 
+function getDeleteByIdsSQLPrepareStatement($conn, $table, $ids)
+{
+    $placeholders = implode(',', array_fill(0, count($ids), '?'));
+    $sql = "DELETE FROM $table WHERE id IN ($placeholders)";
+    $stmt = $conn->prepare($sql);
+    foreach ($ids as $key => $id) {
+        $stmt->bindValue($key + 1, $id, PDO::PARAM_INT);
+    }
+    return $stmt;
+}
+
 function deleteFileByURL($url)
 {
     $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];

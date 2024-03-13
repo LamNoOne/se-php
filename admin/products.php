@@ -5,6 +5,18 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
 
 <?php require_once "./inc/components/header.php" ?>;
 
+<style>
+  .search-set .btn-delete-by-select {
+    min-width: 34px;
+    height: 34px;
+    margin-right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 17px;
+  }
+</style>
+
 <div class="page-wrapper">
   <div class="content">
     <div class="page-header">
@@ -28,6 +40,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               <a class="btn btn-filter" id="filter_search">
                 <img src="assets/img/icons/filter.svg" alt="img" />
                 <span><img src="assets/img/icons/closes.svg" alt="img" /></span>
+              </a>
+            </div>
+            <div class="search-path">
+              <a class="btn btn-danger btn-delete-by-select" id="deleteBySelectBtn">
+                <i class="fas fa-trash-alt"></i>
               </a>
             </div>
             <div class="search-input">
@@ -367,6 +384,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     const DEFAULT_SEARCH = ''
     const DEFAULT_SORT_BY = 'createdAt'
     const DEFAULT_ORDER = 'asc'
+    const tableEle = $('#table')
 
     const clearForm = (modal, form) => {
       const previewImage = form.find('.preview-image')
@@ -380,7 +398,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     }
 
     // handle render products to table
-    const table = $('#table').DataTable({
+    const table = tableEle.DataTable({
       processing: true,
       serverSide: true,
       bFilter: true,
@@ -755,7 +773,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       }
     })
 
-    // handle delete product
+    // handle delete
     $('#table tbody').on('click', '#delete-btn', function() {
       const id = $(this).data('id')
       Swal
@@ -789,6 +807,64 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                 toastr.success('Delete product successfully')
               } else {
                 toastr.error('Delete product failed')
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
+
+    // handle delete by select
+    $('#deleteBySelectBtn').click(function() {
+      const selectAll = tableEle.find('#select-all')
+      const checkedBoxes = tableEle.find(
+        'input[type="checkbox"]:checked:not([id="select-all"])'
+      )
+      let checkedIds = [];
+      checkedBoxes.each(function() {
+        checkedIds = [...checkedIds, $(this).data('id')]
+      })
+
+      Swal
+        .fire({
+          title: 'Delete Selected Products?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: 'actions/delete-product-by-ids.php',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  ids: checkedIds
+                },
+              })
+
+              if (response.status) {
+                const currentPage = table.page.info().page
+                const lastPage = table.page.info().pages
+                let pageAfterDelete = currentPage
+                const isAtLastPage = currentPage === lastPage - 1;
+                if (selectAll.is(':checked') && isAtLastPage) {
+                  pageAfterDelete = currentPage - 1;
+                }
+                setTimeout(() => {
+                  table.page(pageAfterDelete).draw('page')
+                })
+                toastr.success('Delete selected products successfully')
+              } else {
+                toastr.error('Delete selected products failed')
               }
             }
           } catch (error) {

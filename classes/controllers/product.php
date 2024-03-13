@@ -158,6 +158,25 @@ class Product extends DataFetcher
         return Message::message(true, 'Validate successfully');
     }
 
+    private static function validateDeleteByIds($formData)
+    {
+        $result = Validator::required($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::array($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
     public static function paginationQuery($query, $limit, $offset)
     {
         if (!isset($limit)) {
@@ -269,6 +288,25 @@ class Product extends DataFetcher
             return Message::messageData(true, 'Delete product failed');
         } catch (Exception $e) {
             return Message::messageData(true, 'Delete product failed');
+        }
+    }
+
+    public static function deleteByIds($conn, $ids)
+    {
+        try {
+            $validateResult = Product::validateDeleteByIds(['ids' => $ids]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $stmt = getDeleteByIdsSQLPrepareStatement($conn, 'product', $ids);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete product by ids successfully');
+            }
+            return Message::message(true, 'Delete product by ids failed');
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            return Message::message(true, 'Delete product by ids failed');
         }
     }
 

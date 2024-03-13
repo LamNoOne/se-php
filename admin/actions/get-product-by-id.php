@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require_once dirname(dirname(__DIR__)) . '/inc/init.php';
 $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
 
