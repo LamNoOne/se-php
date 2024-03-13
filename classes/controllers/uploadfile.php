@@ -23,7 +23,7 @@ class UploadFile
                 ];
             }
 
-            $rs = Errorfileupload::err($_FILES[$fieldName]['error']);
+            $rs = ErrorFileUpload::err($_FILES[$fieldName]['error']);
             if ($rs['status'] != UPLOAD_ERR_OK) {
                 return [
                     'status' => $rs['status'],
