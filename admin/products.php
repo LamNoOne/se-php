@@ -601,7 +601,6 @@ $categories = Category::getAllCategories($conn);
             processData: false,
           })
           if (response.status) {
-            toastr.success(response.message)
             table.ajax.reload(function(json) {
               // Fix bug: put in setTimeout => added item and move last page
               // but records are still at page = 1, limit = 10
@@ -609,9 +608,10 @@ $categories = Category::getAllCategories($conn);
               setTimeout(function() {
                 table.page(json.totalPages - 1).draw('page');
               }, 0);
+              toastr.success('Add product successfully')
             });
           } else {
-            toastr.error(response.message)
+            toastr.error('Add product failed')
           }
           clearForm();
         }
@@ -667,7 +667,7 @@ $categories = Category::getAllCategories($conn);
     editProductFormSubmitButton.click(function() {
       editProductForm.submit()
     })
-    $('#editProductForm').validate({
+    editProductForm.validate({
       rules: {
         name: {
           required: true
@@ -697,7 +697,7 @@ $categories = Category::getAllCategories($conn);
         }
       },
     })
-    $('#editProductForm').submit(async function(event) {
+    editProductForm.submit(async function(event) {
       const clearForm = () => {
         $('#editProductModal').modal('hide');
         $(this).closest('#editProductForm').find('input, textarea, select').val('')
@@ -721,10 +721,10 @@ $categories = Category::getAllCategories($conn);
           })
           if (response.status) {
             const currentPage = table.page.info().page;
-            toastr.success(response.message)
             table.page(currentPage).draw('page')
+            toastr.success('Edit product successfully')
           } else {
-            toastr.error(response.message)
+            toastr.error('Edit product failed')
           }
           clearForm();
         }
@@ -763,9 +763,11 @@ $categories = Category::getAllCategories($conn);
               })
 
               if (response.status) {
-                window.location.replace(response.data.redirectUrl)
+                const currentPage = table.page.info().page
+                table.page(currentPage).draw('page')
+                toastr.success('Delete product successfully')
               } else {
-                toastr.error(response.message)
+                toastr.error('Delete product failed')
               }
             }
           } catch (error) {
