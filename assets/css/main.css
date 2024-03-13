@@ -1624,6 +1624,21 @@ body {
   margin-top: 7rem;
   padding-top: 2rem;
   background-color: #f4f6f8; }
+  #customer-manager .no-cart {
+    padding-bottom: 5rem; }
+    #customer-manager .no-cart__img img {
+      width: 12rem;
+      height: 12rem; }
+    #customer-manager .no-cart__desc {
+      font-size: 1rem;
+      font-weight: 500;
+      color: rgba(0, 0, 0, 0.75); }
+    #customer-manager .no-cart__btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      background-color: #0055ff; }
   #customer-manager .img-user {
     width: 5rem;
     height: 5rem; }

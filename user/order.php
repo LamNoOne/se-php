@@ -45,6 +45,7 @@ $allPages = $allOrdersData['totalPage'];
                 </ul>
             </div>
             <div class="col-10 px-4">
+                <?php if(!empty($allOrders)) : ?>
                 <ul class="list-unstyled d-flex flex-column gap-3">
                     <?php foreach ($allOrders as $orders) : ?>
                         <li>
@@ -87,6 +88,17 @@ $allPages = $allOrdersData['totalPage'];
                 <div class="row">
                     <div id="pagination" class="py-3"></div>
                 </div>
+                <?php else : ?>
+                    <div class="row">
+                    <div class="no-cart d-flex flex-column justify-content-center align-items-center">
+                        <div class="no-cart__img">
+                            <img class="object-fit-contain" src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/9bdd8040b334d31946f4.png" alt="no-cart">
+                        </div>
+                        <p class="no-cart__desc">There are no orders</p>
+                        <a href="<?php echo APP_URL; ?>" class="no-cart__btn text-decoration-none">Continue to shopping</a>
+                    </div>
+                </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

@@ -3,6 +3,31 @@
     padding-top     : 2rem;
     background-color: #f4f6f8;
 
+    .no-cart {
+        padding-bottom: 5rem;
+
+        &__img {
+            img {
+                width : 12rem;
+                height: 12rem;
+            }
+        }
+
+        &__desc {
+            font-size  : 1rem;
+            font-weight: 500;
+            color      : rgba(black, 0.75);
+        }
+
+        &__btn {
+            padding         : 0.5rem 1rem;
+            font-size       : 1rem;
+            color           : white;
+            cursor          : pointer;
+            background-color: $primary_color;
+        }
+    }
+
     .img-user {
         width : 5rem;
         height: 5rem;
