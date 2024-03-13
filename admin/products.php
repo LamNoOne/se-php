@@ -583,9 +583,9 @@ $categories = Category::getAllCategories($conn);
     addProductForm.submit(async function(event) {
       const clearForm = () => {
         $(addProductModalId).modal('hide');
-        $(this).closest(addProductFormId).find('input, textarea, select').val('')
-        $(this).closest(addProductFormId).find('select').prop('selectedIndex', 0)
-        $(this).closest(addProductFormId).find('.preview-image img').prop('src', '').hide();
+        $(this).find('input, textarea, select').val('')
+        $(this).find('select').prop('selectedIndex', 0)
+        $(this).find('.preview-image img').prop('src', '').hide();
       }
       try {
         event.preventDefault()
@@ -700,9 +700,9 @@ $categories = Category::getAllCategories($conn);
     editProductForm.submit(async function(event) {
       const clearForm = () => {
         $('#editProductModal').modal('hide');
-        $(this).closest('#editProductForm').find('input, textarea, select').val('')
-        $(this).closest('#editProductForm').find('select').prop('selectedIndex', 0)
-        $(this).closest('#editProductForm').find('.preview-image img').prop('src', '').hide();
+        $(this).find('input, textarea, select').val('')
+        $(this).find('select').prop('selectedIndex', 0)
+        $(this).find('.preview-image img').prop('src', '').hide();
       }
       try {
         event.preventDefault()
