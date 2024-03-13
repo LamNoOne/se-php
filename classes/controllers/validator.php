@@ -25,7 +25,7 @@ class Validator
     $status = true; // default validate success
     $errorMessages = [];
     foreach ($fields as $field) {
-      if ($formData[$field] !== null) {
+      if (isset($formData[$field]) && $formData[$field] !== null) {
         $isInt = filter_var($formData[$field], FILTER_VALIDATE_INT);
         if (!$isInt) {
           $status = false;
@@ -46,7 +46,7 @@ class Validator
     $status = true; // default validate success
     $errorMessages = [];
     foreach ($fields as $field) {
-      if ($formData[$field] !== null) {
+      if (isset($formData[$field]) && $formData[$field] !== null) {
         $isFloat = filter_var($formData[$field], FILTER_VALIDATE_FLOAT);
         if (!$isFloat) {
           $status = false;
@@ -67,9 +67,9 @@ class Validator
     $status = true; // default validate success
     $errorMessages = [];
     foreach ($fields as $field) {
-      if ($formData[$field] !== null) {
-        $isUrl = filter_var($fields['imageUrl'], FILTER_VALIDATE_URL)
-          || checkFileExistsInLocalByURL($fields['imageUrl']);
+      if (isset($formData[$field]) && $formData[$field] !== null) {
+        $isUrl = filter_var($formData[$field], FILTER_VALIDATE_URL)
+          || checkFileExistsInLocalByURL($formData[$field]);
         if (!$isUrl) {
           $status = false;
           $errorMessages[] = "\"$field\" must be a URL";

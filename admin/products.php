@@ -381,12 +381,12 @@ $categories = Category::getAllCategories($conn);
                 </div>
               </div>
             </div>
-            <div class="col-lg-12 mt-5">
-              <button type="submit" class="btn btn-submit me-2">Update</button>
-              <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
-            </div>
           </div>
         </form>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-submit me-2">Update</button>
+        <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
@@ -543,7 +543,10 @@ $categories = Category::getAllCategories($conn);
     const addProductModalId = '#addProductModal'
     const addProductForm = $(addProductFormId)
     const addProductModal = $(addProductModalId)
-    const productFormSubmitButton = $(addProductModalId + ' .modal-footer button[type="submit"]')
+    const addProductFormSubmitButton = $(addProductModalId + ' .modal-footer button[type="submit"]')
+    addProductFormSubmitButton.click(function() {
+      addProductForm.submit()
+    })
     addProductForm.validate({
       rules: {
         name: {
@@ -576,9 +579,6 @@ $categories = Category::getAllCategories($conn);
           number: true
         }
       },
-    })
-    productFormSubmitButton.click(function() {
-      addProductForm.submit()
     })
     addProductForm.submit(async function(event) {
       const clearForm = () => {
@@ -622,6 +622,10 @@ $categories = Category::getAllCategories($conn);
     })
 
     // handle edit product
+    const editProductFormId = '#editProductForm'
+    const editProductModalId = '#editProductModal'
+    const editProductForm = $(editProductFormId)
+    const editProductFormSubmitButton = $(editProductModalId + ' .modal-footer button[type="submit"]')
     $('#table tbody').on('click', '.edit-product-button', async function(event) {
       try {
         const id = $(this).data('id')
@@ -633,28 +637,26 @@ $categories = Category::getAllCategories($conn);
         if (response.status) {
           const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editProductModal'))
           modal.show();
-          console.log(response);
-          const product = response.data.product;
 
-          const editProductFormId = '#editProductForm'
-          $(`${editProductFormId} input[name="name"]`).val(product.name)
-          $(`${editProductFormId} input[name="price"]`).val(product.price)
-          $(`${editProductFormId} input[name="stockQuantity"]`).val(product.stockQuantity)
-          $(`${editProductFormId} input[name="screen"]`).val(product.screen)
-          $(`${editProductFormId} input[name="operatingSystem"]`).val(product.operatingSystem)
-          $(`${editProductFormId} input[name="processor"]`).val(product.processor)
-          $(`${editProductFormId} input[name="ram"]`).val(product.ram)
-          $(`${editProductFormId} input[name="storageCapacity"]`).val(product.storageCapacity)
-          $(`${editProductFormId} input[name="weight"]`).val(product.weight)
-          $(`${editProductFormId} input[name="batteryCapacity"]`).val(product.batteryCapacity)
-          $(`${editProductFormId} input[name="color"]`).val(product.color)
-          $(`${editProductFormId} textarea[name="description"]`).val(product.description)
-          $(`${editProductFormId} .preview-image img`).attr('src', product.imageUrl).show()
-          $(`${editProductFormId} .preview-image`).css({
+          const product = response.data.product;
+          editProductForm.attr('data-id', product.id)
+          editProductForm.find('input[name="name"]').val(product.name)
+          editProductForm.find('input[name="price"]').val(product.price)
+          editProductForm.find('input[name="stockQuantity"]').val(product.stockQuantity)
+          editProductForm.find('input[name="screen"]').val(product.screen)
+          editProductForm.find('input[name="operatingSystem"]').val(product.operatingSystem)
+          editProductForm.find('input[name="processor"]').val(product.processor)
+          editProductForm.find('input[name="ram"]').val(product.ram)
+          editProductForm.find('input[name="storageCapacity"]').val(product.storageCapacity)
+          editProductForm.find('input[name="weight"]').val(product.weight)
+          editProductForm.find('input[name="batteryCapacity"]').val(product.batteryCapacity)
+          editProductForm.find('input[name="color"]').val(product.color)
+          editProductForm.find('textarea[name="description"]').val(product.description)
+          editProductForm.find('.preview-image img').attr('src', product.imageUrl).show()
+          editProductForm.find('.preview-image').css({
             'border': 'none'
           })
-          $(`${editProductFormId} input[name="currentImageUrl"]`).val(product.imageUrl)
-
+          editProductForm.find('input[name="currentImageUrl"]').val(product.imageUrl)
         } else {
           toastr.error('Something went wrong')
         }
@@ -662,15 +664,15 @@ $categories = Category::getAllCategories($conn);
         toastr.error('Something went wrong')
       }
     })
+    editProductFormSubmitButton.click(function() {
+      editProductForm.submit()
+    })
     $('#editProductForm').validate({
       rules: {
         name: {
           required: true
         },
         categoryId: {
-          required: true
-        },
-        image: {
           required: true
         },
         price: {
@@ -705,7 +707,9 @@ $categories = Category::getAllCategories($conn);
       try {
         event.preventDefault()
         if ($(this).valid()) {
+          const id = $(this).data('id')
           const formData = new FormData($(this)[0])
+          formData.append('id', id)
 
           const response = await $.ajax({
             url: 'actions/edit-product.php',
@@ -716,8 +720,9 @@ $categories = Category::getAllCategories($conn);
             processData: false,
           })
           if (response.status) {
+            const currentPage = table.page.info().page;
             toastr.success(response.message)
-            table.page('last').draw('page')
+            table.page(currentPage).draw('page')
           } else {
             toastr.error(response.message)
           }
