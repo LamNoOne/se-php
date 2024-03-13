@@ -122,7 +122,7 @@ a.text-linear-hover:hover {
 .preview-image-wrapper .preview-image .image img {
 	height: 100%;
 	width: 100%;
-	object-fit: cover;
+	object-fit: contain;
 	display: none;
 }
 .preview-image-wrapper .preview-image .icon {

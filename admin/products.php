@@ -488,7 +488,13 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           }
         },
         {
-          data: 'id'
+          render: function(data, type, row, meta) {
+            return `
+              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+                ${row.id}
+              </a>
+            `
+          }
         },
         {
           render: function(data, type, row, meta) {

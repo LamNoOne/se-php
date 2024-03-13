@@ -144,12 +144,16 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><?php echo $product->id ?></td>
+                      <td>
+                        <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>">
+                          <?php echo $product->id ?>
+                        </a>
+                      </td>
                       <td class="productimgname">
-                        <a class="product-img" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>">
+                        <a class="product-img" href="product-details.php?id=<?php echo $product->id ?>">
                           <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
                         </a>
-                        <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
+                        <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>"><?php echo $product->name ?></a>
                       </td>
                       <td><?php echo $product->price ?></td>
                       <td><?php echo $product->stockQuantity ?></td>
