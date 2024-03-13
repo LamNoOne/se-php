@@ -121,9 +121,7 @@
                 <span class="menu-arrow"></span></a>
               <ul>
                 <li><a class="text-linear-hover" href="products.php">Product List</a></li>
-                <li><a class="text-linear-hover" href="add-product.php">Add Product</a></li>
                 <li><a class="text-linear-hover" href="categories.html">Category List</a></li>
-                <li><a class="text-linear-hover" href="add-category.html">Add Category</a></li>
               </ul>
             </li>
             <li class="submenu">
@@ -140,9 +138,7 @@
                 <span class="menu-arrow"></span></a>
               <ul>
                 <li><a class="text-linear-hover" href="customers.html">Customer List</a></li>
-                <li><a class="text-linear-hover" href="add-customer.html">Add Customer</a></li>
                 <li><a class="text-linear-hover" href="users.html">User List</a></li>
-                <li><a class="text-linear-hover" href="add-user.html">Add User</a></li>
               </ul>
             </li>
           </ul>
