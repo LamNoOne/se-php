@@ -111,6 +111,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                     <span class="checkmarks"></span>
                   </label>
                 </th>
+                <th>ID</th>
                 <th>Name</th>
                 <th>Price</th>
                 <th>Quantity</th>
@@ -485,6 +486,9 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                 </label>
               `
           }
+        },
+        {
+          data: 'id'
         },
         {
           render: function(data, type, row, meta) {

@@ -96,16 +96,13 @@ if (!$product) {
         </div>
       </div>
       <div class="col-lg-4 col-sm-12">
-        <div class="box-shadow">
-          <img style="width: 100%; object-fit: cover;" src="<?php echo $product->imageUrl ?>" alt="img" />
+        <div class="product-details-image">
+          <img src="<?php echo $product->imageUrl ?>" alt="img" />
         </div>
       </div>
     </div>
     <div class="d-flex gap-3">
-      <a class="btn btn-primary" href="<?php echo "edit-product.php?id=$product->id" ?>">
-        Go To Edit
-      </a>
-      <a class="btn btn-cancel" href="javascript:history.back()">Back</a>
+      <a class="btn btn-primary" href="products.php">Back</a>
     </div>
   </div>
 </div>
@@ -117,10 +114,18 @@ if (!$product) {
     $('#delete-btn').on('click', function() {
       const id = $(this).data('id')
       Swal
-        .fire(sweetalertDeleteConfirmConfig(
-          'Delete This Product?',
-          'This action cannot be reverted. Are you sure?'
-        ))
+        .fire({
+          title: 'Delete Product?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
         .then(async function(result) {
           try {
             if (result.isConfirmed) {

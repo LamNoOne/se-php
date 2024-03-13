@@ -51,11 +51,13 @@ a.text-linear-hover:hover {
 	text-shadow: var(--box-shadow);
 }
 
+.btn {
+	min-width: 80px;
+}
 .btn.disabled {
 	opacity: 0.6;
 	cursor: not-allowed;
 }
-
 .btn-danger {
 	background: #ea1529;
 	color: #fff;
@@ -238,7 +240,6 @@ a.text-linear-hover:hover {
 #category-error + .select2-container--default .select2-selection--single {
 	border: 1px solid var(--error-validate-color) !important;
 }
-
 #category-error
 	+ .select2-container--default
 	.select2-selection--single
@@ -246,7 +247,6 @@ a.text-linear-hover:hover {
 	color: var(--error-validate-color);
 	opacity: 0.8;
 }
-
 #category-error
 	+ .select2-container--default
 	.select2-selection--single
@@ -254,12 +254,24 @@ a.text-linear-hover:hover {
 	b {
 	border-color: var(--error-validate-color);
 }
-
 .form-group #categoryId-error {
 	position: absolute;
 	bottom: -27px;
 	z-index: 10;
 }
+
+/* product details page */
+.product-details-image {
+	box-shadow: var(--box-shadow);
+	border-radius: 8px;
+}
+.product-details-image img {
+	width: 100%;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
+/*********/
 
 form textarea.error,
 form input.error {
@@ -5744,7 +5756,7 @@ span.select2-container.select2-container--default.select2-container--open {
 }
 .search-set .btn-filter {
 	background: var(--primary-color);
-	width: 34px;
+	min-width: 34px;
 	height: 34px;
 	padding: 0;
 	margin-right: 10px;
@@ -5791,6 +5803,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	top: 5px;
 	left: 6px;
 	opacity: 0.75;
+	min-width: 0;
 }
 .wordset ul li {
 	margin: 0 10px;

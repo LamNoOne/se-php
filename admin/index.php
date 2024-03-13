@@ -79,8 +79,9 @@ $users = User::getAllUsers($conn, [], $sorter);
                   <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
-                    <th>Total</th>
                     <th>Status</th>
+                    <th>Total</th>
+                    <th>Shipping Address</th>
                     <th>Created At</th>
                   </tr>
                 </thead>
@@ -99,7 +100,6 @@ $users = User::getAllUsers($conn, [], $sorter);
                         </a>
                         <a class="text-linear-hover" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
                       </td>
-                      <td><?php echo $order->total ?></td>
                       <td>
                         <span class="badges <?php
                                             if ($order->status === 'Pending') {
@@ -109,6 +109,8 @@ $users = User::getAllUsers($conn, [], $sorter);
                                             }
                                             ?>"><?php echo $order->status ?></span>
                       </td>
+                      <td><?php echo $order->total ?></td>
+                      <td><?php echo $order->shipAddress ?></td>
                       <td><?php echo $order->createdAt ?></td>
                     </tr>
                   <?php endforeach; ?>
@@ -126,8 +128,10 @@ $users = User::getAllUsers($conn, [], $sorter);
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Product ID</th>
+                    <th>ID</th>
                     <th>Name</th>
+                    <th>Price</th>
+                    <th>Stock Quantity</th>
                     <th>Category</th>
                     <th>Created At</th>
                   </tr>
@@ -140,13 +144,15 @@ $users = User::getAllUsers($conn, [], $sorter);
                     $count++
                     ?>
                     <tr>
-                      <td><a class="text-linear-hover" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->id ?></a></td>
+                      <td><?php echo $product->id ?></td>
                       <td class="productimgname">
                         <a class="product-img" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>">
                           <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
                         </a>
                         <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/product-details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
                       </td>
+                      <td><?php echo $product->price ?></td>
+                      <td><?php echo $product->stockQuantity ?></td>
                       <td><?php echo $product->categoryName ?></td>
                       <td><?php echo $product->createdAt ?></td>
                     </tr>
