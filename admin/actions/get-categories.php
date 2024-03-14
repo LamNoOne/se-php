@@ -85,4 +85,4 @@ if (isset($_GET['draw'])) {
   $response['draw'] =  (int) $_GET['draw'];
 }
 
-throwStatusMessage($response);
+throwStatusMessage(Message::messageData(true, 'Get categories successfully', $response));

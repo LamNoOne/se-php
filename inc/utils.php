@@ -262,6 +262,30 @@ function getDeleteByIdsSQLPrepareStatement($conn, $table, $ids)
     return $stmt;
 }
 
+function getCreateSQLPrepareStatement($conn, $table, $object)
+{
+    $reflection = new ReflectionObject($object);
+    $properties = $reflection->getProperties();
+
+    $array = [];
+    $columns = [];
+    foreach ($properties as $property) {
+        $property->setAccessible(true);
+        $array[$property->getName()] = $property->getValue($object);
+        $columns[] = $property->getName();
+    }
+
+    $insertStatement = "INSERT INTO `$table`";
+    $insertStatement .= '(`' . implode('`, `', $columns) . '`) VALUES ';
+    $insertStatement .= '(:' . implode(', :', $columns) . ')';
+
+    $stmt = $conn->prepare($insertStatement);
+    foreach ($array as $key => $value) {
+        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+    }
+    return $stmt;
+}
+
 function deleteFileByURL($url)
 {
     $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];

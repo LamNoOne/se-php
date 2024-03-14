@@ -24,7 +24,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         <h3>Category List</h3>
         <h4>Manage your categories</h4>
       </div>
-      <div id="openProductModalButton" class="page-btn">
+      <div class="page-btn" data-bs-toggle="modal" data-bs-target="#addModal">
         <button href="add-product.php" class="btn btn-added box-shadow">
           <img src="assets/img/icons/plus.svg" alt="img" class="me-1" />
           Add New Category
@@ -126,23 +126,23 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
   </div>
 </div>
 
-<div class="modal fade" id="addProductModal" aria-hidden="true" aria-labelledby="addProductModalLabel" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+<div class="modal fade" id="addModal" aria-hidden="true" aria-labelledby="addModalLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addProductModalLabel">Add New Category</h1>
+        <h1 class="modal-title fs-5" id="addModalLabel">Add New Category</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <form id="addProductForm" action="add-product.php" method="POST" enctype="multipart/form-data">
+        <form id="addForm" action="add-product.php" method="POST">
           <div class="row gx-5">
-            <div class="col-lg-3 col-sm-6 col-12">
+            <div class="col-lg-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Category Name</label>
                 <input type="text" name="name" autofocus />
               </div>
             </div>
-            <div class="col-lg-12">
+            <div class="col-lg-12 col-sm-12 col-12">
               <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" name="description"></textarea>
@@ -151,7 +151,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           </div>
         </form>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer d-flex justify-content-end">
         <button type="submit" class="btn btn-submit me-2">Add</button>
         <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
       </div>
@@ -204,14 +204,8 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     const tableEle = $('#table')
 
     const clearForm = (modal, form) => {
-      const previewImage = form.find('.preview-image')
-      const fileName = previewImage.find('.file-name')
       modal.modal('hide');
-      form.find('input, textarea, select').val('')
-      form.find('.preview-image img').prop('src', '').hide();
-      form.find('select').html('')
-      previewImage.removeClass('active');
-      fileName.text('');
+      form.find('input, textarea').val('')
     }
 
     // handle render products to table
@@ -251,11 +245,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         dataFilter: function(data) {
           const dataObj = jQuery.parseJSON(data);
           return JSON.stringify({
-            draw: dataObj.draw,
-            recordsTotal: dataObj.totalItems,
-            recordsFiltered: dataObj.totalItems,
-            data: dataObj.items,
-            totalPages: dataObj.totalPages
+            draw: dataObj.data.draw,
+            recordsTotal: dataObj.data.totalItems,
+            recordsFiltered: dataObj.data.totalItems,
+            data: dataObj.data.items,
+            totalPages: dataObj.data.totalPages
           });
         },
       },
@@ -340,91 +334,37 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     })
 
     // handle add product
-    const addProductFormId = '#addProductForm'
-    const addProductModalId = '#addProductModal'
-    const addProductForm = $(addProductFormId)
-    const addProductModal = $(addProductModalId)
-    const addProductFormSubmitButton = $(addProductModalId + ' .modal-footer button[type="submit"]')
-    $('#openProductModalButton').click(async function() {
-      try {
-        const response = await $.ajax({
-          url: 'actions/get-categories.php',
-          type: 'GET',
-          dataType: 'json',
-        })
-        if (response.status) {
-          const categories = response.data.categories
-          const categorySelect = addProductForm.find('select[name="categoryId"]')
-          categories.forEach((category, index) => {
-            let selectedAttr = '';
-            if (index === 0) {
-              selectedAttr = 'selected'
-            }
-            categorySelect.append(`
-              <option value="${category.id}" ${selectedAttr}>
-                ${category.name}
-              </option>
-            `)
-          })
-          const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addProductModal'))
-          modal.show()
-        } else {
-          toastr.error('Something went wrong')
-        }
-      } catch (error) {
-        console.log(error);
-        toastr.error('Something went wrong')
-      }
-    });
-    addProductFormSubmitButton.click(function() {
-      addProductForm.submit()
+    const addFormId = '#addForm'
+    const addModalId = '#addModal'
+    const addForm = $(addFormId)
+    const addModal = $(addModalId)
+    const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    addFormSubmitButton.click(function() {
+      addForm.submit()
     })
-    addProductForm.validate({
+    addForm.validate({
       rules: {
         name: {
           required: true
-        },
-        categoryId: {
-          required: true
-        },
-        image: {
-          required: true
-        },
-        price: {
-          required: true,
-          number: true
-        },
-        stockQuantity: {
-          required: true,
-          number: true
-        },
-        ram: {
-          number: true
-        },
-        storageCapacity: {
-          number: true
-        },
-        weight: {
-          number: true
-        },
-        batteryCapacity: {
-          number: true
         }
       },
     })
-    addProductForm.submit(async function(event) {
+    addForm.submit(async function(event) {
       try {
         event.preventDefault()
         if ($(this).valid()) {
-          const formData = new FormData($(this)[0])
+          const data = addForm.serializeArray().reduce((acc, item) => {
+            return {
+              ...acc,
+              [item.name]: item.value
+            }
+          }, {})
 
           const response = await $.ajax({
-            url: 'actions/add-product.php',
+            url: 'actions/add-category.php',
             type: 'POST',
             dataType: 'json',
-            data: formData,
-            contentType: false,
-            processData: false,
+            data,
           })
           if (response.status) {
             table.ajax.reload(function(json) {
@@ -434,15 +374,15 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               setTimeout(function() {
                 table.page(json.totalPages - 1).draw('page');
               }, 0);
-              toastr.success('Add product successfully')
+              toastr.success('Add category successfully')
             });
           } else {
-            toastr.error('Add product failed')
+            toastr.error(response.message)
           }
-          clearForm(addProductModal, addProductForm);
+          clearForm(addModal, addForm);
         }
       } catch (error) {
-        clearForm(addProductModal, addProductForm);
+        clearForm(addModal, addForm);
         toastr.error('Something went wrong')
       }
     })

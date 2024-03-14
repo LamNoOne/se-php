@@ -23,12 +23,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $createProductResult = $product->createProduct($conn);
   if ($createProductResult['status']) {
-    $response = Message::messageData(
+    $response = Message::message(
       $createProductResult['status'],
-      $createProductResult['message'],
-      [
-        'redirectUrl' => APP_URL . '/admin/products.php',
-      ]
+      $createProductResult['message']
     );
     throwStatusMessage($response);
   } else {

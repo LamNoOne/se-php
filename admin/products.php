@@ -437,11 +437,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         dataFilter: function(data) {
           const dataObj = jQuery.parseJSON(data);
           return JSON.stringify({
-            draw: dataObj.draw,
-            recordsTotal: dataObj.totalItems,
-            recordsFiltered: dataObj.totalItems,
-            data: dataObj.items,
-            totalPages: dataObj.totalPages
+            draw: dataObj.data.draw,
+            recordsTotal: dataObj.data.totalItems,
+            recordsFiltered: dataObj.data.totalItems,
+            data: dataObj.data.items,
+            totalPages: dataObj.data.totalPages
           });
         },
       },
@@ -564,8 +564,9 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           type: 'GET',
           dataType: 'json',
         })
+        console.log(response);
         if (response.status) {
-          const categories = response.data.categories
+          const categories = response.data.items
           const categorySelect = addProductForm.find('select[name="categoryId"]')
           categories.forEach((category, index) => {
             let selectedAttr = '';

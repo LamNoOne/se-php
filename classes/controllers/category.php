@@ -10,18 +10,92 @@ class Category extends Message
     public $createdAt;
     public $updatedAt;
 
-    public function __construct($id = null, $name = null, $description = null)
-    {
-        $id = $id;
-        $name = $name;
-        $description = $description;
+    public function __construct(
+        $data = []
+    ) {
+        $data = Category::removeBannedFields($data);
+        $data = deleteFieldsHasEmptyString($data);
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
     }
 
-    public static function createCategory($conn, $categoryData)
+    private static function removeBannedFields($fields)
     {
-        /**
-         * Write your code here
-         */
+        $copiedFields = $fields;
+        $bannedFields = ['id', 'createdAt', 'updatedAt'];
+        foreach ($bannedFields as $bannedField) {
+            if (array_key_exists($bannedField, $copiedFields)) {
+                unset($copiedFields[$bannedField]);
+            }
+        }
+        return $copiedFields;
+    }
+
+    private static function validateCreate($formData)
+    {
+        $result = Validator::required($formData, [
+            'categoryId',
+            'name',
+            'imageUrl',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::url($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    public function createCategory($conn)
+    {
+        try {
+            $stmt = getCreateSQLPrepareStatement($conn, TABLES['CATEGORY'], $this);
+            if (!$stmt->execute()) {
+                return Message::message(false, 'Something went wrong');
+            }
+            return Message::message(true, 'Add product successfully');
+        } catch (Exception $e) {
+            $errorCode = $e->getCode();
+            $errorMessage = $e->getMessage();
+            if ($errorCode === '23000') {
+                if (preg_match("/for key '(\w+)'/", $errorMessage, $matches)) {
+                    // $duplicationKey = $matches[1];
+                    return Message::message(false, 'Category name cannot be duplicated');
+                }
+                return Message::message(false, 'Something went wrong');
+            }
+            return Message::message(false, 'Something went wrong');
+        }
     }
 
     public static function updateCategory($conn, $categoryData)
