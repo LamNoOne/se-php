@@ -500,8 +500,8 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <div class="productimgname">
-                <a class="details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}" class="product-img">
+              <div class="name-img-wrapper">
+                <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}" class="product-img">
                   <img src="${row.imageUrl}" />
                 </a>
                 <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">

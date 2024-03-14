@@ -79,9 +79,8 @@ $users = User::getAllUsers($conn, [], $sorter);
                   <tr>
                     <th>Order ID</th>
                     <th>Customer</th>
-                    <th>Status</th>
                     <th>Total</th>
-                    <th>Shipping Address</th>
+                    <th>Status</th>
                     <th>Created At</th>
                   </tr>
                 </thead>
@@ -94,12 +93,15 @@ $users = User::getAllUsers($conn, [], $sorter);
                     ?>
                     <tr>
                       <td><a class="text-linear-hover" href="./product-details.html"><?php echo $order->id ?></a></td>
-                      <td class="productimgname">
-                        <a class="product-img" href="productlist.html">
-                          <img src="<?php echo $order->imageUrl ? $order->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="avatar" />
-                        </a>
-                        <a class="text-linear-hover" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
+                      <td>
+                        <div class="name-img-wrapper">
+                          <a class="product-img" href="productlist.html">
+                            <img src="<?php echo $order->imageUrl ? $order->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="avatar" />
+                          </a>
+                          <a class="text-linear-hover" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
+                        </div>
                       </td>
+                      <td><?php echo $order->total ?></td>
                       <td>
                         <span class="badges <?php
                                             if ($order->status === 'Pending') {
@@ -109,8 +111,6 @@ $users = User::getAllUsers($conn, [], $sorter);
                                             }
                                             ?>"><?php echo $order->status ?></span>
                       </td>
-                      <td><?php echo $order->total ?></td>
-                      <td><?php echo $order->shipAddress ?></td>
                       <td><?php echo $order->createdAt ?></td>
                     </tr>
                   <?php endforeach; ?>
@@ -149,11 +149,13 @@ $users = User::getAllUsers($conn, [], $sorter);
                           <?php echo $product->id ?>
                         </a>
                       </td>
-                      <td class="productimgname">
-                        <a class="product-img" href="product-details.php?id=<?php echo $product->id ?>">
-                          <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
-                        </a>
-                        <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>"><?php echo $product->name ?></a>
+                      <td>
+                        <div class="name-img-wrapper">
+                          <a class="product-img" href="product-details.php?id=<?php echo $product->id ?>">
+                            <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
+                          </a>
+                          <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>"><?php echo $product->name ?></a>
+                        </div>
                       </td>
                       <td><?php echo $product->price ?></td>
                       <td><?php echo $product->stockQuantity ?></td>
@@ -192,13 +194,15 @@ $users = User::getAllUsers($conn, [], $sorter);
                     ?>
                     <tr>
                       <td><a class="text-linear-hover" href="./product-details.html"><?php echo $customer->id ?></a></td>
-                      <td class="productimgname">
-                        <a class="product-img" href="productlist.html">
-                          <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="product" />
-                        </a>
-                        <a class="text-linear-hover" href="product-details.html">
-                          <?php echo $customer->firstName . ' ' . $customer->lastName ?>
-                        </a>
+                      <td>
+                        <div class="name-img-wrapper">
+                          <a class="product-img" href="productlist.html">
+                            <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="product" />
+                          </a>
+                          <a class="text-linear-hover" href="product-details.html">
+                            <?php echo $customer->firstName . ' ' . $customer->lastName ?>
+                          </a>
+                        </div>
                       </td>
                       <td><?php echo $customer->phoneNumber ?></td>
                       <td><?php echo $customer->email ?></td>
@@ -239,15 +243,17 @@ $users = User::getAllUsers($conn, [], $sorter);
                       <td><a class="text-linear-hover" href="./product-details.html">
                           <?php echo $user->id ?>
                         </a></td>
-                      <td class="productimgname">
-                        <a class="product-img" href="productlist.html">
-                          <img src="
-                            <?php echo $user->imageUrl ? $user->imageUrl : './assets/imag/no-avatar-image.png' ?>
-                          " alt="product" />
-                        </a>
-                        <a class="text-linear-hover" href="product-details.html">
-                          <?php echo $user->firstName . ' ' . $user->lastName ?>
-                        </a>
+                      <td>
+                        <div class="name-img-wrapper">
+                          <a class="product-img" href="productlist.html">
+                            <img src="
+                              <?php echo $user->imageUrl ? $user->imageUrl : './assets/imag/no-avatar-image.png' ?>
+                            " alt="product" />
+                          </a>
+                          <a class="text-linear-hover" href="product-details.html">
+                            <?php echo $user->firstName . ' ' . $user->lastName ?>
+                          </a>
+                        </div>
                       </td>
                       <td><?php echo $user->phoneNumber ?></td>
                       <td><?php echo $user->email ?></td>

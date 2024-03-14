@@ -9,6 +9,12 @@
 
 /* Custom */
 /* COMMON */
+.name-img-wrapper {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
 .search-set .btn-delete-by-select {
 	min-width: 34px;
 	height: 34px;
@@ -5069,13 +5075,6 @@ span.select2-container.select2-container--default.select2-container--open {
 	float: left;
 	font-size: 12px;
 }
-.productimgname img {
-	margin-right: 10px;
-}
-.productimgname a {
-	color: #212b36;
-	font-weight: 500;
-}
 .form-group .calc-no {
 	width: 50px !important;
 	text-align: center;
@@ -6632,7 +6631,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	font-weight: 500;
 	display: inline-block;
 	padding: 5px 10px;
-	border-radius: 8px;
+	border-radius: 50px;
 	color: #fff;
 	text-align: center;
 	min-width: 80px;
