@@ -243,7 +243,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+              <a class="text-linear-hover details-btn" href="<?php echo APP_URL ?>/admin/categories/details.php?id=${row.id}">
                 ${row.id}
               </a>
             `
@@ -252,7 +252,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+              <a class="text-linear-hover details-btn" href="<?php echo APP_URL ?>/admin/categories/details.php?id=${row.id}">
                 ${row.name}
               </a>
             `
@@ -264,7 +264,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a id="detailsBtn" class="me-2 action" href="<?php echo APP_URL; ?>/admin/categories/details.php?id=${row.id}">
+              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/categories/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
@@ -403,7 +403,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     })
 
     // In order to switch to old page of deleted item
-    $('#table tbody').on('click', '#detailsBtn', function() {
+    $('#table tbody').on('click', '.details-btn', function() {
       sessionStorage.setItem('pageInfo', JSON.stringify(table.page.info()))
     })
   })

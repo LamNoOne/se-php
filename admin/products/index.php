@@ -387,6 +387,17 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       fileName.text('');
     }
 
+    const goToCurrentPage = (table = {}, pageInfo = {}) => {
+      const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
+      let currentPage = pageInfo.page
+      if (numberItemsBeforeDelete <= 1) {
+        currentPage = currentPage - 1;
+      }
+      setTimeout(() => {
+        table.page(currentPage).draw('page')
+      }, 0)
+    }
+
     // handle render items to table
     const table = tableEle.DataTable({
       processing: true,
@@ -480,7 +491,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+              <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
                 ${row.id}
               </a>
             `
@@ -490,10 +501,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           render: function(data, type, row, meta) {
             return `
               <div class="productimgname">
-                <a href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}" class="product-img">
+                <a class="details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}" class="product-img">
                   <img src="${row.imageUrl}" />
                 </a>
-                <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+                <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
                   ${row.name}
                 </a>
               </div>
@@ -515,7 +526,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
@@ -535,6 +546,13 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       initComplete: (settings, json) => {
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
+
+        // In order to go to current page of deleted item
+        if (sessionStorage.getItem('pageInfo')) {
+          const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
+          sessionStorage.removeItem('pageInfo');
+          goToCurrentPage(table, pageInfo)
+        }
       },
     })
 
@@ -807,12 +825,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 
               if (response.status) {
                 const pageInfo = table.page.info()
-                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-                let currentPage = pageInfo.page
-                if (numberItemsBeforeDelete <= 1) {
-                  currentPage = currentPage - 1;
-                }
-                table.page(currentPage).draw('page')
+                goToCurrentPage(table, pageInfo);
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)
@@ -880,6 +893,11 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             toastr.error('Something went wrong')
           }
         })
+    })
+
+    // In order to go to current page of deleted item
+    $('#table tbody').on('click', '.details-btn', function() {
+      sessionStorage.setItem('pageInfo', JSON.stringify(table.page.info()))
     })
   })
 </script>
