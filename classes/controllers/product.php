@@ -389,89 +389,89 @@ class Product extends DataFetcher
         try {
             $projection =  [
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'id'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'name'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'description'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'imageUrl'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'screen'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'operatingSystem'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'processor'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'ram'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'storageCapacity'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'weight'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'batteryCapacity'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'color'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'price'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'stockQuantity'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'createdAt'
                 ],
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => 'updatedAt'
                 ],
                 [
-                    'table' => 'category',
+                    'table' => TABLES['CATEGORY'],
                     'column' => 'id',
                     'as' => 'categoryId'
                 ],
                 [
-                    'table' => 'category',
+                    'table' => TABLES['CATEGORY'],
                     'column' => 'name',
                     'as' => 'categoryName'
                 ],
             ];
             $join =  [
                 'tables' => [
-                    'product',
-                    'category',
+                    TABLES['PRODUCT'],
+                    TABLES['CATEGORY'],
                 ],
                 'on' => [
                     [
-                        'table1' => 'product',
-                        'table2' => 'category',
+                        'table1' => TABLES['PRODUCT'],
+                        'table2' => TABLES['CATEGORY'],
                         'column1' => 'categoryId',
                         'column2' => 'id'
                     ]
@@ -487,7 +487,7 @@ class Product extends DataFetcher
             }, $filter);
             $sort = [
                 [
-                    'table' => 'product',
+                    'table' => TABLES['PRODUCT'],
                     'column' => $sort['sortBy'],
                     'order' => $sort['order']
                 ]
