@@ -234,7 +234,7 @@
 
   <script src="<?php echo APP_URL; ?>/admin/assets/js/bootstrap.bundle.min.js"></script>
 
-  <script src="<?php echo APP_URL; ?>/admin/assets/js/script.js"></script>
+  <?php require_once "admin/script_js.php"; ?>
 </body>
 
 </html>
