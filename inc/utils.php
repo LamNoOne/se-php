@@ -79,7 +79,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
     $sqlClauses = [];
 
     // handle select clause
-    if (count($projection) === 0) {
+    if (empty($projection)) {
         $sqlClauses[] = 'SELECT *';
     } else {
         $sqlClauses[] = "SELECT " . implode(', ', array_map(function ($projectionItem) {

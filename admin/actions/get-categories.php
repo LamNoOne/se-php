@@ -1,15 +1,16 @@
 <?php
 session_start();
 
-require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
-require_once dirname(dirname(__DIR__)) . '/inc/utils.php';
-$conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
+require_once dirname(dirname(__DIR__)) . "/inc/init.php";
+
+if (!isset($conn)) {
+  $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
   throwStatusMessage(Message::message(false, 'Method must be GET'));
   return;
 }
-
 
 $page = 1;
 $limit = 10;
@@ -45,28 +46,39 @@ if (isset($_GET['order'])) {
   $order = $_GET['order'];
 }
 
-$categoriesOfAllPage = Category::getCategories(
+$itemsOfAllPage = Category::getCategories(
   $conn,
   [
     ['field' => 'name', 'value' => $search, 'like' => true],
   ]
 );
 
-$categoriesPerPage = Category::getCategories(
-  $conn,
-  [
-    ['field' => 'name', 'value' => $search, 'like' => true],
-  ],
-  ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
-  ['sortBy' => $sortBy, 'order' => $order],
-);
+$itemsPerPage = [];
+if ($limit > 0) {
+  $itemsPerPage = Category::getCategories(
+    $conn,
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ],
+    ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
+    ['sortBy' => $sortBy, 'order' => $order],
+  );
+}
 
-$totalItems = count($categoriesOfAllPage);
-$totalItemsPerPage = count($categoriesPerPage);
+$totalItems = count($itemsOfAllPage);
+$items = ($limit > -1) ? $itemsPerPage : $itemsOfAllPage;
+$totalItemsPerPage = count($items);
+
+if ($totalItemsPerPage === 0 || $limit === 0) {
+  $totalPages = 0;
+} else {
+  $totalPages = ($limit > 0) ? ceil($totalItems / $limit) : 1;
+}
+
 $response = [
   'totalItems' =>  $totalItems,
-  'items' => $categoriesPerPage,
-  'totalPages' => $totalItemsPerPage === 0 || ceil($totalItems / $totalItemsPerPage)
+  'items' => $items,
+  'totalPages' => $totalPages
 ];
 
 if (isset($_GET['draw'])) {

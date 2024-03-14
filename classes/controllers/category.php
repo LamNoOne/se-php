@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 class Category extends Message
 {
 
@@ -47,28 +48,7 @@ class Category extends Message
         $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
-            $projection =  [
-                [
-                    'table' => TABLES['CATEGORY'],
-                    'column' => 'id'
-                ],
-                [
-                    'table' => TABLES['CATEGORY'],
-                    'column' => 'name'
-                ],
-                [
-                    'table' => TABLES['CATEGORY'],
-                    'column' => 'description'
-                ],
-                [
-                    'table' => TABLES['CATEGORY'],
-                    'column' => 'createdAt'
-                ],
-                [
-                    'table' => TABLES['CATEGORY'],
-                    'column' => 'updatedAt'
-                ],
-            ];
+            $projection =  [];
             $join =  [
                 'tables' => [
                     TABLES['CATEGORY']

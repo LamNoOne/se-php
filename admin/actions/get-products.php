@@ -46,28 +46,39 @@ if (isset($_GET['order'])) {
   $order = $_GET['order'];
 }
 
-$productsOfAllPage = Product::getAllProductsForAdmin(
+$itemsOfAllPage = Product::getAllProductsForAdmin(
   $conn,
   [
     ['field' => 'name', 'value' => $search, 'like' => true],
   ]
 );
 
-$productsPerPage = Product::getAllProductsForAdmin(
-  $conn,
-  [
-    ['field' => 'name', 'value' => $search, 'like' => true],
-  ],
-  ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
-  ['sortBy' => $sortBy, 'order' => $order],
-);
+$itemsPerPage = [];
+if ($limit > 0) {
+  $itemsPerPage = Product::getAllProductsForAdmin(
+    $conn,
+    [
+      ['field' => 'name', 'value' => $search, 'like' => true],
+    ],
+    ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
+    ['sortBy' => $sortBy, 'order' => $order],
+  );
+}
 
-$totalItems = count($productsOfAllPage);
-$totalItemsPerPage = count($productsPerPage);
+$totalItems = count($itemsOfAllPage);
+$items = ($limit > -1) ? $itemsPerPage : $itemsOfAllPage;
+$totalItemsPerPage = count($items);
+
+if ($totalItemsPerPage === 0 || $limit === 0) {
+  $totalPages = 0;
+} else {
+  $totalPages = ($limit > 0) ? ceil($totalItems / $limit) : 1;
+}
+
 $response = [
   'totalItems' =>  $totalItems,
-  'items' => $productsPerPage,
-  'totalPages' => $totalItemsPerPage === 0 || ceil($totalItems / $totalItemsPerPage)
+  'items' => $items,
+  'totalPages' => $totalPages
 ];
 
 if (isset($_GET['draw'])) {
