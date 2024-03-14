@@ -795,7 +795,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       }
     })
 
-    // handle delete
+    // handle delete a item
     $('#table tbody').on('click', '#delete-btn', function() {
       const id = $(this).data('id')
       Swal
@@ -884,9 +884,9 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
                 setTimeout(() => {
                   table.page(pageAfterDelete).draw('page')
                 })
-                toastr.success('Delete selected products successfully')
+                toastr.success(response.message)
               } else {
-                toastr.error('Delete selected products failed')
+                toastr.error(response.message)
               }
             }
           } catch (error) {

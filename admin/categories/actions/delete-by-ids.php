@@ -14,5 +14,5 @@ if (!isset($_POST['ids'])) {
 
 $ids = $_POST['ids'];
 
-$deleteByIdsResult = Product::deleteByIds($conn, $ids);
+$deleteByIdsResult = Category::deleteByIds($conn, $ids);
 throwStatusMessage($deleteByIdsResult);

@@ -77,6 +77,25 @@ class Category extends Message
         return Message::message(true, 'Validate successfully');
     }
 
+    private static function validateDeleteByIds($formData)
+    {
+        $result = Validator::required($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::array($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
     public function createCategory($conn)
     {
         try {
@@ -112,6 +131,24 @@ class Category extends Message
             $stmt = getDeleteByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id);
             if ($stmt->execute()) {
                 return Message::message(true, 'Delete category successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteByIds($conn, $ids)
+    {
+        try {
+            $validateResult = Category::validateDeleteByIds(['ids' => $ids]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $stmt = getDeleteByIdsSQLPrepareStatement($conn, TABLES['CATEGORY'], $ids);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete category by ids successfully');
             }
             throw new PDOException('Cannot execute sql statement');
         } catch (Exception $e) {

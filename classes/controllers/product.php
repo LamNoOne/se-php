@@ -299,13 +299,12 @@ class Product extends DataFetcher
                 return Message::message(false, $validateResult['message']);
             }
 
-            $stmt = getDeleteByIdsSQLPrepareStatement($conn, 'product', $ids);
+            $stmt = getDeleteByIdsSQLPrepareStatement($conn, TABLES['PRODUCT'], $ids);
             if ($stmt->execute()) {
                 return Message::message(true, 'Delete product by ids successfully');
             }
             return Message::message(true, 'Delete product by ids failed');
         } catch (Exception $e) {
-            print_r($e->getMessage());
             return Message::message(true, 'Delete product by ids failed');
         }
     }
