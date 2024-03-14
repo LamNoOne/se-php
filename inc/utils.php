@@ -79,63 +79,93 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
     $sqlClauses = [];
 
     // handle select clause
-    $sqlClauses[] = "SELECT " . implode(', ', array_map(function ($projectionItem) {
-        $as = '';
-        if (isset($projectionItem['as']) && $projectionItem['as']) {
-            $as = "AS {$projectionItem['as']}";
-        }
-        return "{$projectionItem['table']}.{$projectionItem['column']} $as";
-    }, $projection));
+    if (count($projection) === 0) {
+        $sqlClauses[] = 'SELECT *';
+    } else {
+        $sqlClauses[] = "SELECT " . implode(', ', array_map(function ($projectionItem) {
+            $as = '';
+            if (isset($projectionItem['as']) && $projectionItem['as']) {
+                $as = "AS {$projectionItem['as']}";
+            }
+            return "{$projectionItem['table']}.{$projectionItem['column']} $as";
+        }, $projection));
+    }
 
     // handle from clause
     $tables = $join['tables'];
     $on = $join['on'];
-    if (count($tables) < 2) {
-        return;
+    if (count($tables) === 0) {
+        throw new InvalidArgumentException('"$tables" must have at least 1 table');
+    } else if (
+        count($tables) === 1
+        && isset($join['on'])
+        && count($join['on']) < 1
+    ) {
+        $sqlClauses[] = 'FROM ' . $tables[0];
+    } else {
+        $joinClauses = [
+            "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
+        ];
+        for ($i = 2; $i < count($tables); $i++) {
+            $joinClauses[] = "JOIN {$tables[$i]} ON {$on[$i - 1]['table1']}.{$on[$i - 1]['column1']} = {$on[$i - 1]['table2']}.{$on[$i - 1]['column2']}";
+        }
+        $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
     }
-    $joinClauses = [
-        "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
-    ];
-    for ($i = 2; $i < count($tables); $i++) {
-        $joinClauses[] = "JOIN {$tables[$i]} ON {$on[$i - 1]['table1']}.{$on[$i - 1]['column1']} = {$on[$i - 1]['table2']}.{$on[$i - 1]['column2']}";
-    }
-    $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
+
 
     // handle where clause
     /**
         [
-            'table' => 'product',
-            'column' => 'name',
-            'value' => 'vn',
-            'like' => true
-            'int' => false,
+            [
+                'table' => 'product',
+                'column' => 'name',
+                'value' => 'vn',
+                'like' => true
+            ]
         ]
      */
-    $selectClauses = [];
+    $whereConditions = [];
     foreach ($selection as $selectItem) {
         $compareOperator = '=';
         $selectValue = '';
-        if (isset($selectItem['like']) && isset($selectItem['int'])) {
-            if ($selectItem['like'] && !$selectItem['int']) {
+        if (isset($selectItem['like'])) {
+            if ($selectItem['like']) {
                 $compareOperator = 'LIKE';
-                $selectValue = "{$selectItem['value']}";
-            } else if ($selectItem['int']) {
                 $selectValue = "{$selectItem['value']}";
             }
         } else {
             $selectValue = "'{$selectItem['value']}'";
         }
-        $selectClauses[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $selectValue";
+
+        if (isset($selectItem['table'])) {
+            $whereConditions[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $selectValue";
+        } else {
+            $whereConditions[] = "{$selectItem['column']} $compareOperator $selectValue";
+        }
     }
-    if (!empty($selectClauses)) {
-        $sqlClauses[] = 'WHERE ' . implode(' AND ', $selectClauses);
+    if (!empty($whereConditions)) {
+        $sqlClauses[] = 'WHERE ' . implode(' AND ', $whereConditions);
     }
 
     // handle order by clause
-    $sqlClauses[] = "ORDER BY {$sort['table']}.{$sort['column']} {$sort['order']}";
+    if (!empty($sort)) {
+        $orderByConditions = array_map(function ($sortItem) {
+            if (isset($sortItem['table']) && !$sortItem['table'] === '') {
+                return "{$sortItem['table']}.{$sortItem['column']} {$sortItem['order']}";
+            } else {
+                return "{$sortItem['column']} {$sortItem['order']}";
+            }
+        }, $sort);
+        $sqlClauses[] = 'ORDER BY ' . implode(', ', $orderByConditions);
+    }
 
     // handle limit offset clause
-    if (isset($pagination['limit']) && isset($pagination['offset'])) {
+    if (
+        isset($pagination['limit'])
+        && isset($pagination['offset'])
+        && $pagination['limit'] !== NULL
+        && $pagination['offset'] !== NULL
+    ) {
         $sqlClauses[] = 'LIMIT ' . $pagination['limit'];
         $sqlClauses[] = 'OFFSET ' . $pagination['offset'];
     }
@@ -150,13 +180,17 @@ $sort =  [
         'order' => 'ASC'
     ]
  */
-function getSQLPrepareStatement(
+function getQuerySQLPrepareStatement(
     $conn,
     $projection = [],
     $join = [],
     $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
     $pagination = [],
-    $sort =  []
+    $sort =  [[
+        'table' => '',
+        'column' => 'createdAt',
+        'order' => 'ASC'
+    ]]
 ) {
     $paginationForGetSQL = [];
     if (isset($pagination['offset']) && isset($pagination['limit'])) {

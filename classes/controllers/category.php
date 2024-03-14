@@ -49,4 +49,69 @@ class Category extends Message
             return Message::message(false, "Can not get all categories" . $e->getMessage());
         }
     }
+
+    public static function getCategories(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
+        $pagination = [],
+        $sort =  ['sortBy' => 'id', 'order' => 'ASC']
+    ) {
+        try {
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                [
+                    [
+                        "table" => TABLES['CATEGORY'],
+                        "column" => "id"
+                    ],
+                    [
+                        "table" => TABLES['CATEGORY'],
+                        "column" => "name"
+                    ],
+                    [
+                        "table" => TABLES['CATEGORY'],
+                        "column" => "description"
+                    ],
+                    [
+                        "table" => TABLES['CATEGORY'],
+                        "column" => "createdAt"
+                    ],
+                    [
+                        "table" => TABLES['CATEGORY'],
+                        "column" => "updatedAt"
+                    ],
+                ],
+                [
+                    "tables" => [
+                        TABLES['CATEGORY'],
+                    ],
+                    "on" => [
+                        [
+                            'table1' => 'product',
+                            'table2' => 'category',
+                            'column1' => 'categoryId',
+                            'column2' => 'id'
+                        ]
+                    ]
+                ],
+                $filter,
+                $pagination,
+                [
+                    [
+                        'table' => 'product',
+                        'column' => $sort['sortBy'],
+                        'order' => $sort['order']
+                    ]
+                ]
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return [$stmt, $e->getMessage()];
+            return Message::message(false, 'Get all products failed');
+        }
+    }
 }

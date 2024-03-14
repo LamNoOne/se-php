@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
   $response = [
     'totalItems' =>  $totalItems,
     'items' => $productsPerPage,
-    'totalPages' => ceil($totalItems / $totalItemsPerPage)
+    'totalPages' => $totalItemsPerPage === 0 || ceil($totalItems / $totalItemsPerPage)
   ];
 
   if (isset($_GET['draw'])) {

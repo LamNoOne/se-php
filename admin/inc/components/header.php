@@ -123,7 +123,7 @@
                 <span class="menu-arrow"></span></a>
               <ul>
                 <li><a class="text-linear-hover" href="products.php">Product List</a></li>
-                <li><a class="text-linear-hover" href="categories.html">Category List</a></li>
+                <li><a class="text-linear-hover" href="categories.php">Category List</a></li>
               </ul>
             </li>
             <li class="submenu">

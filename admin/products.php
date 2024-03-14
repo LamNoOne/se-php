@@ -452,27 +452,31 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           searchable: false,
         },
         {
-          name: 'name',
+          name: 'id',
           targets: 1
         },
         {
-          name: 'price',
+          name: 'name',
           targets: 2
         },
         {
-          name: 'stockQuantity',
+          name: 'price',
           targets: 3
         },
         {
-          name: 'categoryId',
+          name: 'stockQuantity',
           targets: 4
         },
         {
-          name: 'createdAt',
+          name: 'categoryId',
           targets: 5
         },
         {
-          targets: 6,
+          name: 'createdAt',
+          targets: 6
+        },
+        {
+          targets: 7,
           orderable: false,
           searchable: false,
         },

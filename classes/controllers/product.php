@@ -382,12 +382,12 @@ class Product extends DataFetcher
      */
     public static function getAllProductsForAdmin(
         $conn,
-        $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]],
         $pagination = [],
         $sort =  ['sortBy' => 'id', 'order' => 'ASC']
     ) {
         try {
-            $stmt = getSQLPrepareStatement(
+            $stmt = getQuerySQLPrepareStatement(
                 $conn,
                 [
                     [
@@ -482,9 +482,11 @@ class Product extends DataFetcher
                 $filter,
                 $pagination,
                 [
-                    'table' => 'product',
-                    'column' => $sort['sortBy'],
-                    'order' => $sort['order']
+                    [
+                        'table' => 'product',
+                        'column' => $sort['sortBy'],
+                        'order' => $sort['order']
+                    ]
                 ]
             );
             $stmt->setFetchMode(PDO::FETCH_OBJ);
