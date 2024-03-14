@@ -265,7 +265,8 @@ class Order extends DataFetcher
                 $_orders = [...$_orders, $singleOrder];
             }
 
-            $orders = [...$orders, 'data' => $_orders];
+            // $orders = [...$orders, 'data' => $_orders];
+            $orders = array_merge($orders, ['data' => $_orders]);
 
             return $orders;
         } catch (Exception $e) {

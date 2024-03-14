@@ -17,7 +17,7 @@ class QueryBuilder extends Validation
      * @param mixed $options
      * Validate options is an array, merge with default options if it's valid
      */
-    protected function validateQueryOptions($options) : mixed
+    protected function validateQueryOptions($options)
     {
         // Validate the query options
         return $this->validation->validateQueryOptions($options);
@@ -122,7 +122,7 @@ class QueryBuilder extends Validation
 
             // Query with limit and offset is optional
             // Check if queryString contains a limit and offset parameters
-            if (str_contains(strval($stmt->queryString), ':limit') && str_contains(strval($stmt->queryString), ':offset')) {
+            if (strpos(strval($stmt->queryString), ':limit') && strpos(strval($stmt->queryString), ':offset')) {
                 $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
             }

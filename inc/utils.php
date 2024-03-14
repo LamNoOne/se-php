@@ -21,7 +21,7 @@ function throwStatusMessage($status)
     echo $jsonStatus;
 }
 
-function createFilter(string $key, mixed $value, string | null $operator = null): array
+function createFilter($key, $value, $operator = null)
 {
     return ['column' => strval($key), 'operator' => strval($operator), 'value' => $value];
 }
@@ -309,7 +309,7 @@ function getQueryByIdSQLPrepareStatement(
     $conn,
     $id,
     $projection = [],
-    $join = [],
+    $join = []
 ) {
     $query = getPlaceholderQueryByIdSQL(
         $projection,

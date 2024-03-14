@@ -90,7 +90,7 @@ class Cart
         }
     }
 
-    public static function getCartByUserId($conn, $userId): array | object
+    public static function getCartByUserId($conn, $userId)
     {
         try {
             $query = 'SELECT * FROM cart WHERE userId=:userId';
@@ -108,7 +108,7 @@ class Cart
         }
     }
 
-    public static function getProductCartById($conn, $cartId, $productId): array | object
+    public static function getProductCartById($conn, $cartId, $productId)
     {
         try {
             //code...
@@ -170,7 +170,7 @@ class Cart
         }
     }
 
-    public static function getProductDetailFromCart($conn, $userId, $productId): array | object
+    public static function getProductDetailFromCart($conn, $userId, $productId)
     {
         try {
             $cartId = static::getCartId($conn, $userId);
@@ -212,7 +212,8 @@ class Cart
             $productCartData = static::getProductCartById($conn, $cartId, $productId);
             if ($productCartData['status'] && isset($productCartData['data']) && !empty($productCartData['data'])) {
                 // increase product cart quantity and call update cart
-                $cartUpdate = [...$cartData, 'quantity' => $productCartData['data']->quantity + $quantity];
+                // $cartUpdate = [...$cartData, 'quantity' => $productCartData['data']->quantity + $quantity];
+                $cartUpdate = array_merge($cartData, ['quantity' => $productCartData['data']->quantity + $quantity]);
                 $status = static::updateCart($conn, $userId, $cartUpdate)['status'];
                 if ($status) {
                     return Message::messageData(true, 'Product exists in cart, update quantity successfully', ['modified' => true]);
