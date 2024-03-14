@@ -264,7 +264,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action" href="<?php echo APP_URL; ?>/admin/categories/details.php?id=${row.id}">
+              <a id="detailsBtn" class="me-2 action" href="<?php echo APP_URL; ?>/admin/categories/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
@@ -284,6 +284,20 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       initComplete: (settings, json) => {
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
+
+        // In order to switch to old page of deleted item
+        if (sessionStorage.getItem('pageInfo')) {
+          const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
+          sessionStorage.removeItem('pageInfo');
+          const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
+          let currentPage = pageInfo.page
+          if (numberItemsBeforeDelete <= 1) {
+            currentPage = currentPage - 1;
+          }
+          setTimeout(() => {
+            table.page(currentPage).draw('page')
+          }, 0)
+        }
       },
     })
 
@@ -339,6 +353,58 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         clearForm(addModal, addForm);
         toastr.error('Something went wrong')
       }
+    })
+
+    // handle delete
+    $('#table tbody').on('click', '#delete-btn', function() {
+      const id = $(this).data('id')
+      Swal
+        .fire({
+          title: 'Delete Category?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: '<?php echo DELETE_CATEGORY_BY_ID_API ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  id
+                },
+              })
+
+              if (response.status) {
+                const pageInfo = table.page.info()
+                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
+                let currentPage = pageInfo.page
+                if (numberItemsBeforeDelete <= 1) {
+                  currentPage = currentPage - 1;
+                }
+                table.page(currentPage).draw('page')
+                toastr.success(response.message)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
+
+    // In order to switch to old page of deleted item
+    $('#table tbody').on('click', '#detailsBtn', function() {
+      sessionStorage.setItem('pageInfo', JSON.stringify(table.page.info()))
     })
   })
 </script>

@@ -78,7 +78,7 @@ if (!$category) {
       const id = $(this).data('id')
       Swal
         .fire({
-          title: 'Delete Product?',
+          title: 'Delete This Category?',
           text: 'This action cannot be reverted. Are you sure?',
           showCancelButton: true,
           confirmButtonText: 'Delete',
@@ -93,7 +93,7 @@ if (!$category) {
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: 'actions/delete-product.php',
+                url: '<?php echo DELETE_CATEGORY_BY_ID_API ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -102,7 +102,7 @@ if (!$category) {
               })
 
               if (response.status) {
-                window.location.replace(response.data.redirectUrl)
+                window.location.replace('<?php echo APP_URL ?>/admin/categories')
               } else {
                 toastr.error(response.message)
               }

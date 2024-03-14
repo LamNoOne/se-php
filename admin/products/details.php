@@ -115,7 +115,7 @@ if (!$product) {
       const id = $(this).data('id')
       Swal
         .fire({
-          title: 'Delete Product?',
+          title: 'Delete This Product?',
           text: 'This action cannot be reverted. Are you sure?',
           showCancelButton: true,
           confirmButtonText: 'Delete',

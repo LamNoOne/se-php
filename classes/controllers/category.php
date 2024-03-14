@@ -106,11 +106,17 @@ class Category extends Message
          */
     }
 
-    public static function deleteCategory($conn, $categoryId)
+    public static function deleteCategory($conn, $id)
     {
-        /**
-         * Write your code here
-         */
+        try {
+            $stmt = getDeleteByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete category successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
     }
 
     public static function getCategoryById($conn, $id)

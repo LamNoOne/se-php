@@ -320,6 +320,14 @@ function getQueryByIdSQLPrepareStatement(
     return $stmt;
 }
 
+function getDeleteByIdSQLPrepareStatement($conn, $table, $id)
+{
+    $sql = "DELETE FROM $table WHERE id = :id";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+    return $stmt;
+}
+
 function getDeleteByIdsSQLPrepareStatement($conn, $table, $ids)
 {
     $placeholders = implode(',', array_fill(0, count($ids), '?'));

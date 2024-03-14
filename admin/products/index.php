@@ -806,15 +806,19 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               })
 
               if (response.status) {
-                const currentPage = table.page.info().page
+                const pageInfo = table.page.info()
+                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
+                let currentPage = pageInfo.page
+                if (numberItemsBeforeDelete <= 1) {
+                  currentPage = currentPage - 1;
+                }
                 table.page(currentPage).draw('page')
-                toastr.success('Delete product successfully')
+                toastr.success(response.message)
               } else {
-                toastr.error('Delete product failed')
+                toastr.error(response.message)
               }
             }
           } catch (error) {
-            console.log(error);
             toastr.error('Something went wrong')
           }
         })
