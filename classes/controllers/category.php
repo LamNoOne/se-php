@@ -37,72 +37,66 @@ class Category extends Message
          */
     }
 
-    public static function getAllCategories($conn)
-    {
-        $query = "SELECT * FROM category";
-        try {
-            $stmt = $conn->prepare($query);
-            $stmt->setFetchMode(PDO::FETCH_CLASS, "Category");
-            $stmt->execute();
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            return Message::message(false, "Can not get all categories" . $e->getMessage());
-        }
-    }
-
+    /**
+     $pagination = ['limit' => 10, 'offset' => 0]
+     */
     public static function getCategories(
         $conn,
-        $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]],
         $pagination = [],
-        $sort =  ['sortBy' => 'id', 'order' => 'ASC']
+        $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
+            $projection =  [
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'name'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'description'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'updatedAt'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['CATEGORY']
+                ],
+            ];
+            $selection = array_map(function ($filterItem) {
+                return [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value'],
+                    'like' => $filterItem['like'],
+                ];
+            }, $filter);
+            $sort = [
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => $sort['sortBy'],
+                    'order' => $sort['order']
+                ]
+            ];
+
             $stmt = getQuerySQLPrepareStatement(
                 $conn,
-                [
-                    [
-                        "table" => TABLES['CATEGORY'],
-                        "column" => "id"
-                    ],
-                    [
-                        "table" => TABLES['CATEGORY'],
-                        "column" => "name"
-                    ],
-                    [
-                        "table" => TABLES['CATEGORY'],
-                        "column" => "description"
-                    ],
-                    [
-                        "table" => TABLES['CATEGORY'],
-                        "column" => "createdAt"
-                    ],
-                    [
-                        "table" => TABLES['CATEGORY'],
-                        "column" => "updatedAt"
-                    ],
-                ],
-                [
-                    "tables" => [
-                        TABLES['CATEGORY'],
-                    ],
-                    "on" => [
-                        [
-                            'table1' => 'product',
-                            'table2' => 'category',
-                            'column1' => 'categoryId',
-                            'column2' => 'id'
-                        ]
-                    ]
-                ],
-                $filter,
+                $projection,
+                $join,
+                $selection,
                 $pagination,
-                [
-                    [
-                        'table' => 'product',
-                        'column' => $sort['sortBy'],
-                        'order' => $sort['order']
-                    ]
-                ]
+                $sort
             );
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
@@ -110,8 +104,7 @@ class Category extends Message
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            return [$stmt, $e->getMessage()];
-            return Message::message(false, 'Get all products failed');
+            return Message::message(false, 'Get categories failed');
         }
     }
 }

@@ -74,7 +74,7 @@ function generateSQLConditions(
     ];
 }
 
-function getSQLQuery($projection = [], $join = [], $selection = [], $pagination = [], $sort = [])
+function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = [], $sort = [])
 {
     $sqlClauses = [];
 
@@ -92,17 +92,27 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
     }
 
     // handle from clause
+    if (!isset($join['tables'])) {
+        throw new InvalidArgumentException('"$tables" is required');
+    }
+    if (!is_array($join['tables'])) {
+        throw new InvalidArgumentException('"$tables" must be a array');
+    }
+    if (isset($join['on']) && !is_array($join['on'])) {
+        throw new InvalidArgumentException('"$join[\'on\']" must be a array');
+    }
     $tables = $join['tables'];
-    $on = $join['on'];
     if (count($tables) === 0) {
         throw new InvalidArgumentException('"$tables" must have at least 1 table');
     } else if (
         count($tables) === 1
-        && isset($join['on'])
-        && count($join['on']) < 1
+        && !isset($join['on'])
     ) {
         $sqlClauses[] = 'FROM ' . $tables[0];
+    } else if (isset($join['on']) && count($join['on']) < 1) {
+        $sqlClauses[] = 'FROM ' . $tables[0];
     } else {
+        $on = $join['on'];
         $joinClauses = [
             "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
         ];
@@ -125,22 +135,29 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
         ]
      */
     $whereConditions = [];
-    foreach ($selection as $selectItem) {
+    foreach ($selection as $index => $selectItem) {
+        if ($selectItem['value'] === '') {
+            continue;
+        }
         $compareOperator = '=';
-        $selectValue = '';
+        $param = '';
         if (isset($selectItem['like'])) {
             if ($selectItem['like']) {
                 $compareOperator = 'LIKE';
-                $selectValue = "{$selectItem['value']}";
+                $param = ":{$selectItem['column']}$index";
             }
         } else {
-            $selectValue = "'{$selectItem['value']}'";
+            $param = ":{$selectItem['value']}$index";
         }
 
         if (isset($selectItem['table'])) {
-            $whereConditions[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $selectValue";
+            $whereConditions[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $param";
         } else {
-            $whereConditions[] = "{$selectItem['column']} $compareOperator $selectValue";
+            if ($selectItem['table'] === '') {
+                $whereConditions[] = "{$selectItem['column']} $compareOperator $param";
+            } else {
+                $whereConditions[] = "{$selectItem['table']}.{$selectItem['column']} $compareOperator $param";
+            }
         }
     }
     if (!empty($whereConditions)) {
@@ -150,7 +167,7 @@ function getSQLQuery($projection = [], $join = [], $selection = [], $pagination 
     // handle order by clause
     if (!empty($sort)) {
         $orderByConditions = array_map(function ($sortItem) {
-            if (isset($sortItem['table']) && !$sortItem['table'] === '') {
+            if (isset($sortItem['table']) && !$sortItem['table'] !== '') {
                 return "{$sortItem['table']}.{$sortItem['column']} {$sortItem['order']}";
             } else {
                 return "{$sortItem['column']} {$sortItem['order']}";
@@ -184,7 +201,7 @@ function getQuerySQLPrepareStatement(
     $conn,
     $projection = [],
     $join = [],
-    $filter = [['field' => 'id', 'value' => '1', 'like' => false, 'int' => true]],
+    $selection = [['table' => '', 'column' => 'id', 'value' => '', 'like' => false]],
     $pagination = [],
     $sort =  [[
         'table' => '',
@@ -200,19 +217,7 @@ function getQuerySQLPrepareStatement(
         ];
     }
 
-    $selection = [];
-    $i = 1;
-    foreach ($filter as $filterItem) {
-        $selection[] = [
-            'table' => 'product',
-            'column' => $filterItem['field'],
-            'value' => ':value' . $i++,
-            'like' => isset($filterItem['like']) ? $filterItem['like'] : false,
-            'int' => isset($filterItem['int']) ? $filterItem['int'] : false
-        ];
-    }
-
-    $query = getSQLQuery(
+    $query = getPlaceholderQuerySQL(
         $projection,
         $join,
         $selection,
@@ -222,15 +227,18 @@ function getQuerySQLPrepareStatement(
 
     $stmt = $conn->prepare($query);
 
-    $i = 1;
-    foreach ($filter as $filterItem) {
-        if ($filterItem['like']) {
-            $stmt->bindValue(':value' . $i++, '%' . $filterItem['value'] . '%', PDO::PARAM_STR);
+    foreach ($selection as $index => $selectionItem) {
+        if ($selectionItem['value'] === '') {
+            continue;
+        }
+        $param = ":{$selectionItem['column']}$index";
+        if ($selectionItem['like']) {
+            $stmt->bindValue($param, '%' . $selectionItem['value'] . '%', PDO::PARAM_STR);
         } else {
-            if ($filterItem['int']) {
-                $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_INT);
+            if (is_numeric($selectionItem['value'])) {
+                $stmt->bindValue($param, $selectionItem['value'], PDO::PARAM_INT);
             } else {
-                $stmt->bindValue(':value' . $i++, $filterItem['value'], PDO::PARAM_STR);
+                $stmt->bindValue($param, $selectionItem['value'], PDO::PARAM_STR);
             }
         }
     }

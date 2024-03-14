@@ -384,110 +384,122 @@ class Product extends DataFetcher
         $conn,
         $filter = [['field' => 'id', 'value' => '', 'like' => false]],
         $pagination = [],
-        $sort =  ['sortBy' => 'id', 'order' => 'ASC']
+        $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
-            $stmt = getQuerySQLPrepareStatement(
-                $conn,
+            $projection =  [
                 [
-                    [
-                        "table" => "product",
-                        "column" => "id"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "name"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "description"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "imageUrl"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "screen"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "operatingSystem"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "processor"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "ram"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "storageCapacity"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "weight"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "batteryCapacity"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "color"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "price"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "stockQuantity"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "createdAt"
-                    ],
-                    [
-                        "table" => "product",
-                        "column" => "updatedAt"
-                    ],
-                    [
-                        "table" => "category",
-                        "column" => "id",
-                        'as' => 'categoryId'
-                    ],
-                    [
-                        "table" => "category",
-                        "column" => "name",
-                        'as' => 'categoryName'
-                    ],
+                    'table' => 'product',
+                    'column' => 'id'
                 ],
                 [
-                    "tables" => [
-                        "product",
-                        "category",
-                    ],
-                    "on" => [
-                        [
-                            'table1' => 'product',
-                            'table2' => 'category',
-                            'column1' => 'categoryId',
-                            'column2' => 'id'
-                        ]
-                    ]
+                    'table' => 'product',
+                    'column' => 'name'
                 ],
-                $filter,
-                $pagination,
                 [
+                    'table' => 'product',
+                    'column' => 'description'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'imageUrl'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'screen'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'operatingSystem'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'processor'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'ram'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'storageCapacity'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'weight'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'batteryCapacity'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'color'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'price'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'stockQuantity'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => 'product',
+                    'column' => 'updatedAt'
+                ],
+                [
+                    'table' => 'category',
+                    'column' => 'id',
+                    'as' => 'categoryId'
+                ],
+                [
+                    'table' => 'category',
+                    'column' => 'name',
+                    'as' => 'categoryName'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    'product',
+                    'category',
+                ],
+                'on' => [
                     [
-                        'table' => 'product',
-                        'column' => $sort['sortBy'],
-                        'order' => $sort['order']
+                        'table1' => 'product',
+                        'table2' => 'category',
+                        'column1' => 'categoryId',
+                        'column2' => 'id'
                     ]
                 ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                return [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value'],
+                    'like' => $filterItem['like'],
+                ];
+            }, $filter);
+            $sort = [
+                [
+                    'table' => 'product',
+                    'column' => $sort['sortBy'],
+                    'order' => $sort['order']
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+                $pagination,
+                $sort
             );
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
@@ -495,7 +507,6 @@ class Product extends DataFetcher
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            return [$stmt, $e->getMessage()];
             return Message::message(false, 'Get all products failed');
         }
     }

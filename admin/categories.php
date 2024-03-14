@@ -21,13 +21,13 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Product List</h3>
-        <h4>Manage your products</h4>
+        <h3>Category List</h3>
+        <h4>Manage your categories</h4>
       </div>
       <div id="openProductModalButton" class="page-btn">
         <button href="add-product.php" class="btn btn-added box-shadow">
           <img src="assets/img/icons/plus.svg" alt="img" class="me-1" />
-          Add New Product
+          Add New Category
         </button>
       </div>
     </div>
@@ -113,9 +113,6 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                 </th>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Category</th>
                 <th>Created At</th>
                 <th>Action</th>
               </tr>
@@ -133,7 +130,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addProductModalLabel">Add New Product</h1>
+        <h1 class="modal-title fs-5" id="addProductModalLabel">Add New Category</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
@@ -141,105 +138,14 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           <div class="row gx-5">
             <div class="col-lg-3 col-sm-6 col-12">
               <div class="form-group">
-                <label>Product Name</label>
+                <label>Category Name</label>
                 <input type="text" name="name" autofocus />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Category</label>
-                <select name="categoryId" class="select">
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Price</label>
-                <input type="number" name="price" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Stock Quantity</label>
-                <input type="number" name="stockQuantity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Screen</label>
-                <input type="text" name="screen" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Operating System</label>
-                <input type="text" name="operatingSystem" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Processor</label>
-                <input type="text" name="processor" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>RAM</label>
-                <input type="number" name="ram" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Storage Capacity</label>
-                <input type="number" name="storageCapacity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Weight</label>
-                <input type="number" name="weight" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Battery Capacity</label>
-                <input type="number" name="batteryCapacity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Color</label>
-                <input type="text" name="color" />
               </div>
             </div>
             <div class="col-lg-12">
               <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" name="description"></textarea>
-              </div>
-            </div>
-            <div class="col-lg-12">
-              <div class="form-group">
-                <label>Image</label>
-                <div class="preview-image-wrapper mx-auto">
-                  <div class="preview-image">
-                    <div class="image">
-                      <img>
-                    </div>
-                    <div class="content">
-                      <div class="icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                      </div>
-                      <p class="text">No file chosen, yet!</p>
-                    </div>
-                    <div class="cancel-btn">
-                      <i class="fas fa-times"></i>
-                    </div>
-                    <p class="file-name">File name here</p>
-                    <input name="image" class="input-file" type="file">
-                  </div>
-                  <button class="choose-file-btn">Choose a image</button>
-                </div>
               </div>
             </div>
           </div>
@@ -265,106 +171,14 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           <div class="row gx-5">
             <div class="col-lg-3 col-sm-6 col-12">
               <div class="form-group">
-                <label>Product Name</label>
+                <label>Category Name</label>
                 <input type="text" name="name" autofocus />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Category</label>
-                <select name="categoryId" class="select">
-                </select>
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Price</label>
-                <input type="number" name="price" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Stock Quantity</label>
-                <input type="number" name="stockQuantity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Screen</label>
-                <input type="text" name="screen" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Operating System</label>
-                <input type="text" name="operatingSystem" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Processor</label>
-                <input type="text" name="processor" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>RAM</label>
-                <input type="number" name="ram" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Storage Capacity</label>
-                <input type="number" name="storageCapacity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Weight</label>
-                <input type="number" name="weight" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Battery Capacity</label>
-                <input type="number" name="batteryCapacity" />
-              </div>
-            </div>
-            <div class="col-lg-3 col-sm-6 col-12">
-              <div class="form-group">
-                <label>Color</label>
-                <input type="text" name="color" />
               </div>
             </div>
             <div class="col-lg-12">
               <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" name="description"></textarea>
-              </div>
-            </div>
-            <div class="col-lg-12">
-              <div class="form-group">
-                <label>Image</label>
-                <div class="preview-image-wrapper mx-auto">
-                  <div class="preview-image">
-                    <div class="image">
-                      <img>
-                    </div>
-                    <div class="content">
-                      <div class="icon">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                      </div>
-                      <p class="text">No file chosen, yet!</p>
-                    </div>
-                    <div class="cancel-btn">
-                      <i class="fas fa-times"></i>
-                    </div>
-                    <p class="file-name">File name here</p>
-                    <input name="image" class="input-file" type="file">
-                    <input name="currentImageUrl" class="current-image-url" type="hidden">
-                  </div>
-                  <button class="choose-file-btn">Choose a image</button>
-                </div>
               </div>
             </div>
           </div>
@@ -419,10 +233,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
-        [5, 'asc']
+        [3, 'asc']
       ],
       ajax: {
-        url: 'actions/get-products.php',
+        url: 'actions/get-categories.php',
         type: 'GET',
         data: function(d, settings) {
           return {
@@ -459,23 +273,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           targets: 2
         },
         {
-          name: 'price',
+          name: 'createdAt',
           targets: 3
         },
         {
-          name: 'stockQuantity',
-          targets: 4
-        },
-        {
-          name: 'categoryId',
-          targets: 5
-        },
-        {
-          name: 'createdAt',
-          targets: 6
-        },
-        {
-          targets: 7,
+          targets: 4,
           orderable: false,
           searchable: false,
         },
@@ -502,25 +304,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <div class="productimgname">
-                <a href="product-details.php?id=${row.id}" class="product-img">
-                  <img src="${row.imageUrl}" />
-                </a>
-                <a class="text-linear-hover" href="product-details.php?id=${row.id}">
-                  ${row.name}
-                </a>
-              </div>
+              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+                ${row.name}
+              </a>
             `
           }
-        },
-        {
-          data: 'price'
-        },
-        {
-          data: 'stockQuantity'
-        },
-        {
-          data: 'categoryName'
         },
         {
           data: 'createdAt'
