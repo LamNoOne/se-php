@@ -190,6 +190,60 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
     return implode(' ', $sqlClauses);
 }
 
+function getPlaceholderQueryByIdSQL($projection = [], $join = [])
+{
+    $sqlClauses = [];
+
+    // handle select clause
+    if (empty($projection)) {
+        $sqlClauses[] = 'SELECT *';
+    } else {
+        $sqlClauses[] = "SELECT " . implode(', ', array_map(function ($projectionItem) {
+            $as = '';
+            if (isset($projectionItem['as']) && $projectionItem['as']) {
+                $as = "AS {$projectionItem['as']}";
+            }
+            return "{$projectionItem['table']}.{$projectionItem['column']} $as";
+        }, $projection));
+    }
+
+    // handle from clause
+    if (!isset($join['tables'])) {
+        throw new InvalidArgumentException('"$tables" is required');
+    }
+    if (!is_array($join['tables'])) {
+        throw new InvalidArgumentException('"$tables" must be a array');
+    }
+    if (isset($join['on']) && !is_array($join['on'])) {
+        throw new InvalidArgumentException('"$join[\'on\']" must be a array');
+    }
+    $tables = $join['tables'];
+    if (count($tables) === 0) {
+        throw new InvalidArgumentException('"$tables" must have at least 1 table');
+    } else if (
+        count($tables) === 1
+        && !isset($join['on'])
+    ) {
+        $sqlClauses[] = 'FROM ' . $tables[0];
+    } else if (isset($join['on']) && count($join['on']) < 1) {
+        $sqlClauses[] = 'FROM ' . $tables[0];
+    } else {
+        $on = $join['on'];
+        $joinClauses = [
+            "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
+        ];
+        for ($i = 2; $i < count($tables); $i++) {
+            $joinClauses[] = "JOIN {$tables[$i]} ON {$on[$i - 1]['table1']}.{$on[$i - 1]['column1']} = {$on[$i - 1]['table2']}.{$on[$i - 1]['column2']}";
+        }
+        $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
+    }
+
+    // handle where clause
+    $sqlClauses[] = 'WHERE id = :id';
+
+    return implode(' ', $sqlClauses);
+}
+
 /**
 $sort =  [
         'table' => 'product',
@@ -248,6 +302,21 @@ function getQuerySQLPrepareStatement(
         $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
     }
 
+    return $stmt;
+}
+
+function getQueryByIdSQLPrepareStatement(
+    $conn,
+    $id,
+    $projection = [],
+    $join = [],
+) {
+    $query = getPlaceholderQueryByIdSQL(
+        $projection,
+        $join
+    );
+    $stmt = $conn->prepare($query);
+    $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     return $stmt;
 }
 

@@ -112,6 +112,34 @@ class Category extends Message
          */
     }
 
+    public static function getCategoryById($conn, $id)
+    {
+        try {
+            $projection =  [];
+            $join =  [
+                'tables' => [
+                    TABLES['CATEGORY']
+                ],
+            ];
+
+            $stmt = getQueryByIdSQLPrepareStatement(
+                $conn,
+                $id,
+                $projection,
+                $join,
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(false, 'Get category by id successfully', [
+                'category' => $stmt->fetch()
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, 'Get category by id failed');
+        }
+    }
+
     /**
      $pagination = ['limit' => 10, 'offset' => 0]
      */

@@ -1,7 +1,7 @@
 <?php
-require_once  dirname(__DIR__) . "/inc/init.php";
+require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 if (!isset($conn))
-  $conn = require_once dirname(__DIR__) . "/inc/db.php";
+  $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 
 $productId = $_GET['id'];
 
@@ -14,7 +14,7 @@ if (!$product) {
 
 ?>
 
-<?php require_once "./inc/components/header.php" ?>;
+<?php require_once dirname(__DIR__) . "/inc/components/header.php" ?>;
 
 <div class="page-wrapper">
   <div class="content">
@@ -102,12 +102,12 @@ if (!$product) {
       </div>
     </div>
     <div class="d-flex gap-3">
-      <a class="btn btn-primary" href="products.php">Back</a>
+      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/admin/products">Back</a>
     </div>
   </div>
 </div>
 
-<?php require_once "./inc/components/footer.php" ?>;
+<?php require_once dirname(__DIR__) . "/inc/components/footer.php" ?>;
 
 <script>
   $(document).ready(function() {
@@ -130,7 +130,7 @@ if (!$product) {
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: 'actions/delete-product.php',
+                url: '<?php echo DELETE_PRODUCT_BY_ID_API ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -139,9 +139,9 @@ if (!$product) {
               })
 
               if (response.status) {
-                window.location.replace(response.data.redirectUrl)
+                window.location.replace('<?php echo APP_URL; ?>/admin/products')
               } else {
-                toastr.error(response.message)
+                toastr.error('Something went wrong')
               }
             }
           } catch (error) {

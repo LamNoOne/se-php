@@ -8,19 +8,14 @@
   <meta name="keywords" content="admin, estimates, bootstrap, business, corporate, creative, management, minimal, modern,  html5, responsive">
   <meta name="author" content="Dreamguys - Bootstrap Admin Template">
   <meta name="robots" content="noindex, nofollow">
-  <title>Error Server - SE Shop PHP - Admin</title>
+  <title>500 - SE Shop PHP</title>
 
   <link rel="shortcut icon" type="image/x-icon" href="assets/img/favicon.jpg">
-
   <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-
   <link rel="stylesheet" href="assets/css/animate.css">
-
   <link rel="stylesheet" href="assets/css/dataTables.bootstrap4.min.css">
-
   <link rel="stylesheet" href="assets/plugins/fontawesome/css/fontawesome.min.css">
   <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
-
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -38,16 +33,11 @@
     </div>
   </div>
 
-
   <script src="assets/js/jquery-3.6.0.min.js"></script>
-
   <script src="assets/js/feather.min.js"></script>
-
   <script src="assets/js/jquery.slimscroll.min.js"></script>
-
   <script src="assets/js/bootstrap.bundle.min.js"></script>
-
-  <script src="assets/js/script.js"></script>
+  <?php require 'script_js.php' ?>
 </body>
 
 </html>
