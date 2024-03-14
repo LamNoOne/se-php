@@ -146,6 +146,39 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
   </div>
 </div>
 
+<div class="modal fade" id="editModal" aria-hidden="true" aria-labelledby="editModalLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editModalLabel">Edit Category</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row gx-5">
+            <div class="col-lg-12 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Category Name</label>
+                <input type="text" name="name" autofocus />
+              </div>
+            </div>
+            <div class="col-lg-12 col-sm-12 col-12">
+              <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" name="description"></textarea>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-submit me-2">Update</button>
+        <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php require_once dirname(__DIR__) . "/inc/components/footer.php" ?>;
 
 <script>
@@ -351,6 +384,86 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         }
       } catch (error) {
         clearForm(addModal, addForm);
+        toastr.error('Something went wrong')
+      }
+    })
+
+    // handle edit
+    const editFormId = '#editForm'
+    const editModalId = '#editModal'
+    const editForm = $(editFormId)
+    const editModal = $(editModalId)
+    const editFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    $('#table tbody').on('click', '.edit-button', async function(event) {
+      try {
+        const id = $(this).data('id')
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+
+        const response = await $.ajax({
+          url: `<?php echo GET_CATEGORY_BY_ID_API; ?>?id=${id}`,
+          type: 'GET',
+          dataType: 'json'
+        })
+
+        if (response.status) {
+          const category = response.data.category;
+
+          editForm.attr('data-id', id);
+          editForm.find('input[name="name"]').val(category.name)
+          editForm.find('textarea[name="description"]').val(category.description)
+
+          modal.show()
+        } else {
+          toastr.error(response.message)
+        }
+      } catch (error) {
+        toastr.error('Something went wrong')
+      }
+    })
+    editFormSubmitButton.click(function() {
+      editForm.submit()
+    })
+    editForm.validate({
+      rules: {
+        name: {
+          required: true
+        }
+      },
+    })
+    editForm.submit(async function(event) {
+      try {
+        event.preventDefault()
+        if ($(this).valid()) {
+          const id = $(this).data('id')
+          let data = $(this).serializeArray().reduce((acc, item) => {
+            return {
+              ...acc,
+              [item.name]: item.value
+            }
+          }, {})
+
+          data = {
+            ...data,
+            id
+          }
+
+          const response = await $.ajax({
+            url: '<?php echo UPDATE_CATEGORY_API; ?>',
+            type: 'POST',
+            dataType: 'json',
+            data,
+          })
+          if (response.status) {
+            const currentPage = table.page.info().page;
+            table.page(currentPage).draw('page')
+            toastr.success('Edit product successfully')
+          } else {
+            toastr.error(response.message)
+          }
+          clearForm(editModal, editForm);
+        }
+      } catch (error) {
+        clearForm(editModal, editForm);
         toastr.error('Something went wrong')
       }
     })

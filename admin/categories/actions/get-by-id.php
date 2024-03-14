@@ -16,7 +16,7 @@ if (!isset($_GET['id'])) {
 
 $id = $_GET['id'];
 
-$result = Category::getCategoryById($coon, $id);
+$result = Category::getCategoryById($conn, $id);
 
 if (!$result['status']) {
   throwStatusMessage($result);

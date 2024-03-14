@@ -363,6 +363,38 @@ function getCreateSQLPrepareStatement($conn, $table, $object)
     return $stmt;
 }
 
+function getUpdateByIdSQLPrepareStatement($conn, $table, $id, $dataToUpdate = [])
+{
+    $keyValuePairs = [];
+    foreach ($dataToUpdate as $key => $value) {
+        $keyValuePairs[] = "`$key`=:$key";
+    }
+    $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs) . " WHERE id=:id";
+    $stmt = $conn->prepare($updateStatement);
+    foreach ($dataToUpdate as $key => $value) {
+        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+    }
+    $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+    return $stmt;
+}
+
+function getDuplicateKeyWhenSQLInsertUpdate($exceptionError)
+{
+    $errorCode = $exceptionError->getCode();
+    $errorMessage = $exceptionError->getMessage();
+    $duplicateKey = [];
+    if (!$errorCode === '23000') {
+        return $duplicateKey;
+    }
+
+    $pattern = "/Duplicate entry '([^']*)' for key '([^']*)'/";
+    if (preg_match($pattern, $errorMessage, $matches)) {
+        $duplicateKey[] = $matches[1];
+        $duplicateKey[] = $matches[2];
+    }
+    return $duplicateKey;
+}
+
 function deleteFileByURL($url)
 {
     $pathToDelete = $_SERVER['DOCUMENT_ROOT'] . parse_url($url)['path'];

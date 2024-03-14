@@ -105,24 +105,35 @@ class Category extends Message
             }
             return Message::message(true, 'Add product successfully');
         } catch (Exception $e) {
-            $errorCode = $e->getCode();
-            $errorMessage = $e->getMessage();
-            if ($errorCode === '23000') {
-                if (preg_match("/for key '(\w+)'/", $errorMessage, $matches)) {
-                    // $duplicationKey = $matches[1];
-                    return Message::message(false, 'Category name cannot be duplicated');
-                }
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
                 return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
             }
             return Message::message(false, 'Something went wrong');
         }
     }
 
-    public static function updateCategory($conn, $categoryData)
+    public static function updateCategory($conn, $id, $dataToUpdate)
     {
-        /**
-         * Write your code here
-         */
+        try {
+            $stmt = getUpdateByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id, $dataToUpdate);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update category successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
+                return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
+            }
+            return Message::message(false, 'Something went wrong');
+        }
     }
 
     public static function deleteCategory($conn, $id)
