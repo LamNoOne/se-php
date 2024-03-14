@@ -2,48 +2,8 @@
 <?php require_once "../inc/utils.php"; ?>
 
 <?php
-if (isset($_SESSION['username'])) {
+if (isset($_SESSION['userId'])) {
     redirect(APP_URL);
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (empty($_POST['email']) || empty($_POST['password'])) {
-        // Display toast message warning
-    } else {
-        if (!isset($conn))
-            $conn = require_once "../inc/db.php";
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-
-        $data = User::authenticate($conn, $email, $password);
-
-        if ($data['status']) {
-            $message = $data['message'];
-            $user = $data['data'];
-            $_SESSION['username'] = $user->username;
-            $_SESSION['firstName'] = $user->firstName;
-            $_SESSION['lastName'] = $user->lastName;
-            $_SESSION['email'] = $user->email;
-            $_SESSION['userId'] = $user->id;
-            $_SESSION['image'] = $user->imageUrl;
-            if ($user->phoneNumber !== NULL) {
-                $_SESSION['phoneNumber'] = $user->phoneNumber;
-            }
-            if ($user->address !== NULL) {
-                $_SESSION['address'] = $user->address;
-            }
-            if (isset($_SESSION['userId']))
-                Auth::login();
-            redirect(APP_URL);
-        } else {
-            // Display toast message warning
-            // Cannot display error message when wrong username or password, move logic to login.php later
-            $status = $data['status'];
-            $message = $data['message'];
-        }
-    }
 }
 ?>
 
@@ -64,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <p class="login-container__desc m-0">
                             If you have an account, sign in with your email address.
                         </p>
-                        <form action="login-register.php" method="post" class="login-form">
+                        <form action="actions/login.php" method="POST" id="form-login" class="login-form">
                             <fieldset>
                                 <div class="login-form__input-container d-flex flex-column gap-1 my-3">
                                     <label for="email-login" class="login-form__input__label">Email<span>&nbsp;*</span></label>
@@ -206,11 +166,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <script>
     $(document).ready(function() {
         const formRegister = $("#form-register");
+        const formLogin = $("#form-login");
 
-        jQuery.validator.addMethod("valid_email", function(value) {
+        const validateEmail = (value) => {
             const regex = /^[a-z0-9]+([-._][a-z0-9]+)*@([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{1,5}$/;
             return value.trim().match(regex);
-        });
+        }
+
+        jQuery.validator.addMethod("valid_email", validateEmail);
 
         formRegister.validate({
             rules: {
@@ -269,25 +232,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             },
         });
 
-        formRegister.submit(async function(e) {
-            e.preventDefault();
-            const formData = {
+        const getRegisterData = () => {
+            return {
                 firstName: $("#firstname").val(),
                 lastName: $("#lastname").val(),
                 username: $("#username").val(),
                 email: $("#email-register").val(),
                 password: $("#password-register").val(),
             }
+        }
 
+        const getLoginData = () => {
+            return {
+                email: $("#email-login").val(),
+                password: $("#password-login").val(),
+            }
+        }
+
+        const register = async (formData) => {
+            const response = await $.ajax({
+                method: "POST",
+                url: "actions/register.php",
+                data: formData,
+            })
+            return JSON.parse(response);
+        }
+
+        const login = async (formData) => {
+            const response = await $.ajax({
+                method: "POST",
+                url: "actions/login.php",
+                data: formData,
+            })
+            return JSON.parse(response);
+        }
+
+        formRegister.submit(async function(e) {
+            e.preventDefault();
             $("#submit-register").html("Loading...");
-
             try {
-                const registerResponse = await $.ajax({
-                    method: "POST",
-                    url: "actions/register.php",
-                    data: formData,
-                })
-                const response = JSON.parse(registerResponse);
+                const response = await register(getRegisterData());
 
                 if (response.status) {
                     const otpId = response.data.otp_id;
@@ -298,6 +282,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             } catch (error) {
                 console.log(error)
+            }
+        })
+
+        formLogin.submit(async function(e) {
+            e.preventDefault();
+            $("#submit-login").html("Loading...");
+            try {
+                const response = await login(getLoginData())
+                response.status ? window.location.replace(response.data.redirect) : toastr.warning(message, "Wrong email or password");
+            } catch (error) {
+                toastr.error(error.message, "User login failed");
             }
         })
     })

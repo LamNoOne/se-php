@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'limit' => isset($_POST['limit']) ? $_POST['limit'] : 20,
             'offset' => 0,
         ];
-    
+        
         $searchResponse = Product::getAllProductsByCondition($conn, $queryProduct)['data'];
         return throwStatusMessage($searchResponse);
     }

@@ -30,10 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $subject = "Your verify code";
     $body = "<p>Dear $firstName $lastName </p> <h3>Your verify OTP code is $otpCode <br></h3>
+            <p>Please verify your email to complete setup <br></p>
             <br><br>
-            <p>With regrads,</p>
-            <b>Programming with Lam</b>
-            https://github.com/LamNoOne";
+            <b>SE Shop</b>";
 
     $responseEmail = Mail::sendEmail($email, $firstName . $lastName, $subject, $body);
 

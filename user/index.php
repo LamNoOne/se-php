@@ -38,7 +38,7 @@ $user = User::getUserById($conn, $_SESSION['userId']);
             <div class="col-10 px-4">
                 <div class="card">
                     <div class="card-header">Account Information</div>
-                    <div class="card-body">
+                    <div class="card-body d-flex flex-column gap-3">
                         <!-- Avatar -->
                         <img src="<?php echo isset($user->imageUrl) ? $user->imageUrl : APP_URL . "/assets/img/no-image.png"; ?>" alt="Avatar" id="avatar" class="img-thumbnail img-user object-fit-contain mb-3">
                         <!-- Change Avatar Form -->
@@ -80,25 +80,42 @@ $user = User::getUserById($conn, $_SESSION['userId']);
                             <button type="submit" class="btn btn-primary">Update Info</button>
                         </form>
                         <!-- Change Password Form -->
-                        <form id="change-user-password" method="POST" action="" enctype="multipart/form-data">
-                            <h5>Change Password</h5>
-                            <!-- Current Password -->
-                            <div class="mb-3">
-                                <label for="current-password" class="form-label">Current Password:</label>
-                                <input type="password" placeholder="If you use google auth, you don't need to fill it" id="current-password" name="currentPassword" class="form-control">
-                            </div>
-                            <!-- New Password -->
-                            <div class="mb-3">
-                                <label for="new-password" class="form-label">New Password:</label>
-                                <input type="password" id="new-password" name="newPassword" class="form-control">
-                            </div>
-                            <!-- Confirm New Password -->
-                            <div class="mb-3">
-                                <label for="confirm-password" class="form-label">Confirm New Password:</label>
-                                <input type="password" id="confirm-password" name="confirmPassword" class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Change Password</button>
-                        </form>
+                        <?php if (!empty($user->password)) : ?>
+                            <form id="change-user-password" method="POST" action="" enctype="multipart/form-data">
+                                <h5>Change Password</h5>
+                                <!-- Current Password -->
+                                <div class="mb-3">
+                                    <label for="current-password" class="form-label">Current Password:</label>
+                                    <input type="password" id="current-password" name="currentPassword" class="form-control">
+                                </div>
+                                <!-- New Password -->
+                                <div class="mb-3">
+                                    <label for="new-password" class="form-label">New Password:</label>
+                                    <input type="password" id="new-password" name="newPassword" class="form-control">
+                                </div>
+                                <!-- Confirm New Password -->
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm New Password:</label>
+                                    <input type="password" id="confirm-password" name="confirmPassword" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        <?php else : ?>
+                            <form id="update-user-password" method="POST" action="" enctype="multipart/form-data">
+                                <h5>Update Password</h5>
+                                <!-- New Password -->
+                                <div class="mb-3">
+                                    <label for="new-password" class="form-label">New Password:</label>
+                                    <input type="password" id="new-password-update" name="new_password" class="form-control">
+                                </div>
+                                <!-- Confirm New Password -->
+                                <div class="mb-3">
+                                    <label for="confirm-password" class="form-label">Confirm New Password:</label>
+                                    <input type="password" id="confirm-password-update" name="confirm_password" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Update Password</button>
+                            </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -117,6 +134,7 @@ $user = User::getUserById($conn, $_SESSION['userId']);
 
         const formUpdateUser = $("#update-user-info");
         const formChangePassword = $("#change-user-password");
+        const formUpdatePassword = $("#update-user-password");
 
         const uploadImage = async function(formData) {
             try {
@@ -269,6 +287,34 @@ $user = User::getUserById($conn, $_SESSION['userId']);
                 const updatePasswordResponse = await $.ajax({
                     method: "POST",
                     url: "actions/change-password.php",
+                    data: passwordData
+                })
+
+                const {
+                    status,
+                    message
+                } = JSON.parse(updatePasswordResponse);
+
+                status ? toastr.success(message, "Update Password") : toastr.error(message, "Update Password");
+            } catch (error) {
+                toastr.error(error.message, "Invalid password");
+            }
+        })
+
+        formUpdatePassword.submit(async function(event) {
+            event.preventDefault();
+
+            const newPassword = $("#new-password-update").val();
+            const confirmPassword = $("#confirm-password-update").val();
+            if (newPassword != confirmPassword) return;
+
+            const passwordData = {
+                password: newPassword
+            }
+            try {
+                const updatePasswordResponse = await $.ajax({
+                    method: "POST",
+                    url: "actions/update-password.php",
                     data: passwordData
                 })
 

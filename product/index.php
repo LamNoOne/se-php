@@ -399,8 +399,6 @@ if (!empty($_GET)) {
         })
     }
 
-    /** Fix refresh page  */
-
     // Filter with price
     btnFilterPrice.addEventListener("click", (event) => {
         event.preventDefault();
