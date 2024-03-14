@@ -117,7 +117,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 </div>
 
 <div class="modal fade" id="addModal" aria-hidden="true" aria-labelledby="addModalLabel" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="addModalLabel">Add New Product</h1>
@@ -241,7 +241,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 </div>
 
 <div class="modal fade" id="editModal" aria-hidden="true" aria-labelledby="editModalLabel" tabindex="-1">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
+  <div class="modal-dialog modal-xl">
     <div class="modal-content">
       <div class="modal-header">
         <h1 class="modal-title fs-5" id="editModalLabel">Edit Product</h1>
