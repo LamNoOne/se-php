@@ -1,7 +1,7 @@
 <?php
-require_once  dirname(__DIR__) . "/inc/init.php";
+require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 if (!isset($conn))
-  $conn = require_once dirname(__DIR__) . "/inc/db.php";
+  $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 
 if (!isset($_GET['id'])) {
   header('Location: ' . APP_URL . '/admin/categories');

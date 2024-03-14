@@ -264,7 +264,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+              <a class="me-2 action" href="<?php echo APP_URL; ?>/admin/categories/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a

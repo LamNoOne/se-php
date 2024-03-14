@@ -133,7 +133,7 @@ class Category extends Message
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');
             }
-            return Message::messageData(false, 'Get category by id successfully', [
+            return Message::messageData(true, 'Get category by id successfully', [
                 'category' => $stmt->fetch()
             ]);
         } catch (Exception $e) {
