@@ -1,5 +1,6 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
+require_once dirname(__DIR__) . "/services/datafetcher.php";
 require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
 class Category extends Message
 {
@@ -137,6 +138,19 @@ class Category extends Message
             ]);
         } catch (Exception $e) {
             return Message::message(false, 'Get category by id failed');
+        }
+    }
+
+    public static function getAllCategories($conn)
+    {
+        $query = "SELECT * FROM category";
+        try {
+            $stmt = $conn->prepare($query);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, "Category");
+            $stmt->execute();
+            return $stmt->fetchAll();
+        } catch (PDOException $e) {
+            return Message::message(false, "Can not get all categories" . $e->getMessage());
         }
     }
 
