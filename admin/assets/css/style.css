@@ -9,6 +9,15 @@
 
 /* Custom */
 /* COMMON */
+.search-set .btn-delete-by-select {
+	min-width: 34px;
+	height: 34px;
+	margin-right: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 17px;
+}
 
 .table {
 	width: 100% !important;

@@ -1,33 +1,20 @@
 <?php
-require_once  dirname(__DIR__) . "/inc/init.php";
-$conn = require_once dirname(__DIR__) . '/inc/db.php';
+require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 ?>
 
-<?php require_once "./inc/components/header.php" ?>;
-
-<style>
-  .search-set .btn-delete-by-select {
-    min-width: 34px;
-    height: 34px;
-    margin-right: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 17px;
-  }
-</style>
+<?php require_once  dirname(__DIR__) . "/inc/components/header.php" ?>;
 
 <div class="page-wrapper">
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Category List</h3>
-        <h4>Manage your categories</h4>
+        <h3>Product List</h3>
+        <h4>Manage your products</h4>
       </div>
-      <div class="page-btn" data-bs-toggle="modal" data-bs-target="#addModal">
-        <button href="add-product.php" class="btn btn-added box-shadow">
-          <img src="assets/img/icons/plus.svg" alt="img" class="me-1" />
-          Add New Category
+      <div id="openProductModalButton" class="page-btn">
+        <button class="btn btn-added box-shadow">
+          <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/plus.svg" alt="img" class="me-1" />
+          Add New Product
         </button>
       </div>
     </div>
@@ -38,8 +25,8 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           <div class="search-set">
             <div class="search-path">
               <a class="btn btn-filter" id="filter_search">
-                <img src="assets/img/icons/filter.svg" alt="img" />
-                <span><img src="assets/img/icons/closes.svg" alt="img" /></span>
+                <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/filter.svg" alt="img" />
+                <span><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/closes.svg" alt="img" /></span>
               </a>
             </div>
             <div class="search-path">
@@ -92,7 +79,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                   </div>
                   <div class="col-lg col-sm-6 col-12">
                     <div class="form-group m-3">
-                      <a class="btn btn-filters ms-auto"><img src="assets/img/icons/search-whites.svg" alt="img" /></a>
+                      <a class="btn btn-filters ms-auto"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/search-whites.svg" alt="img" /></a>
                     </div>
                   </div>
                 </div>
@@ -113,6 +100,9 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
                 </th>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Category</th>
                 <th>Created At</th>
                 <th>Action</th>
               </tr>
@@ -127,31 +117,122 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
 </div>
 
 <div class="modal fade" id="addModal" aria-hidden="true" aria-labelledby="addModalLabel" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addModalLabel">Add New Category</h1>
+        <h1 class="modal-title fs-5" id="addModalLabel">Add New Product</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
-        <form id="addForm" action="add-product.php" method="POST">
+        <form id="addForm" enctype="multipart/form-data">
           <div class="row gx-5">
-            <div class="col-lg-12 col-sm-12 col-12">
+            <div class="col-lg-3 col-sm-6 col-12">
               <div class="form-group">
-                <label>Category Name</label>
+                <label>Product Name</label>
                 <input type="text" name="name" autofocus />
               </div>
             </div>
-            <div class="col-lg-12 col-sm-12 col-12">
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Category</label>
+                <select name="categoryId" class="select">
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Stock Quantity</label>
+                <input type="number" name="stockQuantity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Screen</label>
+                <input type="text" name="screen" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Operating System</label>
+                <input type="text" name="operatingSystem" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Processor</label>
+                <input type="text" name="processor" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>RAM</label>
+                <input type="number" name="ram" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Storage Capacity</label>
+                <input type="number" name="storageCapacity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Weight</label>
+                <input type="number" name="weight" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Battery Capacity</label>
+                <input type="number" name="batteryCapacity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Color</label>
+                <input type="text" name="color" />
+              </div>
+            </div>
+            <div class="col-lg-12">
               <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" name="description"></textarea>
               </div>
             </div>
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label>Image</label>
+                <div class="preview-image-wrapper mx-auto">
+                  <div class="preview-image">
+                    <div class="image">
+                      <img>
+                    </div>
+                    <div class="content">
+                      <div class="icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                      </div>
+                      <p class="text">No file chosen, yet!</p>
+                    </div>
+                    <div class="cancel-btn">
+                      <i class="fas fa-times"></i>
+                    </div>
+                    <p class="file-name">File name here</p>
+                    <input name="image" class="input-file" type="file">
+                  </div>
+                  <button class="choose-file-btn">Choose a image</button>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>
-      <div class="modal-footer d-flex justify-content-end">
+      <div class="modal-footer">
         <button type="submit" class="btn btn-submit me-2">Add</button>
         <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
       </div>
@@ -159,11 +240,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
   </div>
 </div>
 
-<div class="modal fade" id="editProductModal" aria-hidden="true" aria-labelledby="editProductModalLabel" tabindex="-1">
+<div class="modal fade" id="editModal" aria-hidden="true" aria-labelledby="editModalLabel" tabindex="-1">
   <div class="modal-dialog modal-xl modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editProductModalLabel">Edit Product</h1>
+        <h1 class="modal-title fs-5" id="editModalLabel">Edit Product</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
@@ -171,14 +252,106 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           <div class="row gx-5">
             <div class="col-lg-3 col-sm-6 col-12">
               <div class="form-group">
-                <label>Category Name</label>
+                <label>Product Name</label>
                 <input type="text" name="name" autofocus />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Category</label>
+                <select name="categoryId" class="select">
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Stock Quantity</label>
+                <input type="number" name="stockQuantity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Screen</label>
+                <input type="text" name="screen" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Operating System</label>
+                <input type="text" name="operatingSystem" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Processor</label>
+                <input type="text" name="processor" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>RAM</label>
+                <input type="number" name="ram" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Storage Capacity</label>
+                <input type="number" name="storageCapacity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Weight</label>
+                <input type="number" name="weight" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Battery Capacity</label>
+                <input type="number" name="batteryCapacity" />
+              </div>
+            </div>
+            <div class="col-lg-3 col-sm-6 col-12">
+              <div class="form-group">
+                <label>Color</label>
+                <input type="text" name="color" />
               </div>
             </div>
             <div class="col-lg-12">
               <div class="form-group">
                 <label>Description</label>
                 <textarea class="form-control" name="description"></textarea>
+              </div>
+            </div>
+            <div class="col-lg-12">
+              <div class="form-group">
+                <label>Image</label>
+                <div class="preview-image-wrapper mx-auto">
+                  <div class="preview-image">
+                    <div class="image">
+                      <img>
+                    </div>
+                    <div class="content">
+                      <div class="icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                      </div>
+                      <p class="text">No file chosen, yet!</p>
+                    </div>
+                    <div class="cancel-btn">
+                      <i class="fas fa-times"></i>
+                    </div>
+                    <p class="file-name">File name here</p>
+                    <input name="image" class="input-file" type="file">
+                    <input name="currentImageUrl" class="current-image-url" type="hidden">
+                  </div>
+                  <button class="choose-file-btn">Choose a image</button>
+                </div>
               </div>
             </div>
           </div>
@@ -192,7 +365,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
   </div>
 </div>
 
-<?php require_once "./inc/components/footer.php" ?>;
+<?php require_once dirname(__DIR__) . "/inc/components/footer.php" ?>;
 
 <script>
   $(document).ready(function() {
@@ -204,11 +377,17 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
     const tableEle = $('#table')
 
     const clearForm = (modal, form) => {
+      const previewImage = form.find('.preview-image')
+      const fileName = previewImage.find('.file-name')
       modal.modal('hide');
-      form.find('input, textarea').val('')
+      form.find('input, textarea, select').val('')
+      form.find('.preview-image img').prop('src', '').hide();
+      form.find('select').html('')
+      previewImage.removeClass('active');
+      fileName.text('');
     }
 
-    // handle render products to table
+    // handle render items to table
     const table = tableEle.DataTable({
       processing: true,
       serverSide: true,
@@ -227,10 +406,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
-        [3, 'asc']
+        [6, 'asc']
       ],
       ajax: {
-        url: 'actions/get-categories.php',
+        url: '<?php echo GET_PRODUCTS_API; ?>',
         type: 'GET',
         data: function(d, settings) {
           return {
@@ -267,11 +446,23 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           targets: 2
         },
         {
-          name: 'createdAt',
+          name: 'price',
           targets: 3
         },
         {
-          targets: 4,
+          name: 'stockQuantity',
+          targets: 4
+        },
+        {
+          name: 'categoryId',
+          targets: 5
+        },
+        {
+          name: 'createdAt',
+          targets: 6
+        },
+        {
+          targets: 7,
           orderable: false,
           searchable: false,
         },
@@ -289,7 +480,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
+              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
                 ${row.id}
               </a>
             `
@@ -298,11 +489,25 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="product-details.php?id=${row.id}">
-                ${row.name}
-              </a>
+              <div class="productimgname">
+                <a href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}" class="product-img">
+                  <img src="${row.imageUrl}" />
+                </a>
+                <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+                  ${row.name}
+                </a>
+              </div>
             `
           }
+        },
+        {
+          data: 'price'
+        },
+        {
+          data: 'stockQuantity'
+        },
+        {
+          data: 'categoryName'
         },
         {
           data: 'createdAt'
@@ -310,18 +515,18 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action" href="product-details.php?id=${row.id}">
-                <img class="action-icon" src="assets/img/icons/eye.svg" alt="img" />
+              <a class="me-2 action" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
-                class="me-2 edit-product-button action"
+                class="me-2 edit-button action"
                 data-id="${row.id}"
                 href="javascript:void(0)"
               >
-                <img class="action-icon" src="assets/img/icons/edit.svg" alt="img" />
+                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/edit.svg" alt="img" />
               </a>
               <a class="action" data-id="${row.id}" id="delete-btn" href="javascript:void(0)">
-                <img class="action-icon" src="assets/img/icons/delete.svg" alt="img" />
+                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
               </a>
               `
           }
@@ -333,12 +538,43 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       },
     })
 
-    // handle add product
+    // handle add
     const addFormId = '#addForm'
     const addModalId = '#addModal'
     const addForm = $(addFormId)
     const addModal = $(addModalId)
     const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    $('#openProductModalButton').click(async function() {
+      try {
+        const response = await $.ajax({
+          url: '<?php echo GET_CATEGORIES_API; ?>',
+          type: 'GET',
+          dataType: 'json',
+        })
+        if (response.status) {
+          const categories = response.data.items
+          const categorySelect = addForm.find('select[name="categoryId"]')
+          categories.forEach((category, index) => {
+            let selectedAttr = '';
+            if (index === 0) {
+              selectedAttr = 'selected'
+            }
+            categorySelect.append(`
+              <option value="${category.id}" ${selectedAttr}>
+                ${category.name}
+              </option>
+            `)
+          })
+          const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addModal'))
+          modal.show()
+        } else {
+          toastr.error('Something went wrong')
+        }
+      } catch (error) {
+        console.log(error);
+        toastr.error('Something went wrong')
+      }
+    });
     addFormSubmitButton.click(function() {
       addForm.submit()
     })
@@ -346,6 +582,32 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       rules: {
         name: {
           required: true
+        },
+        categoryId: {
+          required: true
+        },
+        image: {
+          required: true
+        },
+        price: {
+          required: true,
+          number: true
+        },
+        stockQuantity: {
+          required: true,
+          number: true
+        },
+        ram: {
+          number: true
+        },
+        storageCapacity: {
+          number: true
+        },
+        weight: {
+          number: true
+        },
+        batteryCapacity: {
+          number: true
         }
       },
     })
@@ -353,18 +615,15 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       try {
         event.preventDefault()
         if ($(this).valid()) {
-          const data = addForm.serializeArray().reduce((acc, item) => {
-            return {
-              ...acc,
-              [item.name]: item.value
-            }
-          }, {})
+          const formData = new FormData($(this)[0])
 
           const response = await $.ajax({
-            url: 'actions/add-category.php',
+            url: '<?php echo ADD_PRODUCT_API; ?>',
             type: 'POST',
             dataType: 'json',
-            data,
+            data: formData,
+            contentType: false,
+            processData: false,
           })
           if (response.status) {
             table.ajax.reload(function(json) {
@@ -374,10 +633,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               setTimeout(function() {
                 table.page(json.totalPages - 1).draw('page');
               }, 0);
-              toastr.success('Add category successfully')
+              toastr.success('Add product successfully')
             });
           } else {
-            toastr.error(response.message)
+            toastr.error('Add product failed')
           }
           clearForm(addModal, addForm);
         }
@@ -387,23 +646,23 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
       }
     })
 
-    // handle edit product
+    // handle edit
     const editProductFormId = '#editProductForm'
-    const editProductModalId = '#editProductModal'
+    const editModalId = '#editModal'
     const editProductForm = $(editProductFormId)
-    const editProductFormSubmitButton = $(editProductModalId + ' .modal-footer button[type="submit"]')
-    $('#table tbody').on('click', '.edit-product-button', async function(event) {
+    const editModal = $(editModalId)
+    const editProductFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    $('#table tbody').on('click', '.edit-button', async function(event) {
       try {
         const id = $(this).data('id')
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editProductModal'))
-
+        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
         const getProduct = $.ajax({
-          url: `actions/get-product-by-id.php?id=${id}`,
+          url: `<?php echo GET_PRODUCT_BY_ID_API; ?>?id=${id}`,
           type: 'GET',
           dataType: 'json'
         })
         const getCategories = $.ajax({
-          url: `actions/get-categories.php`,
+          url: `<?php echo GET_CATEGORIES_API; ?>`,
           type: 'GET',
           dataType: 'json'
         })
@@ -411,9 +670,9 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           getProduct, getCategories
         ])
 
-        if (getProductResponse.status) {
+        if (getProductResponse.status && getCategoriesResponse.status) {
           const product = getProductResponse.data.product;
-          const categories = getCategoriesResponse.data.categories
+          const categories = getCategoriesResponse.data.items
           const categorySelect = editProductForm.find('select[name="categoryId"]')
 
           editProductForm.attr('data-id', product.id)
@@ -446,12 +705,11 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
             `)
           })
 
-          modal.show();
+          modal.show()
         } else {
           toastr.error('Something went wrong')
         }
       } catch (error) {
-        console.log(error);
         toastr.error('Something went wrong')
       }
     })
@@ -497,7 +755,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           formData.append('id', id)
 
           const response = await $.ajax({
-            url: 'actions/edit-product.php',
+            url: '<?php echo EDIT_PRODUCT_API; ?>',
             type: 'POST',
             dataType: 'json',
             data: formData,
@@ -511,10 +769,10 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           } else {
             toastr.error('Edit product failed')
           }
-          clearForm(editProductModal, editProductForm);
+          clearForm(editModal, editProductForm);
         }
       } catch (error) {
-        clearForm(editProductModal, editProductForm);
+        clearForm(editModal, editProductForm);
         toastr.error('Something went wrong')
       }
     })
@@ -539,7 +797,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: 'actions/delete-product.php',
+                url: '<?php echo DELETE_PRODUCT_BY_ID_API; ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -556,6 +814,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
               }
             }
           } catch (error) {
+            console.log(error);
             toastr.error('Something went wrong')
           }
         })
@@ -589,7 +848,7 @@ $conn = require_once dirname(__DIR__) . '/inc/db.php';
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: 'actions/delete-product-by-ids.php',
+                url: '<?php echo DELETE_PRODUCT_BY_IDS_API; ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {

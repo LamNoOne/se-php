@@ -1,10 +1,8 @@
 <?php
-session_start();
-
-require_once dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once dirname(dirname(dirname(__DIR__))) . "/inc/init.php";
 
 if (!isset($conn)) {
-  $conn = require_once dirname(dirname(__DIR__)) . '/inc/db.php';
+  $conn = require_once dirname(dirname(dirname(__DIR__))) . '/inc/db.php';
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
