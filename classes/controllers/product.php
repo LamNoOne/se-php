@@ -376,9 +376,6 @@ class Product extends DataFetcher
         }
     }
 
-    /**
-     $pagination = ['limit' => 10, 'offset' => 0]
-     */
     public static function getAllProductsForAdmin(
         $conn,
         $filter = [['field' => 'id', 'value' => '', 'like' => false]],
@@ -477,12 +474,15 @@ class Product extends DataFetcher
                 ]
             ];
             $selection = array_map(function ($filterItem) {
-                return [
-                    'table' => TABLES['PRODUCT'],
+                $selectionItem = [
+                    'table' => TABLES['ORDER'],
                     'column' => $filterItem['field'],
-                    'value' => $filterItem['value'],
-                    'like' => $filterItem['like'],
+                    'value' => $filterItem['value']
                 ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
             }, $filter);
             $sort = [
                 [
@@ -500,12 +500,14 @@ class Product extends DataFetcher
                 $pagination,
                 $sort
             );
+
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
+            print_r($e->getMessage());
             return Message::message(false, 'Get all products failed');
         }
     }

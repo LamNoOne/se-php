@@ -310,8 +310,8 @@ function getQuerySQLPrepareStatement(
     if (
         isset($pagination['limit'])
         && isset($pagination['offset'])
-        && $pagination['limit']
-        && $pagination['offset']
+        && $pagination['limit'] !== NULL
+        && $pagination['offset'] !== NULL
     ) {
         $enablePagination = true;
     }
@@ -324,8 +324,6 @@ function getQuerySQLPrepareStatement(
         $sort,
         $group
     );
-
-    print_r($query);
 
     $stmt = $conn->prepare($query);
 
@@ -348,11 +346,11 @@ function getQuerySQLPrepareStatement(
     if (
         isset($pagination['limit'])
         && isset($pagination['offset'])
-        && $pagination['limit']
-        && $pagination['offset']
+        && $pagination['limit'] !== NULL
+        && $pagination['offset'] !== NULL
     ) {
-        $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
         $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
     }
 
     return $stmt;

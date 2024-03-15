@@ -225,12 +225,15 @@ class Category extends Message
                 ],
             ];
             $selection = array_map(function ($filterItem) {
-                return [
-                    'table' => TABLES['CATEGORY'],
+                $selectionItem = [
+                    'table' => TABLES['ORDER'],
                     'column' => $filterItem['field'],
-                    'value' => $filterItem['value'],
-                    'like' => $filterItem['like'],
+                    'value' => $filterItem['value']
                 ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
             }, $filter);
             $sort = [
                 [

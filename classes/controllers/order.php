@@ -478,12 +478,15 @@ class Order extends DataFetcher
                 ]
             ];
             $selection = array_map(function ($filterItem) {
-                return [
+                $selectionItem = [
                     'table' => TABLES['ORDER'],
                     'column' => $filterItem['field'],
-                    'value' => $filterItem['value'],
-                    'like' => $filterItem['like'],
+                    'value' => $filterItem['value']
                 ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
             }, $filter);
             $group = [
                 [

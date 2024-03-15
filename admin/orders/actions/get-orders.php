@@ -46,7 +46,7 @@ if (isset($_GET['order'])) {
 $getItemsOfAllPageResult = Order::getOrders(
   $conn,
   [
-    ['field' => 'name', 'value' => $search, 'like' => true],
+    ['field' => 'id', 'value' => $search],
   ]
 );
 
@@ -61,7 +61,7 @@ if ($limit > 0) {
   $getItemsPerPageResult = Order::getOrders(
     $conn,
     [
-      ['field' => 'name', 'value' => $search, 'like' => true],
+      ['field' => 'id', 'value' => $search],
     ],
     ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
     ['sortBy' => $sortBy, 'order' => $order],
