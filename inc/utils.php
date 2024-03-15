@@ -26,57 +26,11 @@ function createFilter($key, $value, $operator = null)
     return ['column' => strval($key), 'operator' => strval($operator), 'value' => $value];
 }
 
-function generateSQLConditions(
-    $filter = [],
-    $sorter = ['id' => 'ASC'],
-    $paginator = []
-) {
-    // handle filter
-    $whereCondition = '';
-    if (!empty($filter)) {
-        $filterConditions = [];
-        foreach ($filter as $filterItem) {
-            if (!empty($filterItem['table']) && !empty($filterItem['column'])) {
-                $filterConditions[] = "{$filterItem['table']}.{$filterItem['column']} LIKE '%{$filterItem['value']}%'";
-            }
-        }
-        if (!empty($filterConditions)) {
-            $whereCondition = 'WHERE ' . implode(' AND ', $filterConditions);
-        }
-    }
-
-    // handle sorter
-    $sortConditions = [];
-    foreach ($sorter as $column => $order) {
-        $sortConditions[] = "$column $order";
-    }
-    $orderByCondition = 'ORDER BY ' . implode(', ', $sortConditions);
-
-    // handle paginator
-    $limitCondition = '';
-    $offsetCondition = '';
-    if (!empty($paginator)) {
-        if (!isset($paginator['limit'])) {
-            throw new Exception('Invalid paginator param');
-        }
-        if (isset($paginator['page'])) {
-            $offset = ($paginator['page'] - 1) * $paginator['limit'];
-            $offsetCondition = 'OFFSET ' . $offset;
-        }
-        $limitCondition = 'LIMIT ' . $paginator['limit'];
-    }
-
-    return [
-        'where' => $whereCondition,
-        'orderBy' => $orderByCondition,
-        'limit' => $limitCondition,
-        'offset' => $offsetCondition
-    ];
-}
-
 function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = [], $sort = [], $group = [])
 {
     $sqlClauses = [];
+
+    // handle select clause
     if (empty($projection)) {
         $sqlClauses[] = 'SELECT *';
     } else {
@@ -88,6 +42,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
             if (isset($projectionItem['column']) && $projectionItem['column']) {
                 return "`{$projectionItem['table']}`.`{$projectionItem['column']}` $as";
             }
+            // use aggregate function
             if (
                 isset($projectionItem['aggregate'])
                 && isset($projectionItem['expression'])
@@ -188,6 +143,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
             if (isset($sortItem['column']) && $sortItem['column'] && $sortItem['column'] !== '') {
                 return "{$sortItem['column']} {$sortItem['order']}";
             }
+            // use aggregate function
             if (
                 isset($sortItem['aggregate'])
                 && $sortItem['aggregate']
