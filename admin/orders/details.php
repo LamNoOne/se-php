@@ -1,5 +1,27 @@
 <?php
 require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once  dirname(dirname(__DIR__)) . "/inc/utils.php";
+$conn = require_once  dirname(dirname(__DIR__)) . "/inc/db.php";
+
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+  return redirectByServer(APP_URL . '/admin/orders/');
+}
+if (!isset($_GET['id'])) {
+  return redirectByServer(APP_URL . '/admin/orders/');
+}
+
+$orderId = $_GET['id'];
+
+$getOrderResult = Order::getOrderByIdV2($conn, $orderId);
+if (!$getOrderResult['status']) {
+  return redirect(APP_URL . '/admin/500.php');
+}
+
+$order = $getOrderResult['data']['order'];
+if (!$order) {
+  return redirect(APP_URL . '/admin/404.php');
+}
+
 ?>
 
 <?php require_once  dirname(__DIR__) . "/inc/components/header.php" ?>;
@@ -8,14 +30,73 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Order List</h3>
-        <h4>Manage customer orders</h4>
+        <h3>Order Details</h3>
+        <h4>Full details of a order</h4>
       </div>
-      <div class="page-btn" data-bs-toggle="modal" data-bs-target="#addModal">
-        <button class="btn btn-added box-shadow">
-          <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/plus.svg" alt="img" class="me-1" />
-          Add New Order
-        </button>
+      <div class="page-btn">
+        <a data-id="<?php ?>" id="delete-btn" class="btn btn-danger" href="javascript:void(0)">Delete</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-8 col-md-6 col-12">
+            <h6 class="fw-bold">Customer Information</h6>
+            <div class="row gx-3 mt-3">
+              <div class="col-lg-3">
+                <img style="border-radius: 8px; width: 100%; height: 100%; object-fit: contain;" src="
+                  <?php
+                  echo $order->customerImageUrl ?
+                    $order->customerImageUrl
+                    : APP_URL . '/admin/assets/img/no-image.png'
+                  ?>">
+              </div>
+              <div class="col-lg-9 mt-1">
+                <div class="row">
+                  <div class="col-lg-3 d-flex gap-2 flex-column align-items-start">
+                    <p class="fw-bold me-1">Full Name:</p>
+                    <p class="fw-bold me-1">Email:</p>
+                    <p class="fw-bold me-1">Phone:</p>
+                    <p class="fw-bold me-1">Address:</p>
+                  </div>
+                  <div class="col-lg-9 d-flex gap-2 flex-column align-items-start">
+                    <p>
+                      <?php echo $order->customerFirstName . ' ' . $order->customerLastName ?>
+                    </p>
+                    <p><?php echo $order->customerPhoneNumber ?></p>
+                    <p><?php echo $order->customerEmail ?></p>
+                    <p><?php echo $order->customerAddress ?></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6 col-12">
+            <h6 class="fw-bold">Order Information</h6>
+            <div class="mt-3 mt-1">
+              <div class="row">
+                <div class="col-lg-6 d-flex gap-2 flex-column align-items-start">
+                  <p class="fw-bold me-1">ID:</p>
+                  <p class="fw-bold me-1">Shipping Phone:</p>
+                  <p class="fw-bold me-1">Shipping Address:</p>
+                  <p class="fw-bold me-1">Status:</p>
+                </div>
+                <div class="col-lg-6 d-flex gap-2 flex-column align-items-end">
+                  <p><?php echo $order->id ?></p>
+                  <p><?php echo $order->phoneNumber ?></p>
+                  <p><?php echo $order->shipAddress ?></p>
+                  <p class="badges
+                    <?php
+                    echo $order->statusId == PENDING ? 'bg-lightred' : 'bg-lightgreen'
+                    ?>">
+                    <?php echo $order->statusName ?>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -54,40 +135,6 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             </ul>
           </div> -->
         </div>
-
-        <div class="card mb-2" id="filter_inputs">
-          <div class="card-body pb-0">
-            <div class="row">
-              <div class="col-lg-12 col-sm-12">
-                <div class="row">
-                  <div class="col-lg-2 col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <select class="select">
-                        <option>Choose Category</option>
-                        <option>Computers</option>
-                        <option>Fruits</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-2 col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <select class="select">
-                        <option>Price</option>
-                        <option>150.00</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <a class="btn btn-filters ms-auto"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/search-whites.svg" alt="img" /></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="table-responsive">
           <table class="table" id="table">
             <thead class="table-light">
@@ -98,10 +145,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
                     <span class="checkmarks"></span>
                   </label>
                 </th>
-                <th>ID</th>
-                <th>Customer Name</th>
-                <th>Total Payment</th>
-                <th>Status</th>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
                 <th>Created At</th>
                 <th>Action</th>
               </tr>
@@ -110,7 +157,16 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             </tbody>
           </table>
         </div>
+        <div class="table-bottom">
+          <div class="d-flex justify-content-end align-items-center gap-3">
+            <span class="fw-bold red-text-color">Total Payment:</span>
+            <span class="badges bg-lightred">4500</span>
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="d-flex gap-3">
+      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/admin/orders">Back</a>
     </div>
   </div>
 </div>
@@ -191,6 +247,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const DEFAULT_SORT_BY = 'createdAt'
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
+    const totalPaymentBadge = $('.card .table-bottom .badges')
 
     const clearForm = (modal, form) => {
       modal.modal('hide');
@@ -219,7 +276,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         [5, 'asc']
       ],
       ajax: {
-        url: '<?php echo GET_ORDERS_API; ?>',
+        url: '<?php echo GET_PRODUCTS_OF_ORDER_API . "?id=$orderId" ?>',
         type: 'GET',
         data: function(d, settings) {
           return {
@@ -238,7 +295,8 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             recordsTotal: dataObj.data?.totalItems,
             recordsFiltered: dataObj.data?.totalItems,
             data: dataObj.data?.items,
-            totalPages: dataObj.data?.totalPages
+            totalPages: dataObj.data?.totalPages,
+            totalPayment: dataObj.data?.totalPayment
           });
         },
       },
@@ -248,19 +306,19 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           searchable: false,
         },
         {
-          name: 'id',
+          name: 'name',
           targets: 1
         },
         {
-          name: 'customerName',
+          name: 'price',
           targets: 2
         },
         {
-          name: 'totalPrice',
+          name: 'quantity',
           targets: 3
         },
         {
-          name: 'status',
+          name: 'totalPrice',
           targets: 4
         },
         {
@@ -277,40 +335,32 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           render: function(data, type, row, meta) {
             return `
                 <label class="checkboxs">
-                  <input data-id=${row.id} type="checkbox" />
+                  <input data-order-id=${row.orderId} data-product-id=${row.id} type="checkbox" />
                   <span class="checkmarks"></span>
                 </label>
               `
           }
         },
         {
-          data: 'id'
-        },
-        {
           render: function(data, type, row, meta) {
             return `
               <div class="name-img-wrapper">
-                <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
-                  <img src="${row.customerImageUrl}" />
+                <a class="product-img details-btn text-linear-hover d-flex align-items-center gap-2" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+                  <img src="${row.imageUrl}" />
+                  <span> ${row.name}</span>
                 </a
-                <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
-                  ${row.customerFirstName} ${row.customerLastName}
-                </a>
               </div>
             `
           }
         },
         {
-          data: 'totalPrice'
+          data: 'price'
         },
         {
-          render: function(data, type, row, meta) {
-            const pendingId = <?php echo PENDING; ?>;
-            const badgesColorClass = row.statusId == pendingId ? 'bg-lightred' : 'bg-lightgreen'
-            return `
-              <span class="badges ${badgesColorClass}">${row.statusName}</span>
-            `
-          }
+          data: 'quantity'
+        },
+        {
+          data: 'totalPrice'
         },
         {
           data: 'createdAt'
@@ -318,17 +368,24 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               <a
                 class="me-2 edit-button action"
-                data-id="${row.id}"
+                data-product-id="${row.id}"
+                data-order-id="${row.orderId}"
                 href="javascript:void(0)"
               >
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/edit.svg" alt="img" />
               </a>
-              <a class="action" data-id="${row.id}" id="delete-btn" href="javascript:void(0)">
+              <a
+                class="action"
+                data-product-id="${row.id}"
+                data-orderId="${row.orderId}"
+                id="delete-btn"
+                href="javascript:void(0)"
+              >
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
               </a>
               `
@@ -352,6 +409,9 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             table.page(currentPage).draw('page')
           }, 0)
         }
+
+        // init total payment on UI
+        totalPaymentBadge.text(json.totalPayment);
       },
     })
 

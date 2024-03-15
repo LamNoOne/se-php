@@ -137,3 +137,6 @@ if (!defined('DELETE_CATEGORY_BY_IDS_API'))
 // Order APIs
 if (!defined('GET_ORDERS_API'))
   define('GET_ORDERS_API', APP_URL . '/admin/orders/actions/get-orders.php');
+
+if (!defined('GET_PRODUCTS_OF_ORDER_API'))
+  define('GET_PRODUCTS_OF_ORDER_API', APP_URL . '/admin/orders/actions/get-products-of-order.php');

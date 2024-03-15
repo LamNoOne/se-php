@@ -287,7 +287,7 @@ class User extends OAuth
 
     public static function getUsers(
         $conn,
-        $filter = [['field' => 'firstName', 'value' => '', 'like' => false]],
+        $filter = [['field' => '', 'value' => '', 'like' => false]],
         $pagination = [],
         $sort =  [['sortBy' => 'createdAt', 'order' => 'ASC']]
     ) {

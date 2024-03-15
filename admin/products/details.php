@@ -102,7 +102,7 @@ if (!$product) {
       </div>
     </div>
     <div class="d-flex gap-3">
-      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/admin/products">Back</a>
+      <a class="btn btn-primary" href="javascript:history.back()">Back</a>
     </div>
   </div>
 </div>

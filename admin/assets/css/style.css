@@ -2,6 +2,7 @@
 	--primary-color: linear-gradient(135deg, #1b7cfa 0%, #b82ffc 100%);
 	--primary-dark-color: linear-gradient(135deg, #1473f0 0%, #a60ff2 100%);
 	--error-validate-color: red;
+	--red-color: #ea5455;
 	--box-shadow: rgba(149, 157, 165, 0.2) 0px 0px 24px;
 }
 
@@ -9,6 +10,19 @@
 
 /* Custom */
 /* COMMON */
+.red-text-color {
+	color: var(--red-color);
+}
+
+.table-bottom span {
+	font-size: 14px;
+}
+
+.table-bottom span.badges {
+	min-width: 100px;
+	min-height: 34px;
+}
+
 .name-img-wrapper {
 	display: flex;
 	align-items: center;
@@ -928,7 +942,7 @@ a:focus {
 }
 
 p {
-	margin-bottom: 20px;
+	margin-bottom: 0;
 }
 p:last-child {
 	margin-bottom: 0;
@@ -6631,10 +6645,13 @@ span.select2-container.select2-container--default.select2-container--open {
 	font-weight: 500;
 	display: inline-block;
 	padding: 5px 10px;
-	border-radius: 50px;
+	border-radius: 5px;
 	color: #fff;
 	text-align: center;
 	min-width: 80px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 .badges.bg-lightgreen {
 	background: #28c76f;

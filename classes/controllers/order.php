@@ -330,6 +330,118 @@ class Order extends DataFetcher
         }
     }
 
+    public static function getOrderByIdV2($conn, $id)
+    {
+        try {
+            $projection =  [
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'id',
+                    'as' => 'customerId'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'firstName',
+                    'as' => 'customerFirstName'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'lastName',
+                    'as' => 'customerLastName'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'imageUrl',
+                    'as' => 'customerImageUrl'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'email',
+                    'as' => 'customerEmail'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'phoneNumber',
+                    'as' => 'customerPhoneNumber'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'address',
+                    'as' => 'customerAddress'
+                ],
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'shipAddress'
+                ],
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'phoneNumber'
+                ],
+                [
+                    'table' => TABLES['ORDER_STATUS'],
+                    'column' => 'id',
+                    'as' => 'statusId'
+                ],
+                [
+                    'table' => TABLES['ORDER_STATUS'],
+                    'column' => 'name',
+                    'as' => 'statusName'
+                ],
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'updatedAt'
+                ]
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['ORDER'],
+                    TABLES['ORDER_STATUS'],
+                    TABLES['USER'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['ORDER'],
+                        'table2' => TABLES['ORDER_STATUS'],
+                        'column1' => 'orderStatusId',
+                        'column2' => 'id'
+                    ],
+                    [
+                        'table1' => TABLES['ORDER'],
+                        'table2' => TABLES['USER'],
+                        'column1' => 'userId',
+                        'column2' => 'id'
+                    ]
+                ]
+            ];
+
+            $stmt = getQueryByIdSQLPrepareStatement(
+                $conn,
+                $id,
+                $projection,
+                $join,
+                TABLES['ORDER']
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Get order by id successfully', [
+                'order' => $stmt->fetch()
+            ]);
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
     public static function getOrders(
         $conn,
         $filter = [['field' => 'id', 'value' => '', 'like' => false]],
@@ -403,6 +515,21 @@ class Order extends DataFetcher
                     'table' => TABLES['USER'],
                     'column' => 'imageUrl',
                     'as' => 'customerImageUrl'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'phoneNumber',
+                    'as' => 'customerPhoneNumber'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'email',
+                    'as' => 'customerEmail'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'address',
+                    'as' => 'customerAddress'
                 ],
                 [
                     'table' => TABLES['ORDER'],
@@ -483,6 +610,133 @@ class Order extends DataFetcher
                 'orders' => $stmt->fetchAll()
             ]);
         } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function getProductsOfOrder(
+        $conn,
+        $filter = [['field' => 'orderId', 'value' => '', 'like' => false]],
+        $pagination = [],
+        $sort =  [['sortBy' => 'createdAt', 'order' => 'ASC']]
+    ) {
+        try {
+            $selectConditions = [
+                'orderId' => ['table' => TABLES['ORDER'], 'column' => 'id'],
+                'name' => ['table' => TABLES['PRODUCT'], 'column' => 'name'],
+                'price' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'price'],
+                'quantity' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'quantity'],
+                'totalPrice' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'totalPrice'],
+                'createdAt' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'updatedAt']
+            ];
+            $sortConditions = [
+                'name' => ['table' => TABLES['PRODUCT'], 'column' => 'name'],
+                'price' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'price'],
+                'quantity' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'quantity'],
+                'totalPrice' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'totalPrice'],
+                'createdAt' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'updatedAt']
+            ];
+
+            $selection = [];
+            foreach ($filter as $filterItem) {
+                $selectCondition = $selectConditions[$filterItem['field']];
+                $selectCondition['value'] = $filterItem['value'];
+                if (isset($filterItem['like']) && $filterItem['like'] !== NULL) {
+                    $selectCondition['like'] = $filterItem['like'];
+                }
+                $selection[] = $selectCondition;
+            }
+
+            $sorter = [];
+            foreach ($sort as $sortItem) {
+                $sortCondition = $sortConditions[$sortItem['sortBy']];
+                $sortCondition['order'] = $sortItem['order'];
+                $sorter[] = $sortCondition;
+            }
+
+            $projection =  [
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'id',
+                    'as' => 'orderId'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id',
+                    'as' => 'id'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'name',
+                    'as' => 'name'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'imageUrl',
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'price'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'quantity'
+                ],
+                [
+                    'expression' => TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity',
+                    'as' => 'totalPrice'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'updatedAt'
+                ],
+            ];
+
+            $join =  [
+                'tables' => [
+                    TABLES['ORDER'],
+                    TABLES['ORDER_DETAIL'],
+                    TABLES['PRODUCT']
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['ORDER'],
+                        'table2' => TABLES['ORDER_DETAIL'],
+                        'column1' => 'id',
+                        'column2' => 'orderId'
+                    ],
+                    [
+                        'table1' => TABLES['ORDER_DETAIL'],
+                        'table2' => TABLES['PRODUCT'],
+                        'column1' => 'productId',
+                        'column2' => 'id'
+                    ]
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+                $pagination,
+                $sorter,
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Get products of order successfully', [
+                'products' => $stmt->fetchAll()
+            ]);
+        } catch (Exception $e) {
+            print_r($e->getMessage());
             return Message::message(false, 'Something went wrong');
         }
     }

@@ -1,6 +1,11 @@
 <?php
 
 #Redirect function if user logged in, default to index.php
+function redirectByServer($url)
+{
+    header("Location: $url");
+}
+
 function redirect($url = "")
 {
     echo
@@ -86,10 +91,17 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
             if (
                 isset($projectionItem['aggregate'])
                 && isset($projectionItem['expression'])
-                && $projectionItem['aggregate']
-                && $projectionItem['expression']
+                && $projectionItem['aggregate'] !== NULL
+                && $projectionItem['expression'] !== NULL
             ) {
                 return "{$projectionItem['aggregate']}({$projectionItem['expression']}) $as";
+            }
+            // use expression to calculate
+            if (
+                isset($projectionItem['expression'])
+                && $projectionItem['expression'] !== NULL
+            ) {
+                return "{$projectionItem['expression']} $as";
             }
         }, $projection));
     }
@@ -203,7 +215,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
     return implode(' ', $sqlClauses);
 }
 
-function getPlaceholderQueryByIdSQL($projection = [], $join = [])
+function getPlaceholderQueryByIdSQL($projection = [], $join = [], $tableContainId = '')
 {
     $sqlClauses = [];
 
@@ -216,7 +228,7 @@ function getPlaceholderQueryByIdSQL($projection = [], $join = [])
             if (isset($projectionItem['as']) && $projectionItem['as']) {
                 $as = "AS {$projectionItem['as']}";
             }
-            return "{$projectionItem['table']}.{$projectionItem['column']} $as";
+            return "`{$projectionItem['table']}`.`{$projectionItem['column']}` $as";
         }, $projection));
     }
 
@@ -237,22 +249,26 @@ function getPlaceholderQueryByIdSQL($projection = [], $join = [])
         count($tables) === 1
         && !isset($join['on'])
     ) {
-        $sqlClauses[] = 'FROM ' . $tables[0];
+        $sqlClauses[] = 'FROM ' . `$tables[0]`;
     } else if (isset($join['on']) && count($join['on']) < 1) {
-        $sqlClauses[] = 'FROM ' . $tables[0];
+        $sqlClauses[] = 'FROM ' . `$tables[0]`;
     } else {
         $on = $join['on'];
         $joinClauses = [
-            "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
+            "`{$tables[0]}` JOIN `{$tables[1]}` ON `{$on[0]['table1']}`.`{$on[0]['column1']}` = `{$on[0]['table2']}`.`{$on[0]['column2']}`"
         ];
         for ($i = 2; $i < count($tables); $i++) {
-            $joinClauses[] = "JOIN {$tables[$i]} ON {$on[$i - 1]['table1']}.{$on[$i - 1]['column1']} = {$on[$i - 1]['table2']}.{$on[$i - 1]['column2']}";
+            $joinClauses[] = "JOIN `{$tables[$i]}` ON `{$on[$i - 1]['table1']}`.`{$on[$i - 1]['column1']}` = `{$on[$i - 1]['table2']}`.`{$on[$i - 1]['column2']}`";
         }
         $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
     }
 
     // handle where clause
-    $sqlClauses[] = 'WHERE id = :id';
+    if ($tableContainId === '') {
+        $sqlClauses[] = 'WHERE `id` = :id';
+    } else {
+        $sqlClauses[] = "WHERE `$tableContainId`.`id` = :id";
+    }
 
     return implode(' ', $sqlClauses);
 }
@@ -360,12 +376,15 @@ function getQueryByIdSQLPrepareStatement(
     $conn,
     $id,
     $projection = [],
-    $join = []
+    $join = [],
+    $tableContainId = ''
 ) {
     $query = getPlaceholderQueryByIdSQL(
         $projection,
-        $join
+        $join,
+        $tableContainId
     );
+
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     return $stmt;
