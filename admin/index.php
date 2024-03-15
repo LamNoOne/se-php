@@ -55,7 +55,6 @@ try {
   $countCustomersResult = User::count($conn, [['field' => 'roleId', 'value' => CUSTOMER]]);
   $countUsersResult = User::count($conn, []);
   if ($countOrdersResult['status']) {
-    print_r($orders);
     $totalOrders = $countOrdersResult['data']['total'];
   }
   if ($countProductsResult['status']) {

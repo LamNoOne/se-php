@@ -131,7 +131,7 @@
                   Sales</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear-hover" href="orders.html">Order List</a></li>
+                <li><a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders">Order List</a></li>
               </ul>
             </li>
             <li class="submenu">
