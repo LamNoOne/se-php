@@ -78,13 +78,17 @@ if (!defined('PAYPAL_PROD_CLIENT_SECRET')) define('PAYPAL_PROD_CLIENT_SECRET', '
 if (!defined('TABLES')) define('TABLES', [
   'CATEGORY' => 'category',
   'PRODUCT' => 'product',
+  'ORDER' => 'order',
+  'ORDER_DETAIL' => 'orderdetail',
+  'ORDER_STATUS' => 'orderstatus',
+  'USER' => 'user'
 ]);
 
 /**
  * Define APIs
  */
 
-// Product API
+// Product APIs
 if (!defined('GET_PRODUCTS_API'))
   define('GET_PRODUCTS_API', APP_URL . '/admin/products/actions/get-products.php');
 
@@ -103,7 +107,7 @@ if (!defined('DELETE_PRODUCT_BY_ID_API'))
 if (!defined('DELETE_PRODUCT_BY_IDS_API'))
   define('DELETE_PRODUCT_BY_IDS_API', APP_URL . '/admin/products/actions/delete-by-ids.php');
 
-// Category API
+// Category APIs
 if (!defined('GET_CATEGORIES_API'))
   define('GET_CATEGORIES_API', APP_URL . '/admin/categories/actions/get-categories.php');
 
@@ -121,3 +125,7 @@ if (!defined('DELETE_CATEGORY_BY_ID_API'))
 
 if (!defined('DELETE_CATEGORY_BY_IDS_API'))
   define('DELETE_CATEGORY_BY_IDS_API', APP_URL . '/admin/categories/actions/delete-by-ids.php');
+
+// Order APIs
+if (!defined('GET_ORDERS_API'))
+  define('GET_ORDERS_API', APP_URL . '/admin/orders/actions/get-orders.php');

@@ -74,20 +74,28 @@ function generateSQLConditions(
     ];
 }
 
-function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = [], $sort = [])
+function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = [], $sort = [], $group = [])
 {
     $sqlClauses = [];
-
-    // handle select clause
     if (empty($projection)) {
         $sqlClauses[] = 'SELECT *';
     } else {
         $sqlClauses[] = "SELECT " . implode(', ', array_map(function ($projectionItem) {
             $as = '';
             if (isset($projectionItem['as']) && $projectionItem['as']) {
-                $as = "AS {$projectionItem['as']}";
+                $as = "AS `{$projectionItem['as']}`";
             }
-            return "{$projectionItem['table']}.{$projectionItem['column']} $as";
+            if (isset($projectionItem['column']) && $projectionItem['column']) {
+                return "`{$projectionItem['table']}`.`{$projectionItem['column']}` $as";
+            }
+            if (
+                isset($projectionItem['aggregate'])
+                && isset($projectionItem['expression'])
+                && $projectionItem['aggregate']
+                && $projectionItem['expression']
+            ) {
+                return "{$projectionItem['aggregate']}({$projectionItem['expression']}) $as";
+            }
         }, $projection));
     }
 
@@ -114,10 +122,10 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
     } else {
         $on = $join['on'];
         $joinClauses = [
-            "{$tables[0]} JOIN {$tables[1]} ON {$on[0]['table1']}.{$on[0]['column1']} = {$on[0]['table2']}.{$on[0]['column2']}"
+            "`{$tables[0]}` JOIN `{$tables[1]}` ON `{$on[0]['table1']}`.`{$on[0]['column1']}` = `{$on[0]['table2']}`.`{$on[0]['column2']}`"
         ];
         for ($i = 2; $i < count($tables); $i++) {
-            $joinClauses[] = "JOIN {$tables[$i]} ON {$on[$i - 1]['table1']}.{$on[$i - 1]['column1']} = {$on[$i - 1]['table2']}.{$on[$i - 1]['column2']}";
+            $joinClauses[] = "JOIN `{$tables[$i]}` ON `{$on[$i - 1]['table1']}`.`{$on[$i - 1]['column1']}` = `{$on[$i - 1]['table2']}`.`{$on[$i - 1]['column2']}`";
         }
         $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
     }
@@ -164,16 +172,37 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
         $sqlClauses[] = 'WHERE ' . implode(' AND ', $whereConditions);
     }
 
+    if (!empty($group)) {
+        $groupConditions = array_map(function ($groupItem) {
+            return "{$groupItem['table']}.{$groupItem['column']}";
+        }, $group);
+        $sqlClauses[] = "GROUP BY " . implode(', ', $groupConditions);
+    }
+
     // handle order by clause
     if (!empty($sort)) {
         $orderByConditions = array_map(function ($sortItem) {
-            if (isset($sortItem['table']) && !$sortItem['table'] !== '') {
+            if (isset($sortItem['table']) && $sortItem['table'] && $sortItem['table'] !== '') {
                 return "{$sortItem['table']}.{$sortItem['column']} {$sortItem['order']}";
-            } else {
+            }
+            if (isset($sortItem['column']) && $sortItem['column'] && $sortItem['column'] !== '') {
                 return "{$sortItem['column']} {$sortItem['order']}";
             }
+            if (
+                isset($sortItem['aggregate'])
+                && $sortItem['aggregate']
+                && $sortItem['aggregate'] !== ''
+                && isset($sortItem['expression'])
+                && $sortItem['expression']
+                && $sortItem['expression'] !== ''
+            ) {
+                return "{$sortItem['aggregate']}({$sortItem['expression']}) {$sortItem['order']}";
+            }
+            return null;
         }, $sort);
-        $sqlClauses[] = 'ORDER BY ' . implode(', ', $orderByConditions);
+        if (!array_search(null, $orderByConditions, true)) {
+            $sqlClauses[] = 'ORDER BY ' . implode(', ', $orderByConditions);
+        }
     }
 
     // handle limit offset clause
@@ -261,7 +290,8 @@ function getQuerySQLPrepareStatement(
         'table' => '',
         'column' => 'createdAt',
         'order' => 'ASC'
-    ]]
+    ]],
+    $group = []
 ) {
     $paginationForGetSQL = [];
     if (isset($pagination['offset']) && isset($pagination['limit'])) {
@@ -276,7 +306,8 @@ function getQuerySQLPrepareStatement(
         $join,
         $selection,
         $paginationForGetSQL,
-        $sort
+        $sort,
+        $group
     );
 
     $stmt = $conn->prepare($query);
