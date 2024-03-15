@@ -26,7 +26,47 @@ function createFilter($key, $value, $operator = null)
     return ['column' => strval($key), 'operator' => strval($operator), 'value' => $value];
 }
 
-function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = [], $sort = [], $group = [])
+/**
+ * This function to get SQL Select has contain placeholders, in order to SQL Prepare Statement, prevent SQL Injection.
+ * @param array $projection The 2-dimension array contains the items you want to select in the query
+ *  - $projection = [[
+ *      'table' => string,
+ *      'column' => string
+ *  ]]
+ * @param array $join The array contains information about tables and join conditions
+ *  - $join = [
+ *      'tables' => [string],
+ *      'on' =>  [
+ *          'table1' => string,
+ *          'table2' => string,
+ *          'column1' => string,
+ *          'column2' => string
+ *      ]
+ *  ]
+ * @param array $selection The 2-dimension array contains conditions for selecting records
+ *  - $selection = [[
+ *      'table' => string,
+ *      'column' => string,
+ *      'value' => string/number,
+ *      'like' => boolean,
+ *   ]];
+ * @param array $pagination If true then enable limit-offset, otherwise disable limit-offset.
+ *  - $pagination = boolean
+ * @param array $sort The 2-dimension array contains information about the sort order of records.
+ *  - $sort = [[
+ *      'table' => string,
+ *      'column' => string,
+ *      'aggregate' => string,
+ *      'expression' => string,
+ *      'order' => 'ASC'/'DESC'
+ *  ]];
+ * @param array $group The 2-dimension array contains information about paging.
+ *  - $group = [[
+ *      'table' => string,
+ *      'column' => string
+ *  ]];
+ */
+function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $pagination = false, $sort = [], $group = [])
 {
     $sqlClauses = [];
 
@@ -87,16 +127,6 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
 
 
     // handle where clause
-    /**
-        [
-            [
-                'table' => 'product',
-                'column' => 'name',
-                'value' => 'vn',
-                'like' => true
-            ]
-        ]
-     */
     $whereConditions = [];
     foreach ($selection as $index => $selectItem) {
         if ($selectItem['value'] === '') {
@@ -163,13 +193,11 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
 
     // handle limit offset clause
     if (
-        isset($pagination['limit'])
-        && isset($pagination['offset'])
-        && $pagination['limit'] !== NULL
-        && $pagination['offset'] !== NULL
+        isset($pagination)
+        && $pagination
     ) {
-        $sqlClauses[] = 'LIMIT ' . $pagination['limit'];
-        $sqlClauses[] = 'OFFSET ' . $pagination['offset'];
+        $sqlClauses[] = 'LIMIT :limit';
+        $sqlClauses[] = 'OFFSET :offset';
     }
 
     return implode(' ', $sqlClauses);
@@ -230,41 +258,74 @@ function getPlaceholderQueryByIdSQL($projection = [], $join = [])
 }
 
 /**
-$sort =  [
-        'table' => 'product',
-        'column' => 'createdAt',
-        'order' => 'ASC'
-    ]
+ * This function to get SQL Select has contain placeholders, in order to SQL Prepare Statement, prevent SQL Injection.
+ * @param array $projection The 2-dimension array contains the items you want to select in the query
+ *  - $projection = [[
+ *      'table' => string,
+ *      'column' => string
+ *  ]]
+ * @param array $join The array contains information about tables and join conditions
+ *  - $join = [
+ *      'tables' => [string],
+ *      'on' =>  [
+ *          'table1' => string,
+ *          'table2' => string,
+ *          'column1' => string,
+ *          'column2' => string
+ *      ]
+ *  ]
+ * @param array $selection The 2-dimension array contains conditions for selecting records
+ *  - $selection = [[
+ *      'table' => string,
+ *      'column' => string,
+ *      'value' => string/number,
+ *      'like' => boolean,
+ *   ]];
+ * @param array $pagination The array contains information about paging.
+ *  - $pagination = ['limit' => int, 'offset' => int];
+ * @param array $sort The 2-dimension array contains information about the sort order of records.
+ *  - $sort = [[
+ *      'table' => string,
+ *      'column' => string,
+ *      'aggregate' => string,
+ *      'expression' => string,
+ *      'order' => 'ASC'/'DESC'
+ *  ]];
+ * @param array $group The 2-dimension array contains information about paging.
+ *  - $group = [[
+ *      'table' => string,
+ *      'column' => string
+ *  ]];
  */
 function getQuerySQLPrepareStatement(
     $conn,
     $projection = [],
     $join = [],
-    $selection = [['table' => '', 'column' => 'id', 'value' => '', 'like' => false]],
+    $selection = [],
     $pagination = [],
-    $sort =  [[
-        'table' => '',
-        'column' => 'createdAt',
-        'order' => 'ASC'
-    ]],
+    $sort =  [],
     $group = []
 ) {
-    $paginationForGetSQL = [];
-    if (isset($pagination['offset']) && isset($pagination['limit'])) {
-        $paginationForGetSQL = [
-            'offset' => ":offset",
-            'limit' => ":limit"
-        ];
+    $enablePagination = false;
+    if (
+        isset($pagination['limit'])
+        && isset($pagination['offset'])
+        && $pagination['limit']
+        && $pagination['offset']
+    ) {
+        $enablePagination = true;
     }
 
     $query = getPlaceholderQuerySQL(
         $projection,
         $join,
         $selection,
-        $paginationForGetSQL,
+        $enablePagination,
         $sort,
         $group
     );
+
+    print_r($query);
 
     $stmt = $conn->prepare($query);
 
@@ -284,7 +345,12 @@ function getQuerySQLPrepareStatement(
         }
     }
 
-    if (isset($pagination['offset']) && isset($pagination['limit'])) {
+    if (
+        isset($pagination['limit'])
+        && isset($pagination['offset'])
+        && $pagination['limit']
+        && $pagination['offset']
+    ) {
         $stmt->bindValue(':offset', $pagination['offset'], PDO::PARAM_INT);
         $stmt->bindValue(':limit', $pagination['limit'], PDO::PARAM_INT);
     }
