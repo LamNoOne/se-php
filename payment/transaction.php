@@ -3,9 +3,7 @@ require_once dirname(__DIR__) . "/inc/components/header.php";
 require_once dirname(__DIR__) . "/inc/init.php";
 require_once dirname(__DIR__) . "/inc/utils.php";
 
-if (!Auth::isLoggedIn()) {
-    Auth::requireLogin();
-}
+Auth::requireLogin();
 
 // Check whether the payment ID is not empty 
 if (!empty($_GET['checkout_ref_id'])) {
@@ -51,7 +49,7 @@ if (!empty($_GET['checkout_ref_id'])) {
                                     <span class="me-1">Date Due:</span>
                                     <span class="fw-medium"><?php echo $transaction->updatedAt; ?></span>
                                 </div>
-                                <div  class="mt-1">
+                                <div class="mt-1">
                                     <span class="me-1">Order Status:</span>
                                     <span class="fw-medium"><?php echo $transaction->orderStatus; ?></span>
                                 </div>

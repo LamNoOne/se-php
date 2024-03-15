@@ -1,7 +1,6 @@
 <?php require_once dirname(__DIR__) . "/inc/components/header.php"; ?>
 <?php
-if (!Auth::isLoggedIn() || !isset($_SESSION['userId']))
-    Auth::requireLogin();
+Auth::requireLogin();
 
 if (!isset($conn))
     $conn = require_once dirname(__DIR__) . "/inc/db.php";

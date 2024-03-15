@@ -1,8 +1,7 @@
 <?php require_once dirname(__DIR__) . "/inc/components/header.php"; ?>
 <?php require_once dirname(__DIR__) . "/inc/utils.php"; ?>
 <?php
-if (!Auth::isLoggedIn())
-    Auth::requireLogin();
+Auth::requireLogin();
 
 if (!isset($_GET['orderId'])) redirect(APP_URL);
 
