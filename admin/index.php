@@ -3,20 +3,72 @@ require_once  dirname(__DIR__) . "/inc/init.php";
 if (!isset($conn))
   $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
-$sorter = array(
-  'createdAt' => 'DESC',
-  'updatedAt' => 'DESC'
-);
+$orders = [];
+$customers = [];
+$users = [];
+$products = [];
+$totalOrders = 0;
+$totalProducts = 0;
+$totalCustomers = 0;
+$totalUsers = 0;
 
-$orders = Order::getAllOrders($conn, [], $sorter);
-$products = Product::getAllProductsForAdmin(
-  $conn,
-  [],
-  [],
-  ['sortBy' => 'createdAt', 'order' => 'DESC']
-);
-$customers = User::getAllUsers($conn, ['roleId' => 3], $sorter);
-$users = User::getAllUsers($conn, [], $sorter);
+try {
+  $pagination = ['limit' => 4, 'offset' => 0];
+  $sort = [['sortBy' => 'createdAt', 'order' => 'DESC']];
+
+  $getOrdersResult = Order::getOrders(
+    $conn,
+    [],
+    $pagination,
+    ['sortBy' => 'createdAt', 'order' => 'DESC']
+  );
+  $getCustomersResult = User::getUsers(
+    $conn,
+    [['field' => 'roleId', 'value' => CUSTOMER]],
+    $pagination,
+    $sort
+  );
+  $getUsersResult = User::getUsers(
+    $conn,
+    [],
+    $pagination,
+    $sort
+  );
+  $products = Product::getAllProductsForAdmin(
+    $conn,
+    [],
+    $pagination,
+    ['sortBy' => 'createdAt', 'order' => 'DESC']
+  );
+  if ($getOrdersResult['status']) {
+    $orders = $getOrdersResult['data']['orders'];
+  }
+  if ($getCustomersResult['status']) {
+    $customers = $getCustomersResult['data']['users'];
+  }
+  if ($getUsersResult['status']) {
+    $users = $getUsersResult['data']['users'];
+  }
+
+  $countOrdersResult = Order::count($conn, []);
+  $countProductsResult = Product::count($conn, []);
+  $countCustomersResult = User::count($conn, [['field' => 'roleId', 'value' => CUSTOMER]]);
+  $countUsersResult = User::count($conn, []);
+  if ($countOrdersResult['status']) {
+    print_r($orders);
+    $totalOrders = $countOrdersResult['data']['total'];
+  }
+  if ($countProductsResult['status']) {
+    $totalProducts = $countProductsResult['data']['total'];
+  }
+  if ($countCustomersResult['status']) {
+    $totalCustomers = $countCustomersResult['data']['total'];
+  }
+  if ($countUsersResult['status']) {
+    $totalUsers = $countUsersResult['data']['total'];
+  }
+} catch (Exception $e) {
+}
 
 ?>
 
@@ -28,7 +80,7 @@ $users = User::getAllUsers($conn, [], $sorter);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count box-shadow">
           <div class="dash-counts">
-            <h4><?php echo count($orders) ?></h4>
+            <h4><?php echo $totalOrders ?></h4>
             <h5>Orders</h5>
           </div>
           <div class="dash-imgs">
@@ -39,7 +91,7 @@ $users = User::getAllUsers($conn, [], $sorter);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count das1 box-shadow">
           <div class="dash-counts">
-            <h4><?php echo count($products) ?></h4>
+            <h4><?php echo $totalProducts ?></h4>
             <h5>Products</h5>
           </div>
           <div class="dash-imgs">
@@ -50,7 +102,7 @@ $users = User::getAllUsers($conn, [], $sorter);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count das2 box-shadow">
           <div class="dash-counts">
-            <h4><?php echo count($customers) ?></h4>
+            <h4><?php echo $totalCustomers ?></h4>
             <h5>Customers</h5>
           </div>
           <div class="dash-imgs">
@@ -61,7 +113,7 @@ $users = User::getAllUsers($conn, [], $sorter);
       <div class="col-lg-3 col-sm-6 col-12 d-flex">
         <div class="dash-count das3 box-shadow">
           <div class="dash-counts">
-            <h4><?php echo count($users) ?></h4>
+            <h4><?php echo $totalUsers ?></h4>
             <h5>Users</h5>
           </div>
           <div class="dash-imgs">
@@ -77,7 +129,7 @@ $users = User::getAllUsers($conn, [], $sorter);
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Order ID</th>
+                    <th>ID</th>
                     <th>Customer</th>
                     <th>Total</th>
                     <th>Status</th>
@@ -85,31 +137,31 @@ $users = User::getAllUsers($conn, [], $sorter);
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $count = 1 ?>
                   <?php foreach ($orders as $order) : ?>
-                    <?php
-                    if ($count > 4) break;
-                    $count++
-                    ?>
                     <tr>
-                      <td><a class="text-linear-hover" href="./product-details.html"><?php echo $order->id ?></a></td>
+                      <td>
+                        <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/orders/details?id=$order->id"; ?>">
+                          <?php echo $order->id ?>
+                        </a>
+                      </td>
                       <td>
                         <div class="name-img-wrapper">
-                          <a class="product-img" href="productlist.html">
-                            <img src="<?php echo $order->imageUrl ? $order->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="avatar" />
+                          <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details?id=$order->customerId"; ?>" />
+                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" alt="" />
                           </a>
-                          <a class="text-linear-hover" href="product-details.html"><?php echo $order->firstName . ' ' . $order->lastName ?></a>
+                          <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details?id=$order->customerId"; ?>">
+                            <?php
+                            echo $order->customerFirstName . ' ' . $order->customerLastName
+                            ?>
+                          </a>
                         </div>
                       </td>
-                      <td><?php echo $order->total ?></td>
+                      <td><?php echo $order->totalPrice ?></td>
                       <td>
-                        <span class="badges <?php
-                                            if ($order->status === 'Pending') {
-                                              echo 'bg-lightred';
-                                            } else {
-                                              echo 'bg-lightgreen';
-                                            }
-                                            ?>"><?php echo $order->status ?></span>
+                        <span class="badges
+                          <?php echo $order->statusId === PENDING ? 'bg-lightred' : 'bg-lightgreen'; ?>">
+                          <?php echo $order->statusName ?>
+                        </span>
                       </td>
                       <td><?php echo $order->createdAt ?></td>
                     </tr>
@@ -137,24 +189,19 @@ $users = User::getAllUsers($conn, [], $sorter);
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $count = 1 ?>
                   <?php foreach ($products as $product) : ?>
-                    <?php
-                    if ($count > 4) break;
-                    $count++
-                    ?>
                     <tr>
                       <td>
-                        <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>">
+                        <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/products/details.php?id=$product->id" ?>">
                           <?php echo $product->id ?>
                         </a>
                       </td>
                       <td>
                         <div class="name-img-wrapper">
-                          <a class="product-img" href="product-details.php?id=<?php echo $product->id ?>">
-                            <img src="<?php echo $product->imageUrl ? $product->imageUrl : './assets/img/no-image.png' ?>" alt="product" />
+                          <a class="product-img" href="<?php echo APP_URL . "/admin/products/details.php?id=$product->id" ?>">
+                            <img src="<?php echo $product->imageUrl ? $product->imageUrl : APP_URL . '/admin/assets/img/no-image.png' ?>" />
                           </a>
-                          <a class="text-linear-hover" href="product-details.php?id=<?php echo $product->id ?>"><?php echo $product->name ?></a>
+                          <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/products/details.php?id=$product->id" ?>"><?php echo $product->name ?></a>
                         </div>
                       </td>
                       <td><?php echo $product->price ?></td>
@@ -177,29 +224,28 @@ $users = User::getAllUsers($conn, [], $sorter);
               <table class="table">
                 <thead>
                   <tr>
-                    <th>Customer ID</th>
+                    <th>ID</th>
                     <th>Full Name</th>
                     <th>Phone</th>
                     <th>Email</th>
                     <th>Address</th>
+                    <th>Status</th>
                     <th>Created At</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $count = 1 ?>
                   <?php foreach ($customers as $customer) : ?>
-                    <?php
-                    if ($count > 4) break;
-                    $count++
-                    ?>
                     <tr>
-                      <td><a class="text-linear-hover" href="./product-details.html"><?php echo $customer->id ?></a></td>
+                      <td>
+                        <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$customer->id" ?>"><?php echo $customer->id ?>
+                        </a>
+                      </td>
                       <td>
                         <div class="name-img-wrapper">
-                          <a class="product-img" href="productlist.html">
-                            <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : './assets/img/no-avatar-image.png' ?>" alt="product" />
+                          <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details.php?id=$customer->id" ?>">
+                            <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" />
                           </a>
-                          <a class="text-linear-hover" href="product-details.html">
+                          <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$customer->id" ?>">
                             <?php echo $customer->firstName . ' ' . $customer->lastName ?>
                           </a>
                         </div>
@@ -207,6 +253,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                       <td><?php echo $customer->phoneNumber ?></td>
                       <td><?php echo $customer->email ?></td>
                       <td><?php echo $customer->address ?></td>
+                      <td>
+                        <span class="badges
+                          <?php echo $customer->active ? 'bg-lightgreen' : 'bg-lightred'; ?>">
+                          <?php echo $customer->active ? 'Active' : 'Disabled'; ?>
+                        </span>
+                      </td>
                       <td><?php echo $customer->createdAt ?></td>
                     </tr>
                   <?php endforeach; ?>
@@ -224,33 +276,31 @@ $users = User::getAllUsers($conn, [], $sorter);
               <table class="table">
                 <thead>
                   <tr>
-                    <th>User ID</th>
+                    <th>ID</th>
                     <th>Full Name</th>
                     <th>Phone</th>
                     <th>Email</th>
                     <th>Address</th>
+                    <th>Status</th>
                     <th>Created At</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <?php $count = 1 ?>
                   <?php foreach ($users as $user) : ?>
-                    <?php
-                    if ($count > 4) break;
-                    $count++
-                    ?>
                     <tr>
-                      <td><a class="text-linear-hover" href="./product-details.html">
+                      <td><a class="text-linear-hover" href="<?php echo APP_URL . "/admin/users/details.php?id=$user->id" ?>">
                           <?php echo $user->id ?>
                         </a></td>
                       <td>
                         <div class="name-img-wrapper">
-                          <a class="product-img" href="productlist.html">
+                          <a class="product-img" href="<?php echo APP_URL . "/admin/users/details.php?id=$user->id" ?>">
                             <img src="
-                              <?php echo $user->imageUrl ? $user->imageUrl : './assets/imag/no-avatar-image.png' ?>
-                            " alt="product" />
+                              <?php echo $user->imageUrl ? $user->imageUrl
+                                : APP_URL  . '/admin/assets/imag/no-avatar-image.png'
+                              ?>
+                            " />
                           </a>
-                          <a class="text-linear-hover" href="product-details.html">
+                          <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/users/details.php?id=$user->id" ?>">
                             <?php echo $user->firstName . ' ' . $user->lastName ?>
                           </a>
                         </div>
@@ -258,6 +308,12 @@ $users = User::getAllUsers($conn, [], $sorter);
                       <td><?php echo $user->phoneNumber ?></td>
                       <td><?php echo $user->email ?></td>
                       <td><?php echo $user->address ?></td>
+                      <td>
+                        <span class="badges
+                            <?php echo $user->active ? 'bg-lightgreen' : 'bg-lightred'; ?>">
+                          <?php echo $user->active ? 'Active' : 'Disabled'; ?>
+                        </span>
+                      </td>
                       <td><?php echo $user->createdAt ?></td>
                     </tr>
                   <?php endforeach; ?>

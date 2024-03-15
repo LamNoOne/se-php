@@ -507,7 +507,6 @@ class Product extends DataFetcher
             }
             return $stmt->fetchAll();
         } catch (Exception $e) {
-            print_r($e->getMessage());
             return Message::message(false, 'Get all products failed');
         }
     }
@@ -534,6 +533,55 @@ class Product extends DataFetcher
             return $stmt->fetch();
         } catch (Exception $e) {
             return Message::message(false, 'Get product by id failed');
+        }
+    }
+
+    public static function count(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]]
+    ) {
+        try {
+            $projection =  [
+                [
+                    'aggregate' => 'COUNT',
+                    'expression' => '*',
+                    'as' => 'total'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['PRODUCT']
+                ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Count products successfully', [
+                'total' => $stmt->fetch()->total
+            ]);
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            return Message::message(false, 'Something went wrong');
         }
     }
 }

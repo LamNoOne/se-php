@@ -40,6 +40,13 @@ if (!defined("DELIVERING")) define("DELIVERING", 3);
 if (!defined("DELIVERED")) define("DELIVERED", 4);
 
 /**
+ * Define role
+ */
+if (!defined("ADMIN")) define("ADMIN", 1);
+if (!defined("STAFF")) define("STAFF", 2);
+if (!defined("CUSTOMER")) define("CUSTOMER", 3);
+
+/**
  * Debug mode
  */
 if (!defined('DB_DEBUG')) define('DB_DEBUG', true);
@@ -81,6 +88,7 @@ if (!defined('TABLES')) define('TABLES', [
   'ORDER' => 'order',
   'ORDER_DETAIL' => 'orderdetail',
   'ORDER_STATUS' => 'orderstatus',
+  'ROLE' => 'role',
   'USER' => 'user'
 ]);
 

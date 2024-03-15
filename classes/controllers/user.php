@@ -206,7 +206,8 @@ class User extends OAuth
         }
     }
 
-    public static function updateUserPassword($conn, $userId, $password) {
+    public static function updateUserPassword($conn, $userId, $password)
+    {
         try {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
             $query = "UPDATE user SET password=:password WHERE id=:userId";
@@ -284,31 +285,147 @@ class User extends OAuth
          */
     }
 
-    public static function getAllUsers(
+    public static function getUsers(
         $conn,
-        $filter = [],
-        $sorter = ['id' => 'ASC'],
-        $paginator = []
+        $filter = [['field' => 'firstName', 'value' => '', 'like' => false]],
+        $pagination = [],
+        $sort =  [['sortBy' => 'createdAt', 'order' => 'ASC']]
     ) {
         try {
-            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
+            $selectConditions = [
+                'id' => ['table' => TABLES['USER'], 'column' => 'id'],
+                'firstName' => ['table' => TABLES['USER'], 'column' => 'firstName'],
+                'lastName' => ['table' => TABLES['USER'], 'column' => 'lastName'],
+                'phone' => ['table' => TABLES['USER'], 'column' => 'phoneNumber'],
+                'email' => ['table' => TABLES['USER'], 'column' => 'email'],
+                'address' => ['table' => TABLES['USER'], 'column' => 'address'],
+                'username' => ['table' => TABLES['USER'], 'column' => 'username'],
+                'createdAt' => ['table' => TABLES['USER'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['USER'], 'column' => 'updatedAt'],
+                'roleId' => ['table' => TABLES['ROLE'], 'column' => 'id'],
+                'roleName' => ['table' => TABLES['ROLE'], 'column' => 'name']
+            ];
+            $sortConditions = [
+                'id' => ['table' => TABLES['USER'], 'column' => 'id'],
+                'firstName' => ['table' => TABLES['USER'], 'column' => 'firstName'],
+                'lastName' => ['table' => TABLES['USER'], 'column' => 'lastName'],
+                'phone' => ['table' => TABLES['USER'], 'column' => 'phoneNumber'],
+                'email' => ['table' => TABLES['USER'], 'column' => 'email'],
+                'address' => ['table' => TABLES['USER'], 'column' => 'address'],
+                'username' => ['table' => TABLES['USER'], 'column' => 'username'],
+                'createdAt' => ['table' => TABLES['USER'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['USER'], 'column' => 'updatedAt'],
+                'roleId' => ['table' => TABLES['ROLE'], 'column' => 'id'],
+                'roleName' => ['table' => TABLES['ROLE'], 'column' => 'name'],
+            ];
 
-            $query = "
-                SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
-                FROM `user` U join `role` R on U.roleId = R.id
-                {$sqlConditions['where']}
-                {$sqlConditions['orderBy']}
-                {$sqlConditions['limit']}
-                {$sqlConditions['offset']}
-            ";
-            $stmt = $conn->prepare($query);
+            $selection = [];
+            foreach ($filter as $filterItem) {
+                $selectCondition = $selectConditions[$filterItem['field']];
+                $selectCondition['value'] = $filterItem['value'];
+                if (isset($filterItem['like']) && $filterItem['like'] !== NULL) {
+                    $selectCondition['like'] = $filterItem['like'];
+                }
+                $selection[] = $selectCondition;
+            }
+
+            $sorter = [];
+            foreach ($sort as $sortItem) {
+                $sortCondition = $sortConditions[$sortItem['sortBy']];
+                $sortCondition['order'] = $sortItem['order'];
+                $sorter[] = $sortCondition;
+            }
+
+            $projection =  [
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'firstName'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'lastName'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'imageUrl'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'phoneNumber'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'email'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'address'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'username'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'active'
+                ],
+                [
+                    'table' => TABLES['ROLE'],
+                    'column' => 'id',
+                    'as' => 'roleId'
+                ],
+                [
+                    'table' => TABLES['ROLE'],
+                    'column' => 'name',
+                    'as' => 'roleName'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['USER'],
+                    'column' => 'updatedAt'
+                ]
+            ];
+
+            $join =  [
+                'tables' => [
+                    TABLES['USER'],
+                    TABLES['ROLE'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['USER'],
+                        'table2' => TABLES['ROLE'],
+                        'column1' => 'roleId',
+                        'column2' => 'id',
+                    ]
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+                $pagination,
+                $sorter,
+            );
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
-                throw new PDOException("Can not execute query");
+                throw new PDOException('Cannot execute query');
             }
-            return $stmt->fetchAll();
+            return Message::messageData(true, 'Get users successfully', [
+                'users' => $stmt->fetchAll()
+            ]);
         } catch (Exception $e) {
-            return Message::message(false, $e->getMessage());
+            print_r($e->getMessage());
+            return Message::message(false, 'Something went wrong');
         }
     }
 
@@ -366,6 +483,54 @@ class User extends OAuth
             return $stmt->fetch();
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function count(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]]
+    ) {
+        try {
+            $projection =  [
+                [
+                    'aggregate' => 'COUNT',
+                    'expression' => '*',
+                    'as' => 'total'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['USER']
+                ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['USER'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Count users successfully', [
+                'total' => $stmt->fetch()->total
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
         }
     }
 }

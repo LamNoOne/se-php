@@ -330,36 +330,6 @@ class Order extends DataFetcher
         }
     }
 
-    public static function getAllOrders(
-        $conn,
-        $filter = [],
-        $sorter = ['id' => 'ASC'],
-        $paginator = []
-    ) {
-        try {
-            $sqlConditions = generateSQLConditions($filter, $sorter, $paginator);
-            $query = "
-                SELECT O.id, O.shipAddress, O.phoneNumber, OS.name as status, U.imageUrl, U.firstName, U.lastName, SUM(OD.quantity * OD.price) as 'total', O.createdAt, O.updatedAt
-                FROM `order` as O join user as U on O.`userId` = U.id
-                    join orderdetail as OD on OD.orderId = O.id
-                    join orderstatus as OS on OS.id = O.orderStatusId
-                {$sqlConditions['where']}
-                GROUP BY O.id
-                {$sqlConditions['orderBy']}
-                {$sqlConditions['limit']}
-                {$sqlConditions['offset']}
-            ";
-            $stmt = $conn->prepare($query);
-            $stmt->setFetchMode(PDO::FETCH_OBJ);
-            if (!$stmt->execute()) {
-                throw new PDOException('Cannot execute query');
-            }
-            return $stmt->fetchAll();
-        } catch (PDOException $e) {
-            return Message::message(false, "Can not get orders: " . $e->getMessage());
-        }
-    }
-
     public static function getOrders(
         $conn,
         $filter = [['field' => 'id', 'value' => '', 'like' => false]],
@@ -376,7 +346,8 @@ class Order extends DataFetcher
                     TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
                 ]],
                 'status' => [['table' => TABLES['ORDER_STATUS'], 'column' => 'name']],
-                'createdAt' => [['table' => TABLES['ORDER'], 'column' => 'createdAt']]
+                'createdAt' => [['table' => TABLES['ORDER'], 'column' => 'createdAt']],
+                'updatedAt' => [['table' => TABLES['ORDER'], 'column' => 'updatedAt']]
             ];
 
             $sortCondition = $sortConditions[$sort['sortBy']];
@@ -512,7 +483,55 @@ class Order extends DataFetcher
                 'orders' => $stmt->fetchAll()
             ]);
         } catch (Exception $e) {
-            return Message::message(false, 'Get orders failed');
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function count(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]]
+    ) {
+        try {
+            $projection =  [
+                [
+                    'aggregate' => 'COUNT',
+                    'expression' => '*',
+                    'as' => 'total'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['ORDER']
+                ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['ORDER'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Count products successfully', [
+                'total' => $stmt->fetch()->total
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
         }
     }
 }

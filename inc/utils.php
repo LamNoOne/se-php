@@ -106,14 +106,14 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
     }
     $tables = $join['tables'];
     if (count($tables) === 0) {
-        throw new InvalidArgumentException('"$tables" must have at least 1 table');
+        throw new InvalidArgumentException('"$join[\'tables\']" must have at least 1 table');
     } else if (
         count($tables) === 1
         && !isset($join['on'])
     ) {
-        $sqlClauses[] = 'FROM ' . $tables[0];
+        $sqlClauses[] = 'FROM ' . "`$tables[0]`";
     } else if (isset($join['on']) && count($join['on']) < 1) {
-        $sqlClauses[] = 'FROM ' . $tables[0];
+        $sqlClauses[] = 'FROM ' . "`$tables[0]`";
     } else {
         $on = $join['on'];
         $joinClauses = [
@@ -140,7 +140,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
                 $param = ":{$selectItem['column']}$index";
             }
         } else {
-            $param = ":{$selectItem['value']}$index";
+            $param = ":{$selectItem['column']}$index";
         }
 
         if (isset($selectItem['table'])) {
@@ -332,7 +332,7 @@ function getQuerySQLPrepareStatement(
             continue;
         }
         $param = ":{$selectionItem['column']}$index";
-        if ($selectionItem['like']) {
+        if (isset($selectionItem['like']) && $selectionItem['like']) {
             $stmt->bindValue($param, '%' . $selectionItem['value'] . '%', PDO::PARAM_STR);
         } else {
             if (is_numeric($selectionItem['value'])) {
