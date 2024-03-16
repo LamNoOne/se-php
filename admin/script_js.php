@@ -268,6 +268,7 @@ require_once dirname(__DIR__) . "/inc/init.php"
 		})
 		$(document).on('click', '#toggle_btn', function() {
 			if ($('body').hasClass('mini-sidebar')) {
+				localStorage.removeItem('isActiveMiniSideBar')
 				$('body').removeClass('mini-sidebar')
 				$(this).addClass('active')
 				$('.subdrop + ul').slideDown()
@@ -275,8 +276,9 @@ require_once dirname(__DIR__) . "/inc/init.php"
 				setTimeout(function() {
 					$('body').removeClass('mini-sidebar')
 					$('.header-left').addClass('active')
-				}, 100)
+				}, 0)
 			} else {
+				localStorage.setItem('isActiveMiniSideBar', true)
 				$('body').addClass('mini-sidebar')
 				$(this).removeClass('active')
 				$('.subdrop + ul').slideUp()
@@ -284,10 +286,17 @@ require_once dirname(__DIR__) . "/inc/init.php"
 				setTimeout(function() {
 					$('body').addClass('mini-sidebar')
 					$('.header-left').removeClass('active')
-				}, 100)
+				}, 0)
 			}
 			return false
 		})
+		const autoToggleSideBar = () => {
+			const isActiveMiniSideBar = Boolean(localStorage.getItem('isActiveMiniSideBar'))
+			if (isActiveMiniSideBar) {
+				$('#toggle_btn').click()
+			}
+		}
+		autoToggleSideBar()
 		if (localStorage.getItem('screenModeNightTokenState') == 'night') {
 			setTimeout(function() {
 				$('body').removeClass('mini-sidebar')
