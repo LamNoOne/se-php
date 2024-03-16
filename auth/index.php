@@ -272,13 +272,12 @@ if (isset($_SESSION['userId'])) {
             $("#submit-register").html("Loading...");
             try {
                 const response = await register(getRegisterData());
-
                 if (response.status) {
                     const otpId = response.data.otp_id;
                     const email = response.data.email
                     window.location.replace(`<?php echo APP_URL; ?>/auth/verification.php?verification_token=${otpId}&email=${email}`);
                 } else {
-                    toastr.warning(message, "User registration failed");
+                    toastr.warning(response.message, "User registration failed");
                 }
             } catch (error) {
                 console.log(error)
@@ -290,7 +289,7 @@ if (isset($_SESSION['userId'])) {
             $("#submit-login").html("Loading...");
             try {
                 const response = await login(getLoginData())
-                response.status ? window.location.replace(response.data.redirect) : toastr.warning(message, "Wrong email or password");
+                response.status ? window.location.replace(response.data.redirect) : toastr.warning(response.message, "Wrong email or password");
             } catch (error) {
                 toastr.error(error.message, "User login failed");
             }

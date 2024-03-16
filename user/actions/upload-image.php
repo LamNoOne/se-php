@@ -27,16 +27,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $_SESSION['image'] = $newImage;
 
-    if($oldImage) {
+    if ($oldImage) {
         /**
+         * unlink the old image which belongs to this server
          * $oldImage = "http://localhost//img1.jpg";
          * unlink not accept http
          * get the image name from the url -> use basename method instead
          */
-        $filename = basename($oldImage);
-        // delete oldFile
-        unlink(dirname(dirname(__DIR__)) . "/uploads/" . $filename);
+        if (parse_url($oldImage)['host'] === $_SERVER['HTTP_HOST']) {
+            $filename = basename($oldImage);
+            // delete oldFile
+            unlink(dirname(dirname(__DIR__)) . "/uploads/" . $filename);
+        }
     }
-    
+
     return throwStatusMessage($response);
 }

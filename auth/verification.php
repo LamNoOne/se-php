@@ -75,7 +75,7 @@ if (isset($_GET['verification_token']) && isset($_GET['email'])) {
                     toastr.success("OTP is successfully verified", "OTP");
                     setTimeout(() => {
                         if (forgotPassword === '') {
-                            window.location.replace(`<?php echo APP_URL; ?>/auth/login-register.php`);
+                            window.location.replace(`<?php echo APP_URL; ?>/auth/`);
                         } else {
                             window.location.replace(`<?php echo APP_URL; ?>/auth/reset-password.php?email=${email}`);
                         }

@@ -135,7 +135,7 @@ $productDetail = Product::getProductById($conn, $product_id);
 
             // if userId is not exist, require login => navigate to login
             if (userId === '')
-                window.location.href = "<?php echo APP_URL; ?>/auth/login-register.php";
+                window.location.href = "<?php echo APP_URL; ?>/auth/";
 
             // parse params to integer
             userId = parseInt(userId)

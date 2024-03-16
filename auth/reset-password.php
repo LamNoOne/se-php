@@ -99,7 +99,7 @@ if ($_GET['email']) {
                 if (status) {
                     toastr.success(message, "Update Password");
                     setTimeout(() => {
-                        window.location.replace("<?php echo APP_URL; ?>/auth/login-register.php");
+                        window.location.replace("<?php echo APP_URL; ?>/auth/");
                     }, 1500)
                 } else {
                     toastr.error(message, "Update Password");

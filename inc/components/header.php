@@ -344,7 +344,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                                 </li>
                                             </ul>
                                         <?php else : ?>
-                                            <a href="<?php echo APP_URL; ?>/auth/login-register.php" class="login-btn text-decoration-none">
+                                            <a href="<?php echo APP_URL; ?>/auth/" class="login-btn text-decoration-none">
                                                 <i class="fa-regular fa-circle-user"></i>
                                                 <span class="header-control-desc">Login</span>
                                             </a>
