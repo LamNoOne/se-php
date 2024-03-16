@@ -107,12 +107,6 @@ if (!$order) {
         <div class="table-top">
           <div class="search-set">
             <div class="search-path">
-              <a class="btn btn-filter" id="filter_search">
-                <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/filter.svg" alt="img" />
-                <span><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/closes.svg" alt="img" /></span>
-              </a>
-            </div>
-            <div class="search-path">
               <a class="btn btn-danger btn-delete-by-select" id="deleteBySelectBtn">
                 <i class="fas fa-trash-alt"></i>
               </a>
