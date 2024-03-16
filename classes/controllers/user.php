@@ -60,7 +60,7 @@ class User extends OAuth
         }
     }
 
-    public static function OAuthenticate($conn, $oData = array())
+    public static function oAuthenticate($conn, $oData = array())
     {
         try {
             if (empty($oData) || empty($oData['email'])) throw new Exception("No oAuth user data");

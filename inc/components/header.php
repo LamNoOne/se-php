@@ -35,7 +35,7 @@ if ($gClient->getAccessToken()) {
     // Insert or update user data to the database 
     $gpUserData['oauthProvider'] = 'google';
 
-    $user = User::OAuthenticate($conn, $gpUserData);
+    $user = User::oAuthenticate($conn, $gpUserData);
     Auth::login();
     $_SESSION['username'] = $user->username;
     $_SESSION['firstName'] = $user->firstName;

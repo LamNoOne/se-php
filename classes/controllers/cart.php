@@ -2,6 +2,7 @@
 
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
+require_once "product.php";
 
 class Cart
 {
@@ -70,6 +71,16 @@ class Cart
             // validate data, array is not empty and contains defined keys
             if (!Validation::validateData($cartDataPattern, $cartData)) {
                 throw new InvalidArgumentException('Invalid cart data');
+            }
+
+            $product = Product::getProductById($conn, $cartData['productId']);
+
+            if(empty($product)) {
+                return Message::message(false, 'Product not found');
+            }
+
+            if($product->stockQuantity < $cartData['quantity']) {
+                return Message::message(false, 'Product quantity is not enough');
             }
 
             $updateStatement = "UPDATE cartdetail SET quantity=:quantity WHERE cartId=:cartId AND productId=:productId";
@@ -206,19 +217,31 @@ class Cart
             // get value from cartData
             $productId = $cartData['productId'];
             $quantity = $cartData['quantity'];
-            $cartId = static::getCartId($conn, $userId);
 
+            $product = Product::getProductById($conn, $productId);
+            if(empty($product)) {
+                return Message::message(false, 'Product not found');
+            }
+
+            if($product->stockQuantity < $quantity) {
+                return Message::message(false, 'Product quantity is not enough');
+            }
+
+            $cartId = static::getCartId($conn, $userId);
             // check if product is already in cart
             $productCartData = static::getProductCartById($conn, $cartId, $productId);
             if ($productCartData['status'] && isset($productCartData['data']) && !empty($productCartData['data'])) {
                 // increase product cart quantity and call update cart
                 // $cartUpdate = [...$cartData, 'quantity' => $productCartData['data']->quantity + $quantity];
+                if($productCartData['data']->quantity + $quantity > $product->stockQuantity) {
+                    return Message::message(false, 'Product quantity is not enough');
+                }
                 $cartUpdate = array_merge($cartData, ['quantity' => $productCartData['data']->quantity + $quantity]);
                 $status = static::updateCart($conn, $userId, $cartUpdate)['status'];
                 if ($status) {
                     return Message::messageData(true, 'Product exists in cart, update quantity successfully', ['modified' => true]);
                 } else {
-                    return Message::message(false, 'Product exist in cart, update failed');
+                    return Message::message(false, 'Update product cart failed');
                 }
             }
 
