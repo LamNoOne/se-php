@@ -10,6 +10,29 @@
 
 /* Custom */
 /* COMMON */
+.modal .form-group label {
+	margin-bottom: 0;
+}
+
+.form-select {
+	height: 40px;
+	width: 100%;
+	font-size: 14px;
+	font-weight: 500;
+	color: #637381;
+	padding: 10px;
+	border-radius: 8px;
+}
+
+.form-select:hover {
+	border: 1px solid rgba(145, 158, 171, 0.32);
+}
+
+.form-select:focus {
+	box-shadow: none;
+	border: 1px solid rgba(145, 158, 171, 0.32);
+}
+
 .red-text-color {
 	color: var(--red-color);
 }

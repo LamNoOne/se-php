@@ -24,12 +24,6 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         <div class="table-top">
           <div class="search-set">
             <div class="search-path">
-              <a class="btn btn-filter" id="filter_search">
-                <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/filter.svg" alt="img" />
-                <span><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/closes.svg" alt="img" /></span>
-              </a>
-            </div>
-            <div class="search-path">
               <a class="btn btn-danger btn-delete-by-select" id="deleteBySelectBtn">
                 <i class="fas fa-trash-alt"></i>
               </a>
@@ -38,52 +32,6 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               <a class="btn btn-searchset">
                 <i class="fas fa-search"></i>
               </a>
-            </div>
-          </div>
-          <!-- <div class="wordset">
-            <ul>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="assets/img/icons/pdf.svg" alt="img" /></a>
-              </li>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="assets/img/icons/excel.svg" alt="img" /></a>
-              </li>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="assets/img/icons/printer.svg" alt="img" /></a>
-              </li>
-            </ul>
-          </div> -->
-        </div>
-
-        <div class="card mb-2" id="filter_inputs">
-          <div class="card-body pb-0">
-            <div class="row">
-              <div class="col-lg-12 col-sm-12">
-                <div class="row">
-                  <div class="col-lg-2 col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <select class="select">
-                        <option>Choose Category</option>
-                        <option>Computers</option>
-                        <option>Fruits</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg-2 col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <select class="select">
-                        <option>Price</option>
-                        <option>150.00</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div class="col-lg col-sm-6 col-12">
-                    <div class="form-group m-3">
-                      <a class="btn btn-filters ms-auto"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/search-whites.svg" alt="img" /></a>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>

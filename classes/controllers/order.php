@@ -21,7 +21,8 @@ class Order extends DataFetcher
         $this->price = $price;
     }
 
-    public static function cancelOrder($conn, $orderId) {
+    public static function cancelOrder($conn, $orderId)
+    {
         try {
             $queryOrderStatus = "SELECT orderStatusId FROM `order` WHERE id = :orderId";
             $stmtOrderStatus = $conn->prepare($queryOrderStatus);
@@ -468,6 +469,19 @@ class Order extends DataFetcher
         $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
+            $filterConditions = [
+                'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
+                'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
+                'totalPrice' => [[
+                    'aggregate' => 'SUM',
+                    'expression' =>
+                    TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
+                ]],
+                'status' => [['table' => TABLES['ORDER_STATUS'], 'column' => 'name']],
+                'createdAt' => [['table' => TABLES['ORDER'], 'column' => 'createdAt']],
+                'updatedAt' => [['table' => TABLES['ORDER'], 'column' => 'updatedAt']]
+            ];
+
             $sortConditions = [
                 'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
                 'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
@@ -629,6 +643,26 @@ class Order extends DataFetcher
                 'orders' => $stmt->fetchAll()
             ]);
         } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function updateOrder($conn, $id, $dataToUpdate)
+    {
+        try {
+            $stmt = getUpdateByIdSQLPrepareStatement($conn, TABLES['ORDER'], $id, $dataToUpdate);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update order successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
+                return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
+            }
             return Message::message(false, 'Something went wrong');
         }
     }

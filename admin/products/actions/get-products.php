@@ -16,18 +16,6 @@ $search = '';
 $sortBy = 'createdAt';
 $order = 'asc';
 
-$dataToValidate = $_GET;
-
-// $validateResult = Validator::integer($dataToValidate, [
-//   'page',
-//   'limit',
-//   'search',
-//   'draw'
-// ]);
-// if (!$validateResult['status']) {
-//   throwStatusMessage(Message::message(false, $validateResult['status']));
-// }
-
 if (isset($_GET['page'])) {
   $page = $_GET['page'];
 }

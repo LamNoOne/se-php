@@ -51,23 +51,6 @@
       </a>
 
       <ul class="nav user-menu">
-        <li class="nav-item">
-          <div class="top-nav-search">
-            <a href="javascript:void(0);" class="responsive-search">
-              <i class="fa fa-search"></i>
-            </a>
-            <form action="#">
-              <div class="searchinputs">
-                <input type="text" placeholder="Search Here ..." />
-                <div class="search-addon">
-                  <span><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/closes.svg" alt="img" /></span>
-                </div>
-              </div>
-              <a class="btn" id="searchdiv"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/search.svg" alt="img" /></a>
-            </form>
-          </div>
-        </li>
-
         <li class="nav-item dropdown has-arrow main-drop">
           <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
             <span class="user-img"><img src="<?php echo APP_URL; ?>/admin/assets/img/no-avatar-image.png" alt="" />
