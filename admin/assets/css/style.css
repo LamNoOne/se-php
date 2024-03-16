@@ -6686,7 +6686,7 @@ span.select2-container.select2-container--default.select2-container--open {
 .badges {
 	font-size: 12px;
 	font-weight: 500;
-	display: inline-block;
+	display: inline-block !important;
 	padding: 5px 10px;
 	border-radius: 5px;
 	color: #fff;
