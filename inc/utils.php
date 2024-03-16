@@ -556,13 +556,25 @@ function deliveredStatus()
     return "#28c76f";
 }
 
+function pendingCancelStatus()
+{
+    return "#f4c22b";
+}
+
+function cancelledStatus()
+{
+    return "#686262";
+}
+
 function getStatusController()
 {
     return [
         "paid" => "paidStatus",
         "pending" => "pendingStatus",
         "delivering" => "deliveringStatus",
-        "delivered" => "deliveredStatus"
+        "delivered" => "deliveredStatus",
+        "pending cancel" => "pendingCancelStatus",
+        "cancelled" => "cancelledStatus"
     ];
 }
 

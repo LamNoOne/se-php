@@ -45,59 +45,87 @@ $allPages = $allOrdersData['totalPage'];
                 </ul>
             </div>
             <div class="col-10 px-4">
-                <?php if(!empty($allOrders)) : ?>
-                <ul class="list-unstyled d-flex flex-column gap-3">
-                    <?php foreach ($allOrders as $orders) : ?>
-                        <li>
-                            <div class="order-item d-flex flex-column">
-                                <ul class="d-flex flex-column flex-grow-1 gap-3">
-                                    <?php foreach ($orders->orderDetail as $order) : ?>
-                                        <li class="d-flex justify-content-between w-100 border-bottom border-black border-opacity-10 py-2">
-                                            <div class="d-flex gap-3">
-                                                <img class="order-item__img object-fit-contain" src="<?php echo $order->imageUrl; ?>" alt="order-item" />
-                                                <div class="order-item__info d-flex flex-column justify-content-between">
-                                                    <p class="order-item__desc m-0">
-                                                        <?php echo $order->name; ?>
-                                                    </p>
-                                                    <span>&times;<?php echo $order->quantity; ?></span>
-                                                    <span class="order-item__price"><?php echo $order->price; ?> USD</span>
+                <?php if (!empty($allOrders)) : ?>
+                    <ul class="list-unstyled d-flex flex-column gap-3">
+                        <?php foreach ($allOrders as $orders) : ?>
+                            <li>
+                                <div class="order-item d-flex flex-column">
+                                    <ul class="d-flex flex-column flex-grow-1 gap-3">
+                                        <?php foreach ($orders->orderDetail as $order) : ?>
+                                            <li class="d-flex justify-content-between w-100 border-bottom border-black border-opacity-10 py-2">
+                                                <div class="d-flex gap-3">
+                                                    <img class="order-item__img object-fit-contain" src="<?php echo $order->imageUrl; ?>" alt="order-item" />
+                                                    <div class="order-item__info d-flex flex-column justify-content-between">
+                                                        <p class="order-item__desc m-0">
+                                                            <?php echo $order->name; ?>
+                                                        </p>
+                                                        <span>&times;<?php echo $order->quantity; ?></span>
+                                                        <span class="order-item__price"><?php echo $order->price; ?> USD</span>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="order-item__time d-flex flex-column justify-content-between">
-                                                <span><?php echo $order->createdAt; ?></span>
-                                                <span class="subtotal-price"><?php echo $order->quantity * $order->price; ?> USD</span>
-                                            </div>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span style="background-color: <?php echo getStatus($orders->status); ?>;" class="order-status border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Status: <?php echo $orders->status; ?></span>
-                                    <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
-                                        <button data-index="<?php echo $orders->id; ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Repurchase</button>
-                                        <?php if (!$orders->transaction_id) : ?>
-                                            <a href="<?php echo APP_URL; ?>/payment?orderId=<?php echo $orders->id; ?>" class="continue-payment align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Continue Payment</a>
-                                        <?php else : ?>
-                                            <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-watch-detail border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
-                                        <?php endif; ?>
+                                                <div class="order-item__time d-flex flex-column justify-content-between">
+                                                    <span><?php echo $order->createdAt; ?></span>
+                                                    <span class="subtotal-price"><?php echo $order->quantity * $order->price; ?> USD</span>
+                                                </div>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span style="background-color: <?php echo getStatus($orders->status); ?>;" class="order-status border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Status: <?php echo $orders->status; ?></span>
+                                        <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
+                                            <?php if ($orders->orderStatusId != CANCELLED && $orders->orderStatusId != PENDING_CANCEL) : ?>
+                                                <div class="cancel-form">
+                                                    <!-- Button trigger modal -->
+                                                    <button type="button" class="btn btn-cancel-order align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3 btn-cancel-primary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                                        Cancel
+                                                    </button>
+
+                                                    <!-- Modal -->
+                                                    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                                                        <div class="modal-dialog modal-dialog-centered">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h1 class="modal-title text-primary fs-5" id="cancelModalLabel">Cancel Confirmation</h1>
+                                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body fs-6">
+                                                                    Are you sure want to cancel?
+                                                                </div>
+                                                                <div class="modal-footer d-flex justify-content-between align-items-center flex-nowrap">
+                                                                    <button type="button" class="btn w-100 d-inline-block btn-secondary btn-cancel-control btn-cancel-cancel" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="button" data-index="<?php echo $orders->id; ?>" class="btn w-100 d-inline-block btn-primary btn-cancel-control btn-cancel-confirm">Yes</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            <?php endif; ?>
+                                            <button data-index="<?php echo $orders->id; ?>" class="btn-order-detail align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Repurchase</button>
+                                            <?php if (!$orders->transaction_id && $orders->orderStatusId != CANCELLED) : ?>
+                                                <a href="<?php echo APP_URL; ?>/payment?orderId=<?php echo $orders->id; ?>" class="continue-payment align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3">Continue Payment</a>
+                                            <?php elseif ($orders->orderStatusId != CANCELLED) : ?>
+                                                <a href="<?php echo APP_URL; ?>/payment/transaction.php?checkout_ref_id=<?php echo base64_encode($orders->transaction_id); ?>" class="btn-watch-detail border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Watch Detail</a>
+                                            <?php endif; ?>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-                <div class="row">
-                    <div id="pagination" class="py-3"></div>
-                </div>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                    <div class="row">
+                        <div id="pagination" class="py-3"></div>
+                    </div>
                 <?php else : ?>
                     <div class="row">
-                    <div class="no-cart d-flex flex-column justify-content-center align-items-center">
-                        <div class="no-cart__img">
-                            <img class="object-fit-contain" src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/9bdd8040b334d31946f4.png" alt="no-cart">
+                        <div class="no-cart d-flex flex-column justify-content-center align-items-center">
+                            <div class="no-cart__img">
+                                <img class="object-fit-contain" src="https://deo.shopeemobile.com/shopee/shopee-pcmall-live-sg/cart/9bdd8040b334d31946f4.png" alt="no-cart">
+                            </div>
+                            <p class="no-cart__desc">There are no orders</p>
+                            <a href="<?php echo APP_URL; ?>" class="no-cart__btn text-decoration-none">Continue to shopping</a>
                         </div>
-                        <p class="no-cart__desc">There are no orders</p>
-                        <a href="<?php echo APP_URL; ?>" class="no-cart__btn text-decoration-none">Continue to shopping</a>
                     </div>
-                </div>
                 <?php endif; ?>
             </div>
         </div>
@@ -132,6 +160,32 @@ $allPages = $allOrdersData['totalPage'];
                         message
                     } = JSON.parse(repurchaseResponse);
                     status ? window.location.href = "<?php echo APP_URL; ?>/cart" : toastr.error(message, "Error Repurchase");
+                } catch (error) {
+                    toastr.error(error.message, "Error");
+                }
+            })
+        })
+        
+        const allBtnCancelOrder = $(".btn-cancel-control").get();
+        console.log(allBtnCancelOrder)
+        allBtnCancelOrder.forEach(function(el) {
+            el.addEventListener("click", async function(e) {
+                e.preventDefault();
+                const orderId = $(this).data("index");
+
+                try {
+                    const cancelOrderResponse = await $.ajax({
+                        method: "POST",
+                        url: "actions/cancel-order.php",
+                        data: {
+                            orderId
+                        }
+                    })
+                    const {
+                        status,
+                        message
+                    } = JSON.parse(cancelOrderResponse);
+                    status ? window.location.reload() : toastr.error(message, "Error Cancelling Order");
                 } catch (error) {
                     toastr.error(error.message, "Error");
                 }

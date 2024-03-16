@@ -38,6 +38,8 @@ if (!defined("PENDING")) define("PENDING", 1);
 if (!defined("PAID")) define("PAID", 2);
 if (!defined("DELIVERING")) define("DELIVERING", 3);
 if (!defined("DELIVERED")) define("DELIVERED", 4);
+if (!defined("PENDING_CANCEL")) define("PENDING_CANCEL", 5);
+if (!defined("CANCELLED")) define("CANCELLED", 6);
 
 /**
  * Define role

@@ -21,6 +21,25 @@ class Order extends DataFetcher
         $this->price = $price;
     }
 
+    public static function cancelOrder($conn, $orderId) {
+        try {
+            $queryOrderStatus = "SELECT orderStatusId FROM `order` WHERE id = :orderId";
+            $stmtOrderStatus = $conn->prepare($queryOrderStatus);
+            $stmtOrderStatus->bindParam(":orderId", $orderId, PDO::PARAM_INT);
+            $stmtOrderStatus->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmtOrderStatus->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            $orderStatus = $stmtOrderStatus->fetch();
+            if (intval($orderStatus->orderStatusId) === PENDING) {
+                return static::updateOrderStatus($conn, $orderId, CANCELLED);
+            }
+            return static::updateOrderStatus($conn, $orderId, PENDING_CANCEL);
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
     public static function createOrderByCart($conn, $data)
     {
         $createOrderStatement =
