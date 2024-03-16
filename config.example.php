@@ -140,3 +140,6 @@ if (!defined('GET_ORDERS_API'))
 
 if (!defined('GET_PRODUCTS_OF_ORDER_API'))
   define('GET_PRODUCTS_OF_ORDER_API', APP_URL . '/admin/orders/actions/get-products-of-order.php');
+
+if (!defined('UPDATE_ORDER_PRODUCT_API'))
+  define('UPDATE_ORDER_PRODUCT_API', APP_URL . '/admin/orders/actions/update-order-product.php');

@@ -736,7 +736,127 @@ class Order extends DataFetcher
                 'products' => $stmt->fetchAll()
             ]);
         } catch (Exception $e) {
-            print_r($e->getMessage());
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function getOrderProduct(
+        $conn,
+        $filter = [
+            ['field' => 'orderId', 'value' => ''],
+            ['field' => 'productId', 'value' => '']
+        ]
+    ) {
+        try {
+            $selectConditions = [
+                'orderId' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'orderId'],
+                'productId' => ['table' => TABLES['ORDER_DETAIL'], 'column' => 'productId'],
+            ];
+
+            $selection = [];
+            foreach ($filter as $filterItem) {
+                $selectCondition = $selectConditions[$filterItem['field']];
+                $selectCondition['value'] = $filterItem['value'];
+                if (isset($filterItem['like']) && $filterItem['like'] !== NULL) {
+                    $selectCondition['like'] = $filterItem['like'];
+                }
+                $selection[] = $selectCondition;
+            }
+
+            $projection =  [
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'orderId',
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'productId',
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'name',
+                    'as' => 'name'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'imageUrl',
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'price'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'quantity'
+                ],
+                [
+                    'expression' => TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity',
+                    'as' => 'totalPrice'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['ORDER_DETAIL'],
+                    'column' => 'updatedAt'
+                ]
+            ];
+
+            $join =  [
+                'tables' => [
+                    TABLES['ORDER_DETAIL'],
+                    TABLES['PRODUCT']
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['ORDER_DETAIL'],
+                        'table2' => TABLES['PRODUCT'],
+                        'column1' => 'productId',
+                        'column2' => 'id'
+                    ]
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Get order product successfully', [
+                'orderProduct' => $stmt->fetch()
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function updateOrderProduct(
+        $conn,
+        $orderId,
+        $productId,
+        $dataToUpdate
+    ) {
+        try {
+            $stmt = getUpdateByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['ORDER_DETAIL'],
+                [
+                    ['column' => 'orderId', 'value' => $orderId],
+                    ['column' => 'productId', 'value' => $productId]
+                ],
+                $dataToUpdate
+            );
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update order product successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
             return Message::message(false, 'Something went wrong');
         }
     }

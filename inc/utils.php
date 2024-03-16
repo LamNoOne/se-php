@@ -448,6 +448,32 @@ function getUpdateByIdSQLPrepareStatement($conn, $table, $id, $dataToUpdate = []
     return $stmt;
 }
 
+function getUpdateByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns = [], $dataToUpdate = [])
+{
+    $keyValuePairs = [];
+    foreach ($dataToUpdate as $key => $value) {
+        $keyValuePairs[] = "`$key`=:$key";
+    }
+    $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs);
+
+    $whereConditions = array_map(function ($item) {
+        return "{$item['column']}=:{$item['column']}";
+    }, $multiColumns);
+
+    $updateStatement .= ' WHERE ' . implode(' AND ', $whereConditions);
+
+    $stmt = $conn->prepare($updateStatement);
+
+    foreach ($dataToUpdate as $key => $value) {
+        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+    }
+    foreach ($multiColumns as $item) {
+        $stmt->bindValue(":{$item['column']}", $item['value'], PDO::PARAM_STR);
+    }
+
+    return $stmt;
+}
+
 function getDuplicateKeyWhenSQLInsertUpdate($exceptionError)
 {
     $errorCode = $exceptionError->getCode();

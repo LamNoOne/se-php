@@ -160,7 +160,7 @@ if (!$order) {
         <div class="table-bottom">
           <div class="d-flex justify-content-end align-items-center gap-3">
             <span class="fw-bold red-text-color">Total Payment:</span>
-            <span class="badges bg-lightred">4500</span>
+            <span class="badges bg-lightred"></span>
           </div>
         </div>
       </div>
@@ -208,7 +208,7 @@ if (!$order) {
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editModalLabel">Edit Category</h1>
+        <h1 class="modal-title fs-5" id="editModalLabel">Edit Product in Order</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
@@ -357,7 +357,20 @@ if (!$order) {
           data: 'price'
         },
         {
-          data: 'quantity'
+          render: function(data, type, row, meta) {
+            return `
+              <div class="edit-order-product">
+                <input 
+                  type="number"
+                  min="1"
+                  name="quantity"
+                  value="${row.quantity}"
+                  style="display: none;"
+                />
+                <span>${row.quantity}</span>
+              </div>
+            `
+          }
         },
         {
           data: 'totalPrice'
@@ -368,26 +381,36 @@ if (!$order) {
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
-                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
-              </a>
-              <a
-                class="me-2 edit-button action"
-                data-product-id="${row.id}"
-                data-order-id="${row.orderId}"
-                href="javascript:void(0)"
-              >
-                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/edit.svg" alt="img" />
-              </a>
-              <a
-                class="action"
-                data-product-id="${row.id}"
-                data-orderId="${row.orderId}"
-                id="delete-btn"
-                href="javascript:void(0)"
-              >
-                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
-              </a>
+              <div class="confirm-buttons">
+                <button
+                  class="btn btn-primary update-order-product-submit-button"
+                  data-product-id="${row.id}"
+                  data-order-id="${row.orderId}"
+                >
+                  Update
+                </button>
+                <button class="btn btn-cancel update-order-product-cancel-button">Cancel</button>
+              </div>
+              <div class="actions">
+                <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/products/details.php?id=${row.id}">
+                  <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
+                </a>
+                <a
+                  class="me-2 edit-button action"
+                  href="javascript:void(0)"
+                >
+                  <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/edit.svg" alt="img" />
+                </a>
+                <a
+                  class="action"
+                  data-product-id="${row.id}"
+                  data-orderId="${row.orderId}"
+                  id="delete-btn"
+                  href="javascript:void(0)"
+                >
+                  <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
+                </a>
+              </div>
               `
           }
         },
@@ -409,9 +432,6 @@ if (!$order) {
             table.page(currentPage).draw('page')
           }, 0)
         }
-
-        // init total payment on UI
-        totalPaymentBadge.text(json.totalPayment);
       },
     })
 
@@ -469,86 +489,88 @@ if (!$order) {
       }
     })
 
-    // handle edit
-    const editFormId = '#editForm'
-    const editModalId = '#editModal'
-    const editForm = $(editFormId)
-    const editModal = $(editModalId)
-    const editFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
-    $('#table tbody').on('click', '.edit-button', async function(event) {
-      try {
-        const id = $(this).data('id')
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+    // handle edit quantity of product
+    $('#table').on('draw.dt', function(event, settings) {
+      const {
+        totalPayment
+      } = settings.json || {}
+      // change total payment on UI
+      totalPaymentBadge.text(totalPayment);
 
-        const response = await $.ajax({
-          url: `<?php echo GET_CATEGORY_BY_ID_API; ?>?id=${id}`,
-          type: 'GET',
-          dataType: 'json'
+      $('#table tbody tr').each(async function() {
+        const tr = $(this)
+        const editButton = tr.find('.actions .edit-button')
+        const confirmButtons = tr.find('.confirm-buttons')
+        const actions = tr.find('.actions')
+        const quantityInput = tr.find('.edit-order-product input[name]')
+        const valueSpan = tr.find('.edit-order-product span')
+        const submitButton = tr.find('.update-order-product-submit-button')
+        const cancelButton = tr.find('.update-order-product-cancel-button')
+
+        const toggleUpdateOrderProduct = () => {
+          if (actions.css('display') === 'none') {
+            actions.show()
+            valueSpan.show()
+            confirmButtons.hide()
+            quantityInput.hide()
+            return;
+          }
+          actions.hide()
+          valueSpan.hide()
+          confirmButtons.show()
+          quantityInput.show()
+        }
+        editButton.click(function() {
+          toggleUpdateOrderProduct();
         })
 
-        if (response.status) {
-          const category = response.data.category;
-
-          editForm.attr('data-id', id);
-          editForm.find('input[name="name"]').val(category.name)
-          editForm.find('textarea[name="description"]').val(category.description)
-
-          modal.show()
-        } else {
-          toastr.error(response.message)
-        }
-      } catch (error) {
-        toastr.error('Something went wrong')
-      }
-    })
-    editFormSubmitButton.click(function() {
-      editForm.submit()
-    })
-    editForm.validate({
-      rules: {
-        name: {
-          required: true
-        }
-      },
-    })
-    editForm.submit(async function(event) {
-      try {
-        event.preventDefault()
-        if ($(this).valid()) {
-          const id = $(this).data('id')
-          let data = $(this).serializeArray().reduce((acc, item) => {
-            return {
-              ...acc,
-              [item.name]: item.value
+        submitButton.click(async function() {
+          try {
+            const orderId = $(this).data('orderId')
+            const productId = $(this).data('productId')
+            const quantityInputValue = quantityInput.val();
+            if (quantityInputValue === '') {
+              toastr.error('Quantity is required');
+              return;
             }
-          }, {})
+            const quantity = parseInt(quantityInput.val())
+            if (quantity < 1) {
+              toastr.error('Quantity must be greater than 0');
+              return;
+            }
 
-          data = {
-            ...data,
-            id
-          }
+            const response = await $.ajax({
+              url: `<?php echo UPDATE_ORDER_PRODUCT_API; ?>`,
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                productId,
+                orderId,
+                quantity
+              }
+            })
 
-          const response = await $.ajax({
-            url: '<?php echo UPDATE_CATEGORY_API; ?>',
-            type: 'POST',
-            dataType: 'json',
-            data,
-          })
-          if (response.status) {
-            const currentPage = table.page.info().page;
-            table.page(currentPage).draw('page')
-            toastr.success('Edit product successfully')
-          } else {
+            if (response.status) {
+              const currentPage = table.page.info().page;
+              toggleUpdateOrderProduct();
+              table.page(currentPage).draw('page')
+              totalPaymentBadge.text(response.data.totalPayment);
+              toastr.success('Update quantity successfully')
+              return;
+            }
+            toggleUpdateOrderProduct();
             toastr.error(response.message)
+          } catch (error) {
+            toggleUpdateOrderProduct();
+            toastr.error('Something went wrong')
           }
-          clearForm(editModal, editForm);
-        }
-      } catch (error) {
-        clearForm(editModal, editForm);
-        toastr.error('Something went wrong')
-      }
-    })
+        })
 
+        cancelButton.click(function() {
+          toggleUpdateOrderProduct();
+        })
+      })
+    })
     // handle delete a item
     $('#table tbody').on('click', '#delete-btn', function() {
       const id = $(this).data('id')
