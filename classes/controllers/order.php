@@ -21,7 +21,8 @@ class Order extends DataFetcher
         $this->price = $price;
     }
 
-    public static function cancelOrder($conn, $orderId) {
+    public static function cancelOrder($conn, $orderId)
+    {
         try {
             $queryOrderStatus = "SELECT orderStatusId FROM `order` WHERE id = :orderId";
             $stmtOrderStatus = $conn->prepare($queryOrderStatus);
@@ -468,6 +469,19 @@ class Order extends DataFetcher
         $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
+            $filterConditions = [
+                'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
+                'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
+                'totalPrice' => [[
+                    'aggregate' => 'SUM',
+                    'expression' =>
+                    TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
+                ]],
+                'status' => [['table' => TABLES['ORDER_STATUS'], 'column' => 'name']],
+                'createdAt' => [['table' => TABLES['ORDER'], 'column' => 'createdAt']],
+                'updatedAt' => [['table' => TABLES['ORDER'], 'column' => 'updatedAt']]
+            ];
+
             $sortConditions = [
                 'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
                 'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],

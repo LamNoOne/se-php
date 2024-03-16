@@ -11,12 +11,6 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         <h3>Order List</h3>
         <h4>Manage customer orders</h4>
       </div>
-      <div class="page-btn" data-bs-toggle="modal" data-bs-target="#addModal">
-        <button class="btn btn-added box-shadow">
-          <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/plus.svg" alt="img" class="me-1" />
-          Add New Order
-        </button>
-      </div>
     </div>
 
     <div class="card">

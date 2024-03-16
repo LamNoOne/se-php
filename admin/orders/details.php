@@ -33,9 +33,6 @@ if (!$order) {
         <h3>Order Details</h3>
         <h4>Full details of a order</h4>
       </div>
-      <div class="page-btn">
-        <a data-id="<?php ?>" id="delete-btn" class="btn btn-danger" href="javascript:void(0)">Delete</a>
-      </div>
     </div>
 
     <div class="card">
