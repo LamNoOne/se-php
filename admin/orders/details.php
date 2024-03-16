@@ -496,7 +496,6 @@ if (!$order) {
               const currentPage = table.page.info().page;
               toggleUpdateOrderProduct();
               table.page(currentPage).draw('page')
-              totalPaymentBadge.text(response.data.totalPayment);
               toastr.success('Update quantity successfully')
               return;
             }
