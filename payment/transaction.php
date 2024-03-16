@@ -124,10 +124,7 @@ if (!empty($_GET['checkout_ref_id'])) {
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12">
-                                <span class="fw-medium">Note:</span>
-                                <span>It was a pleasure working with you and your team. We hope you will keep us in mind for future freelance
-                                    projects. Thank You!</span>
+                            <div class="col-12 py-2">
                             </div>
                         </div>
                     </div>

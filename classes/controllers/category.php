@@ -1,8 +1,7 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
-require_once dirname(__DIR__) . "/services/datafetcher.php";
 require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
-class Category extends Message
+class Category
 {
 
     public $id;

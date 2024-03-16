@@ -89,7 +89,7 @@ body {
     background-color: white;
     width: 1200px;
     display: grid;
-    grid-template-areas: 'main right right right right right' 'footer footer footer footer footer footer';
+    grid-template-areas: 'main right right right right right' 'footer footer footer footer footer footer';
     gap: 1px;
     background-color: rgba(0, 0, 0, 0.2); }
     #header .main-header .main-header__menu .dropdown-menu-mega .grid-container .list-item {
@@ -1564,6 +1564,7 @@ body {
       position: absolute;
       left: 0;
       right: 0;
+      bottom: -2rem;
       display: flex;
       width: 100%;
       padding: 0.5rem;

@@ -221,7 +221,6 @@ $totalPrice = array_reduce($orderDetail, fn ($total, $orderItem) => $total += $o
                     .then((result) => {
                         if (result.status == 1) {
                             window.location.href = "transaction.php?checkout_ref_id=" + result.ref_id;
-                            // console.log(result);
                         } else {
                             const messageContainer = document.querySelector("#paymentResponse");
                             messageContainer.classList.remove("hidden");
@@ -229,7 +228,7 @@ $totalPrice = array_reduce($orderDetail, fn ($total, $orderItem) => $total += $o
 
                             setTimeout(function() {
                                 messageContainer.classList.add("hidden");
-                                messageText.textContent = "";
+                                messageContainer.textContent = "";
                             }, 5000);
                         }
                         setProcessing(false);

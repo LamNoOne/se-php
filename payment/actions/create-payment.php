@@ -1,3 +1,0 @@
-<?php
-
-// pay with paypal

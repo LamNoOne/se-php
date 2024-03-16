@@ -2,13 +2,13 @@
 
 // Include the PayPal API library 
 require_once dirname(dirname(__DIR__)) . "/inc/init.php";
-$conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
 require_once dirname(dirname(__DIR__)) . '/classes/controllers/paypal.php';
 require_once dirname(dirname(__DIR__)) . '/classes/controllers/order.php';
 $paypal = new PaypalCheckout();
 
 $response = array('status' => 0, 'msg' => 'Transaction Failed!');
 if (!empty($_POST['paypal_order_check']) && !empty($_POST['order_id'])) {
+    $conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
     // Validate and get order details with PayPal API 
     try {
         $invoice = $paypal->validate($_POST['order_id']);
@@ -68,22 +68,17 @@ if (!empty($_POST['paypal_order_check']) && !empty($_POST['order_id'])) {
 
         if (!empty($invoice_id) && $invoice_status == 'COMPLETED') {
             // Check if any transaction data is exists already with the same TXN ID 
-            $query = "SELECT id FROM payment WHERE transaction_id = ?";
-            $stmt = $conn->prepare($query);
-            $stmt->execute([$transaction_id]);
-            $row_id = $stmt->fetchColumn();
+            $row_id = Payment::getPayment($conn, $transaction_id);
 
             $payment_id = 0;
             if (!empty($row_id)) {
                 $payment_id = $row_id;
             } else {
                 // Insert transaction data into the database 
-                $query = "INSERT INTO payment (order_id,invoice_id,transaction_id,payer_id,payer_name,payer_email,payer_country,merchant_id,merchant_email,paid_amount,paid_amount_currency,payment_source,payment_status,createdAt) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                $stmt = $conn->prepare($query);
-                $insert = $stmt->execute([(int)$order_id, $invoice_id, $transaction_id, $payer_id, $payer_full_name, $payer_email_address, $payer_country_code, $merchant_id, $payee_email_address, $amount_value, $currency_code, $payment_source, $payment_status, $invoice_time]);
-
-                if ($insert) {
-                    $payment_id = $conn->lastInsertId();
+                $newPayment = new Payment(null, $order_id, $invoice_id, $transaction_id, $payer_id, $payer_full_name, $payer_email_address, $payer_country_code, $merchant_id, $payee_email_address, $amount_value, $currency_code, $payment_source, $payment_status, $invoice_time);
+                $createdPaymentResponse = $newPayment->createPayment($conn);
+                if ($createdPaymentResponse['status']) {
+                    $payment_id = $createdPaymentResponse['data']['payment_id'];
                     $status = Order::updateOrderStatus($conn, $order_id, PAID)['status'];
                 }
             }

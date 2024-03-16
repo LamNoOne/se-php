@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
                         </form>
                     </div>
                     <div class="col-4">
-                        <div class="order-summary">
+                        <div class="order-summary py-3 mb-5">
                             <h3 class="order-summary__title">Order Summary</h3>
                             <div class="order-summary__border border-bottom border-black border-opacity-25"></div>
                             <div class="order-summary__items">

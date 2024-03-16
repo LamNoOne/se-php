@@ -1,4 +1,4 @@
-<footer id="footer" class="bg-black pt-5 mt-5">
+<footer id="footer" class="bg-black pt-5">
     <?php
     require_once "loader.php";
     ?>
