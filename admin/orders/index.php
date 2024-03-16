@@ -189,8 +189,25 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         },
         {
           render: function(data, type, row, meta) {
-            const pendingId = <?php echo PENDING; ?>;
-            const badgesColorClass = row.statusId == pendingId ? 'bg-lightred' : 'bg-lightgreen'
+            const pendingStatusId = <?php echo PENDING; ?>;
+            const pendingCancelStatusId = <?php echo PENDING_CANCEL; ?>;
+            const cancelledStatusId = <?php echo CANCELLED; ?>;
+            const paidStatusId = <?php echo PAID; ?>;
+            const deliveringStatusId = <?php echo DELIVERING; ?>;
+            const deliveredStatusId = <?php echo DELIVERED; ?>;
+            let badgesColorClass = 'bg-lightgreen'
+            if (row.statusId == pendingStatusId) {
+              badgesColorClass = 'bg-lightred'
+            } else if (row.statusId == pendingCancelStatusId) {
+              badgesColorClass = 'bg-lightyellow'
+            } else if (row.statusId == cancelledStatusId) {
+              badgesColorClass = 'bg-lightgrey'
+            } else if (row.statusId == paidStatusId) {
+              badgesColorClass = 'bg-lightblue'
+            } else if (row.statusId == deliveringStatusId) {
+              badgesColorClass = 'bg-lightpurple'
+            }
+
             return `
               <span class="badges ${badgesColorClass}">${row.statusName}</span>
             `
