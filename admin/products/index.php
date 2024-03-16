@@ -376,10 +376,9 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
 
-    const clearForm = (modal, form) => {
+    const clearForm = (form) => {
       const previewImage = form.find('.preview-image')
       const fileName = previewImage.find('.file-name')
-      modal.modal('hide');
       form.find('input, textarea, select').val('')
       form.find('.preview-image img').prop('src', '').hide();
       form.find('select').html('')
@@ -405,7 +404,6 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         table.page(currentPage).draw('page')
       }, 0)
     }
-
 
     const goToLastPage = (table = {}, isAddItem = false) => {
       const pageInfo = table.page.info()
@@ -585,7 +583,12 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const addModalId = '#addModal'
     const addForm = $(addFormId)
     const addModal = $(addModalId)
+    const addModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('addModal'))
     const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    // handle clear category select when hidden add modal
+    addModal.on("hidden.bs.modal", function() {
+      clearForm(addForm);
+    });
     $('#openProductModalButton').click(async function() {
       try {
         const response = await $.ajax({
@@ -607,13 +610,11 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               </option>
             `)
           })
-          const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('addModal'))
-          modal.show()
+          addModalBootstrapInstance.show()
         } else {
           toastr.error('Something went wrong')
         }
       } catch (error) {
-        console.log(error);
         toastr.error('Something went wrong')
       }
     });
@@ -670,12 +671,12 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             goToLastPage(table, true)
             toastr.success('Add product successfully')
           } else {
-            toastr.error('Add product failed')
+            toastr.error(response.message)
           }
-          clearForm(addModal, addForm);
+          addModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(addModal, addForm);
+        addModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })
@@ -685,11 +686,14 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const editModalId = '#editModal'
     const editProductForm = $(editProductFormId)
     const editModal = $(editModalId)
+    const editModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
     const editProductFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    editModal.on("hidden.bs.modal", function() {
+      clearForm(editProductForm);
+    });
     $('#table tbody').on('click', '.edit-button', async function(event) {
       try {
         const id = $(this).data('id')
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
         const getProduct = $.ajax({
           url: `<?php echo GET_PRODUCT_BY_ID_API; ?>?id=${id}`,
           type: 'GET',
@@ -739,7 +743,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             `)
           })
 
-          modal.show()
+          editModalBootstrapInstance.show()
         } else {
           toastr.error('Something went wrong')
         }
@@ -803,10 +807,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           } else {
             toastr.error('Edit product failed')
           }
-          clearForm(editModal, editProductForm);
+          editModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(editModal, editProductForm);
+        editModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })

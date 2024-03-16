@@ -190,8 +190,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
 
-    const clearForm = (modal, form) => {
-      modal.modal('hide');
+    const clearForm = (form) => {
       form.find('input, textarea').val('')
     }
 
@@ -366,7 +365,11 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const addModalId = '#addModal'
     const addForm = $(addFormId)
     const addModal = $(addModalId)
+    const addModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('addModal'))
     const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    addModal.on("hidden.bs.modal", function() {
+      clearForm(addForm);
+    });
     addFormSubmitButton.click(function() {
       addForm.submit()
     })
@@ -400,10 +403,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           } else {
             toastr.error(response.message)
           }
-          clearForm(addModal, addForm);
+          addModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(addModal, addForm);
+        addModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })
@@ -413,12 +416,14 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const editModalId = '#editModal'
     const editForm = $(editFormId)
     const editModal = $(editModalId)
+    const editModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
     const editFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    editModal.on("hidden.bs.modal", function() {
+      clearForm(editForm);
+    });
     $('#table tbody').on('click', '.edit-button', async function(event) {
       try {
         const id = $(this).data('id')
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
-
         const response = await $.ajax({
           url: `<?php echo GET_CATEGORY_BY_ID_API; ?>?id=${id}`,
           type: 'GET',
@@ -432,7 +437,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           editForm.find('input[name="name"]').val(category.name)
           editForm.find('textarea[name="description"]').val(category.description)
 
-          modal.show()
+          editModalBootstrapInstance.show()
         } else {
           toastr.error(response.message)
         }
@@ -480,10 +485,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           } else {
             toastr.error(response.message)
           }
-          clearForm(editModal, editForm);
+          editModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(editModal, editForm);
+        editModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })
