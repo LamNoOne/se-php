@@ -881,6 +881,28 @@ class Order extends DataFetcher
         }
     }
 
+    public static function deleteByOrderProducts($conn, $ids)
+    {
+        try {
+            foreach ($ids as $idPair) {
+                $stmt = getDeleteByMultiColumnsSQLPrepareStatement(
+                    $conn,
+                    TABLES['ORDER_DETAIL'],
+                    [
+                        ['column' => 'orderId', 'value' => $idPair['orderId']],
+                        ['column' => 'productId', 'value' => $idPair['productId']]
+                    ]
+                );
+                if (!$stmt->execute()) {
+                    throw new PDOException('Cannot execute sql statement');
+                }
+            }
+            return Message::message(true, 'Delete order products successfully');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
     public static function count(
         $conn,
         $filter = [['field' => 'id', 'value' => '', 'like' => false]]

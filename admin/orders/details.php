@@ -520,5 +520,60 @@ if (!$order) {
           }
         })
     })
+
+    // handle delete order products by select
+    $('#deleteBySelectBtn').click(function() {
+      const selectAll = tableEle.find('#select-all')
+      const checkedBoxes = tableEle.find(
+        'input[type="checkbox"]:checked:not([id="select-all"])'
+      )
+      let checkedIds = [];
+      checkedBoxes.each(function() {
+        checkedIds = [
+          ...checkedIds,
+          {
+            orderId: $(this).data('orderId'),
+            productId: $(this).data('productId')
+          }
+        ]
+      })
+
+      Swal
+        .fire({
+          title: 'Delete Selected Order Products?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: '<?php echo DELETE_ORDER_PRODUCTS_API; ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  ids: checkedIds
+                },
+              })
+
+              if (response.status) {
+                goToCurrentPage(table, true)
+                toastr.success(response.message)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
   })
 </script>
