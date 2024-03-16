@@ -290,13 +290,63 @@ require_once dirname(__DIR__) . "/inc/init.php"
 			}
 			return false
 		})
+
+
+		// CUSTOM
 		const autoToggleSideBar = () => {
 			const isActiveMiniSideBar = Boolean(localStorage.getItem('isActiveMiniSideBar'))
 			if (isActiveMiniSideBar) {
 				$('#toggle_btn').click()
 			}
 		}
+		const activeSideBarButton = () => {
+			const pages = {
+				product: $('li#productButton'),
+				sales: $('#salesButton'),
+				people: $('#peopleButton'),
+			}
+			const dashboardButton = $('#dashboardButton')
+			const currentPage = sessionStorage.getItem('currentPage')
+			if (!currentPage) {
+				dashboardButton.addClass('active')
+				return
+			}
+
+			const button = pages[currentPage];
+			if (!button) {
+				dashboardButton.addClass('active')
+				return
+			}
+			button.addClass('active')
+		}
+		const handleClickSubMenuItems = () => {
+			const dashboardLink = $('#dashboardLink')
+			const productListLink = $('#productListLink')
+			const categoryListLink = $('#categoryListLink')
+			const orderListLink = $('#orderListLink')
+			const logo = $('.header .header-left .logo')
+
+			logo.click(function() {
+				sessionStorage.removeItem('currentPage')
+			})
+			dashboardLink.click(function() {
+				sessionStorage.removeItem('currentPage')
+			})
+			productListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'product')
+			})
+			categoryListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'product')
+			})
+			orderListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'sales')
+			})
+		}
 		autoToggleSideBar()
+		handleClickSubMenuItems()
+		activeSideBarButton()
+
+
 		if (localStorage.getItem('screenModeNightTokenState') == 'night') {
 			setTimeout(function() {
 				$('body').removeClass('mini-sidebar')

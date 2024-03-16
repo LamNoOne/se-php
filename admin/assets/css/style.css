@@ -4544,7 +4544,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	-webkit-transform: rotate(90deg);
 	-ms-transform: rotate(90deg);
 }
-.sidebar .sidebar-menu > ul > li.active a {
+.sidebar .sidebar-menu > ul > li.active > a {
 	background: var(--primary-color);
 	border-radius: 8px;
 }

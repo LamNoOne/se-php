@@ -32,10 +32,10 @@
     <div class="header">
       <div class="header-left active">
         <div class="flex-fill">
-          <a href="./" class="logo">
+          <a href="<?php echo APP_URL; ?>/admin/" class="logo">
             <img src="<?php echo APP_URL; ?>/admin/assets/img/logo.svg" alt="" />
           </a>
-          <a href="./" class="logo-small">
+          <a href="<?php echo APP_URL; ?>/admin/" class="logo-small">
             <img src="<?php echo APP_URL; ?>/admin/assets/img/logo.svg" alt="" />
           </a>
         </div>
@@ -95,29 +95,29 @@
       <div class="sidebar-inner slimscroll">
         <div id="sidebar-menu" class="sidebar-menu">
           <ul>
-            <li class="active">
-              <a href="<?php echo APP_URL; ?>/admin"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/dashboard.svg" alt="img" /><span>
+            <li id="dashboardButton">
+              <a id="dashboardLink" href="<?php echo APP_URL; ?>/admin"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/dashboard.svg" alt="img" /><span>
                   Dashboard</span>
               </a>
             </li>
-            <li class="submenu">
+            <li id="productButton" class="submenu">
               <a href="javascript:void(0);"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/product.svg" alt="img" /><span>
                   Product</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products">Product List</a></li>
-                <li><a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/categories">Category List</a></li>
+                <li><a id="productListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products">Product List</a></li>
+                <li><a id="categoryListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/categories">Category List</a></li>
               </ul>
             </li>
-            <li class="submenu">
+            <li id="salesButton" class="submenu">
               <a href="javascript:void(0);"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/sales1.svg" alt="img" /><span>
                   Sales</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders">Order List</a></li>
+                <li><a id="orderListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders">Order List</a></li>
               </ul>
             </li>
-            <li class="submenu">
+            <li id="peopleButton" class="submenu">
               <a href="javascript:void(0);"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/users1.svg" alt="img" /><span>
                   People</span>
                 <span class="menu-arrow"></span></a>
