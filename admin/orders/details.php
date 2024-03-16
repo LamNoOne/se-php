@@ -254,6 +254,40 @@ if (!$order) {
       form.find('input, textarea').val('')
     }
 
+    const goToCurrentPage = (table = {}, isDeleteItem = false, oldPageInfo = null) => {
+      let pageInfo = table.page.info()
+      if (isDeleteItem && oldPageInfo) {
+        pageInfo = oldPageInfo
+      }
+      const numberItemsBefore = pageInfo.end - pageInfo.start
+      let currentPage = pageInfo.page
+      if (isDeleteItem && numberItemsBefore === 1 && currentPage > 0) {
+        currentPage = currentPage - 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(currentPage).draw('page')
+      }, 0)
+    }
+
+    const goToLastPage = (table = {}, isAddItem = false) => {
+      const pageInfo = table.page.info()
+      let totalPages = pageInfo.pages;
+      if (isAddItem && ((pageInfo.end - pageInfo.start) === pageInfo.length)) {
+        totalPages = pageInfo.pages + 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(totalPages - 1).draw('page')
+      }, 0)
+    }
+
     // handle render items to table
     const table = tableEle.DataTable({
       processing: true,
@@ -422,14 +456,7 @@ if (!$order) {
         if (sessionStorage.getItem('pageInfo')) {
           const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
           sessionStorage.removeItem('pageInfo');
-          const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-          let currentPage = pageInfo.page
-          if (numberItemsBeforeDelete <= 1) {
-            currentPage = currentPage - 1;
-          }
-          setTimeout(() => {
-            table.page(currentPage).draw('page')
-          }, 0)
+          goToCurrentPage(table, true, pageInfo);
         }
       },
     })
@@ -602,13 +629,7 @@ if (!$order) {
               })
 
               if (response.status) {
-                const pageInfo = table.page.info()
-                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-                let currentPage = pageInfo.page
-                if (numberItemsBeforeDelete === 1 && currentPage > 0) {
-                  currentPage = currentPage - 1;
-                }
-                table.page(currentPage).draw('page')
+                goToCurrentPage(table)
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)
