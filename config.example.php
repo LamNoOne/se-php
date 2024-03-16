@@ -137,8 +137,14 @@ if (!defined('DELETE_CATEGORY_BY_IDS_API'))
   define('DELETE_CATEGORY_BY_IDS_API', APP_URL . '/admin/categories/actions/delete-by-ids.php');
 
 // Order APIs
+if (!defined('GET_ORDER_BY_ID_API'))
+  define('GET_ORDER_BY_ID_API', APP_URL . '/admin/orders/actions/get-by-id.php');
+
 if (!defined('GET_ORDERS_API'))
   define('GET_ORDERS_API', APP_URL . '/admin/orders/actions/get-orders.php');
+
+if (!defined('UPDATE_ORDER_API'))
+  define('UPDATE_ORDER_API', APP_URL . '/admin/orders/actions/update-order.php');
 
 if (!defined('GET_PRODUCTS_OF_ORDER_API'))
   define('GET_PRODUCTS_OF_ORDER_API', APP_URL . '/admin/orders/actions/get-products-of-order.php');
@@ -151,3 +157,7 @@ if (!defined('DELETE_ORDER_PRODUCT_API'))
 
 if (!defined('DELETE_ORDER_PRODUCTS_API'))
   define('DELETE_ORDER_PRODUCTS_API', APP_URL . '/admin/orders/actions/delete-order-products.php');
+
+// Order Status APIs
+if (!defined('GET_ORDER_STATUSES_API'))
+  define('GET_ORDER_STATUSES_API', APP_URL . '/admin/order-statuses/actions/get-order-statuses.php');

@@ -633,6 +633,26 @@ class Order extends DataFetcher
         }
     }
 
+    public static function updateOrder($conn, $id, $dataToUpdate)
+    {
+        try {
+            $stmt = getUpdateByIdSQLPrepareStatement($conn, TABLES['ORDER'], $id, $dataToUpdate);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update order successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
+                return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
+            }
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
     public static function getProductsOfOrder(
         $conn,
         $filter = [['field' => 'orderId', 'value' => '', 'like' => false]],

@@ -84,9 +84,9 @@ if (!$order) {
                 </div>
                 <div class="col-lg-6 d-flex gap-2 flex-column align-items-end">
                   <p><?php echo $order->id ?></p>
-                  <p><?php echo $order->phoneNumber ?></p>
-                  <p><?php echo $order->shipAddress ?></p>
-                  <p class="badges
+                  <p class="shippingPhone"><?php echo $order->phoneNumber ?></p>
+                  <p class="shippingAddress"><?php echo $order->shipAddress ?></p>
+                  <p class="status badges
                     <?php
                     echo $order->statusId == PENDING ? 'bg-lightred' : 'bg-lightgreen'
                     ?>">
@@ -94,6 +94,11 @@ if (!$order) {
                   </p>
                 </div>
               </div>
+            </div>
+            <div class="mt-5 d-flex justify-content-end">
+              <a href="javascript:void(0)" class="btn btn-primary" id="openEditModalButton">
+                Edit
+              </a>
             </div>
           </div>
         </div>
@@ -121,19 +126,6 @@ if (!$order) {
               </a>
             </div>
           </div>
-          <!-- <div class="wordset">
-            <ul>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="pdf"><img src="assets/img/icons/pdf.svg" alt="img" /></a>
-              </li>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="excel"><img src="assets/img/icons/excel.svg" alt="img" /></a>
-              </li>
-              <li>
-                <a data-bs-toggle="tooltip" data-bs-placement="top" title="print"><img src="assets/img/icons/printer.svg" alt="img" /></a>
-              </li>
-            </ul>
-          </div> -->
         </div>
         <div class="table-responsive">
           <table class="table" id="table">
@@ -171,6 +163,47 @@ if (!$order) {
   </div>
 </div>
 
+<div class="modal fade" id="editModal" aria-hidden="true" aria-labelledby="editModalLabel" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="editModalLabel">
+          Edit Order Information
+        </h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm">
+          <div class="row gx-5">
+            <div class="col-lg-12 col-sm-12 col-12">
+              <div class="form-group row align-items-center">
+                <label class="col col-lg-4">Shipping Phone</label>
+                <input class="col col-lg-8" type="text" name="phoneNumber" autofocus />
+              </div>
+            </div>
+            <div class="col-lg-12 col-sm-12 col-12">
+              <div class="form-group row align-items-center">
+                <label class="col col-lg-4">Shipping Address</label>
+                <input class="col col-lg-8" type="text" name="shipAddress" />
+              </div>
+            </div>
+            <div class="col-lg-12 col-sm-12 col-12">
+              <div class="form-group row align-items-center">
+                <label class="col col-lg-4">Status</label>
+                <select name="orderStatusId" class="col col-lg-8 form-select"></select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-end">
+        <button type="submit" class="btn btn-submit me-2">Update</button>
+        <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <?php require_once dirname(__DIR__) . "/inc/components/footer.php" ?>;
 
 <script>
@@ -183,9 +216,9 @@ if (!$order) {
     const tableEle = $('#table')
     const totalPaymentBadge = $('.card .table-bottom .badges')
 
-    const clearForm = (modal, form) => {
-      modal.modal('hide');
-      form.find('input, textarea').val('')
+    const clearForm = (form) => {
+      form.find('input, textarea, select').val('')
+      form.find('select').html('')
     }
 
     const goToCurrentPage = (table = {}, isDeleteItem = false, oldPageInfo = null) => {
@@ -574,6 +607,126 @@ if (!$order) {
             toastr.error('Something went wrong')
           }
         })
+    })
+
+    // handle edit order info
+    const editFormId = '#editForm'
+    const editModalId = '#editModal'
+    const editForm = $(editFormId)
+    const editModal = $(editModalId)
+    const editModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+    const phoneNumberInput = $('#editForm input[name="phoneNumber"]')
+    const shipAddressInput = $('#editForm input[name="shipAddress"]')
+    const statusSelect = $('#editForm select[name="orderStatusId"]')
+    const editFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    editModal.on("hidden.bs.modal", function() {
+      clearForm(editForm);
+    });
+    const searchParams = new URLSearchParams(window.location.search)
+    let orderStatuses = []
+    $('#openEditModalButton').click(async function() {
+      try {
+        const getOrderStatuses = $.ajax({
+          url: `<?php echo GET_ORDER_STATUSES_API; ?>?limit=-1`,
+          type: 'GET',
+          dataType: 'json'
+        })
+        const getOrder = $.ajax({
+          url: `<?php echo GET_ORDER_BY_ID_API; ?>?id=${searchParams.get('id')}`,
+          type: 'GET',
+          dataType: 'json'
+        })
+
+        const [orderStatusesResponse, orderResponse] = await Promise.all([
+          getOrderStatuses,
+          getOrder
+        ])
+
+        if (orderStatusesResponse.status && orderResponse.status) {
+          orderStatuses = orderStatusesResponse.data?.items || []
+          const order = orderResponse.data?.order || {}
+          phoneNumberInput.val(order.phoneNumber)
+          shipAddressInput.val(order.shipAddress)
+          statusSelect.html(orderStatuses.map((status) => `
+            <option
+              ${order.statusId == status.id ? 'selected' : ''}
+              value="${status.id}"
+            >
+              ${status.name}
+            </option>
+          `).join(''))
+          editModalBootstrapInstance.show()
+          return
+        }
+        toastr.error('Something went wrong')
+      } catch (error) {
+        toastr.error('Something went wrong')
+      }
+    })
+    editFormSubmitButton.click(function() {
+      editForm.submit()
+    })
+    editForm.validate({
+      rules: {
+        phoneNumber: {
+          required: true
+        },
+        shipAddress: {
+          required: true
+        },
+        orderStatusId: {
+          required: true
+        }
+      },
+    })
+    editForm.submit(async function(event) {
+      try {
+        event.preventDefault()
+        if ($(this).valid()) {
+          let data = $(this).serializeArray().reduce((acc, item) => {
+            return {
+              ...acc,
+              [item.name]: item.value
+            }
+          }, {})
+
+          data = {
+            ...data,
+            id: searchParams.get('id')
+          }
+
+          const response = await $.ajax({
+            url: '<?php echo UPDATE_ORDER_API; ?>',
+            type: 'POST',
+            dataType: 'json',
+            data,
+          })
+          if (response.status) {
+            $('.card .shippingPhone').text(data.phoneNumber)
+            $('.card .shippingAddress').text(data.shipAddress)
+            const currentStatus = orderStatuses.find(
+              status => status.id === data.orderStatusId
+            )
+            $('.card .status')
+              .text(currentStatus.name)
+              .removeClass('bg-lightgreen')
+              .removeClass('bg-lightred')
+              .addClass(
+                currentStatus.id == <?php echo PENDING ?> ?
+                'bg-lightred' :
+                'bg-lightgreen'
+              )
+            toastr.success('Edit order successfully')
+          } else {
+            toastr.error(response.message)
+          }
+          editModalBootstrapInstance.hide()
+        }
+      } catch (error) {
+        editModalBootstrapInstance.hide()
+        console.log(error);
+        toastr.error('Something went wrong')
+      }
     })
   })
 </script>
