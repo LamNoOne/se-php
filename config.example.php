@@ -1,8 +1,8 @@
 <?php
-
+if (!defined('BASE_NAME')) define('BASE_NAME', (basename(__DIR__) === 'www' || basename(__DIR__) === 'htdocs') ? '' : '/' . basename(__DIR__));
 if (!defined('GOOGLE_CLIENT_ID')) define('GOOGLE_CLIENT_ID', '');
 if (!defined('GOOGLE_CLIENT_SECRET')) define('GOOGLE_CLIENT_SECRET', '');
-if (!defined('GOOGLE_REDIRECT_URL')) define('GOOGLE_REDIRECT_URL', 'http://localhost');
+if (!defined('GOOGLE_REDIRECT_URL')) define('GOOGLE_REDIRECT_URL', 'http://' . $_SERVER['HTTP_HOST'] . BASE_NAME);
 
 /**
  * Define database configuration
@@ -15,7 +15,7 @@ if (!defined('DB_PASS')) define('DB_PASS', "");
 /**
  * Define APP URL
  */
-if (!defined("APP_URL")) define("APP_URL", "http://localhost");
+if (!defined("APP_URL")) define("APP_URL", 'http://' . $_SERVER['HTTP_HOST'] . BASE_NAME);
 
 /**
  * Define timezone configuration
