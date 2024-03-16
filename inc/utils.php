@@ -217,7 +217,6 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
 
 function getPlaceholderQueryByIdSQL($projection = [], $join = [], $tableContainId = '')
 {
-    print_r($join);
     $sqlClauses = [];
 
     // handle select clause

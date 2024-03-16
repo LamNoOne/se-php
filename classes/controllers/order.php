@@ -457,7 +457,6 @@ class Order extends DataFetcher
                 'order' => $stmt->fetch()
             ]);
         } catch (Exception $e) {
-            print_r($e->getMessage());
             return Message::message(false, 'Something went wrong');
         }
     }
