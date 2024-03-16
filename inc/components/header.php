@@ -43,6 +43,7 @@ if ($gClient->getAccessToken()) {
     $_SESSION['email'] = $user->email;
     $_SESSION['userId'] = $user->id;
     $_SESSION['image'] = $user->imageUrl;
+    $_SESSION['roleId'] = $user->roleId;
     if ($user->phoneNumber !== NULL) {
         $_SESSION['phoneNumber'] = $user->phoneNumber;
     }
@@ -330,8 +331,16 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                                 <?php endif; ?>
                                             </button>
                                             <ul class="dropdown-menu" id="dropdown-menu-user">
+                                                <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === 1) : ?>
+                                                    <li>
+                                                        <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/">Go to Admin</a>
+                                                    </li>
+                                                    <li>
+                                                        <hr class="dropdown-divider" />
+                                                    </li>
+                                                <?php endif; ?>
                                                 <li>
-                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user">My Account</a>
+                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user/">My Account</a>
                                                 </li>
                                                 <li>
                                                     <a class="dropdown-item" href="<?php echo APP_URL; ?>/user/order.php">Orders</a>

@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['email'] = $user->email;
             $_SESSION['userId'] = $user->id;
             $_SESSION['image'] = $user->imageUrl;
+            $_SESSION['roleId'] = $user->roleId;
             if ($user->phoneNumber !== NULL) {
                 $_SESSION['phoneNumber'] = $user->phoneNumber;
             }
