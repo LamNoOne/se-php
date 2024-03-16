@@ -171,72 +171,6 @@ if (!$order) {
   </div>
 </div>
 
-<div class="modal fade" id="addModal" aria-hidden="true" aria-labelledby="addModalLabel" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="addModalLabel">Add New Category</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <form id="addForm">
-          <div class="row gx-5">
-            <div class="col-lg-12 col-sm-12 col-12">
-              <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="name" autofocus />
-              </div>
-            </div>
-            <div class="col-lg-12 col-sm-12 col-12">
-              <div class="form-group">
-                <label>Description</label>
-                <textarea class="form-control" name="description"></textarea>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer d-flex justify-content-end">
-        <button type="submit" class="btn btn-submit me-2">Add</button>
-        <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="editModal" aria-hidden="true" aria-labelledby="editModalLabel" tabindex="-1">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h1 class="modal-title fs-5" id="editModalLabel">Edit Product in Order</h1>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <form id="editForm">
-          <div class="row gx-5">
-            <div class="col-lg-12 col-sm-12 col-12">
-              <div class="form-group">
-                <label>Category Name</label>
-                <input type="text" name="name" autofocus />
-              </div>
-            </div>
-            <div class="col-lg-12 col-sm-12 col-12">
-              <div class="form-group">
-                <label>Description</label>
-                <textarea class="form-control" name="description"></textarea>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer d-flex justify-content-end">
-        <button type="submit" class="btn btn-submit me-2">Update</button>
-        <button type="reset" class="btn btn-cancel" data-bs-dismiss="modal">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <?php require_once dirname(__DIR__) . "/inc/components/footer.php" ?>;
 
 <script>
@@ -252,6 +186,40 @@ if (!$order) {
     const clearForm = (modal, form) => {
       modal.modal('hide');
       form.find('input, textarea').val('')
+    }
+
+    const goToCurrentPage = (table = {}, isDeleteItem = false, oldPageInfo = null) => {
+      let pageInfo = table.page.info()
+      if (isDeleteItem && oldPageInfo) {
+        pageInfo = oldPageInfo
+      }
+      const numberItemsBefore = pageInfo.end - pageInfo.start
+      let currentPage = pageInfo.page
+      if (isDeleteItem && numberItemsBefore === 1 && currentPage > 0) {
+        currentPage = currentPage - 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(currentPage).draw('page')
+      }, 0)
+    }
+
+    const goToLastPage = (table = {}, isAddItem = false) => {
+      const pageInfo = table.page.info()
+      let totalPages = pageInfo.pages;
+      if (isAddItem && ((pageInfo.end - pageInfo.start) === pageInfo.length)) {
+        totalPages = pageInfo.pages + 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(totalPages - 1).draw('page')
+      }, 0)
     }
 
     // handle render items to table
@@ -422,71 +390,10 @@ if (!$order) {
         if (sessionStorage.getItem('pageInfo')) {
           const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
           sessionStorage.removeItem('pageInfo');
-          const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-          let currentPage = pageInfo.page
-          if (numberItemsBeforeDelete <= 1) {
-            currentPage = currentPage - 1;
-          }
-          setTimeout(() => {
-            table.page(currentPage).draw('page')
-          }, 0)
+          goToCurrentPage(table, true, pageInfo);
         }
       },
     })
-
-    // // handle add item
-    // const addFormId = '#addForm'
-    // const addModalId = '#addModal'
-    // const addForm = $(addFormId)
-    // const addModal = $(addModalId)
-    // const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
-    // addFormSubmitButton.click(function() {
-    //   addForm.submit()
-    // })
-    // addForm.validate({
-    //   rules: {
-    //     name: {
-    //       required: true
-    //     }
-    //   },
-    // })
-    // addForm.submit(async function(event) {
-    //   try {
-    //     event.preventDefault()
-    //     if ($(this).valid()) {
-    //       const data = addForm.serializeArray().reduce((acc, item) => {
-    //         return {
-    //           ...acc,
-    //           [item.name]: item.value
-    //         }
-    //       }, {})
-
-    //       const response = await $.ajax({
-    //         url: '<?php echo ADD_CATEGORY_API; ?>',
-    //         type: 'POST',
-    //         dataType: 'json',
-    //         data,
-    //       })
-    //       if (response.status) {
-    //         table.ajax.reload(function(json) {
-    //           // Fix bug: put in setTimeout => added item and move last page
-    //           // but records are still at page = 1, limit = 10
-    //           // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
-    //           setTimeout(function() {
-    //             table.page(json.totalPages - 1).draw('page');
-    //           }, 0);
-    //           toastr.success('Add category successfully')
-    //         });
-    //       } else {
-    //         toastr.error(response.message)
-    //       }
-    //       clearForm(addModal, addForm);
-    //     }
-    //   } catch (error) {
-    //     clearForm(addModal, addForm);
-    //     toastr.error('Something went wrong')
-    //   }
-    // })
 
     // handle edit quantity of product
     $('#table').on('draw.dt', function(event, settings) {
@@ -571,7 +478,7 @@ if (!$order) {
       })
     })
 
-    // handle delete a item
+    // handle delete order product
     $('#table tbody').on('click', '.delete-btn', function() {
       const orderId = $(this).data('orderId')
       const productId = $(this).data('productId')
@@ -602,13 +509,7 @@ if (!$order) {
               })
 
               if (response.status) {
-                const pageInfo = table.page.info()
-                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-                let currentPage = pageInfo.page
-                if (numberItemsBeforeDelete === 1 && currentPage > 0) {
-                  currentPage = currentPage - 1;
-                }
-                table.page(currentPage).draw('page')
+                goToCurrentPage(table)
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)
@@ -620,7 +521,7 @@ if (!$order) {
         })
     })
 
-    // handle delete by select
+    // handle delete order products by select
     $('#deleteBySelectBtn').click(function() {
       const selectAll = tableEle.find('#select-all')
       const checkedBoxes = tableEle.find(
@@ -628,12 +529,18 @@ if (!$order) {
       )
       let checkedIds = [];
       checkedBoxes.each(function() {
-        checkedIds = [...checkedIds, $(this).data('id')]
+        checkedIds = [
+          ...checkedIds,
+          {
+            orderId: $(this).data('orderId'),
+            productId: $(this).data('productId')
+          }
+        ]
       })
 
       Swal
         .fire({
-          title: 'Delete Selected Products?',
+          title: 'Delete Selected Order Products?',
           text: 'This action cannot be reverted. Are you sure?',
           showCancelButton: true,
           confirmButtonText: 'Delete',
@@ -648,7 +555,7 @@ if (!$order) {
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: '<?php echo DELETE_CATEGORY_BY_IDS_API; ?>',
+                url: '<?php echo DELETE_ORDER_PRODUCTS_API; ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -657,16 +564,7 @@ if (!$order) {
               })
 
               if (response.status) {
-                const currentPage = table.page.info().page
-                const lastPage = table.page.info().pages
-                let pageAfterDelete = currentPage
-                const isAtLastPage = currentPage === lastPage - 1;
-                if (selectAll.is(':checked') && isAtLastPage) {
-                  pageAfterDelete = currentPage - 1;
-                }
-                setTimeout(() => {
-                  table.page(pageAfterDelete).draw('page')
-                })
+                goToCurrentPage(table, true)
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)
@@ -676,11 +574,6 @@ if (!$order) {
             toastr.error('Something went wrong')
           }
         })
-    })
-
-    // In order to switch to old page of deleted item
-    $('#table tbody').on('click', '.details-btn', function() {
-      sessionStorage.setItem('pageInfo', JSON.stringify(table.page.info()))
     })
   })
 </script>

@@ -197,6 +197,40 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       form.find('input, textarea').val('')
     }
 
+    const goToCurrentPage = (table = {}, isDeleteItem = false, oldPageInfo = null) => {
+      let pageInfo = table.page.info()
+      if (isDeleteItem && oldPageInfo) {
+        pageInfo = oldPageInfo
+      }
+      const numberItemsBefore = pageInfo.end - pageInfo.start
+      let currentPage = pageInfo.page
+      if (isDeleteItem && numberItemsBefore === 1 && currentPage > 0) {
+        currentPage = currentPage - 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(currentPage).draw('page')
+      }, 0)
+    }
+
+    const goToLastPage = (table = {}, isAddItem = false) => {
+      const pageInfo = table.page.info()
+      let totalPages = pageInfo.pages;
+      if (isAddItem && ((pageInfo.end - pageInfo.start) === pageInfo.length)) {
+        totalPages = pageInfo.pages + 1;
+      }
+
+      // Fix bug: put in setTimeout => added item and move last page
+      // but records are still at page = 1, limit = 10
+      // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+      setTimeout(() => {
+        table.page(totalPages - 1).draw('page')
+      }, 0)
+    }
+
     // handle render items to table
     const table = tableEle.DataTable({
       processing: true,
@@ -343,14 +377,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         if (sessionStorage.getItem('pageInfo')) {
           const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
           sessionStorage.removeItem('pageInfo');
-          const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-          let currentPage = pageInfo.page
-          if (numberItemsBeforeDelete <= 1) {
-            currentPage = currentPage - 1;
-          }
-          setTimeout(() => {
-            table.page(currentPage).draw('page')
-          }, 0)
+          goToCurrentPage(table, pageInfo)
         }
       },
     })
@@ -360,7 +387,11 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const addModalId = '#addModal'
     const addForm = $(addFormId)
     const addModal = $(addModalId)
+    const addModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('addModal'))
     const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    addModal.on("hidden.bs.modal", function() {
+      clearForm(addForm);
+    });
     addFormSubmitButton.click(function() {
       addForm.submit()
     })
@@ -389,22 +420,15 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             data,
           })
           if (response.status) {
-            table.ajax.reload(function(json) {
-              // Fix bug: put in setTimeout => added item and move last page
-              // but records are still at page = 1, limit = 10
-              // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
-              setTimeout(function() {
-                table.page(json.totalPages - 1).draw('page');
-              }, 0);
-              toastr.success('Add category successfully')
-            });
+            goToLastPage(table, true)
+            toastr.success('Add category successfully')
           } else {
             toastr.error(response.message)
           }
-          clearForm(addModal, addForm);
+          addModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(addModal, addForm);
+        addModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })
@@ -414,12 +438,14 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const editModalId = '#editModal'
     const editForm = $(editFormId)
     const editModal = $(editModalId)
+    const editModalBootstrapInstance = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
     const editFormSubmitButton = $(editModalId + ' .modal-footer button[type="submit"]')
+    editModal.on("hidden.bs.modal", function() {
+      clearForm(editForm);
+    });
     $('#table tbody').on('click', '.edit-button', async function(event) {
       try {
         const id = $(this).data('id')
-        const modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
-
         const response = await $.ajax({
           url: `<?php echo GET_CATEGORY_BY_ID_API; ?>?id=${id}`,
           type: 'GET',
@@ -433,7 +459,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           editForm.find('input[name="name"]').val(category.name)
           editForm.find('textarea[name="description"]').val(category.description)
 
-          modal.show()
+          editModalBootstrapInstance.show()
         } else {
           toastr.error(response.message)
         }
@@ -481,10 +507,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           } else {
             toastr.error(response.message)
           }
-          clearForm(editModal, editForm);
+          editModalBootstrapInstance.hide()
         }
       } catch (error) {
-        clearForm(editModal, editForm);
+        editModalBootstrapInstance.hide()
         toastr.error('Something went wrong')
       }
     })
@@ -518,13 +544,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               })
 
               if (response.status) {
-                const pageInfo = table.page.info()
-                const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
-                let currentPage = pageInfo.page
-                if (numberItemsBeforeDelete <= 1) {
-                  currentPage = currentPage - 1;
-                }
-                table.page(currentPage).draw('page')
+                goToCurrentPage(table, true)
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)
@@ -573,16 +593,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               })
 
               if (response.status) {
-                const currentPage = table.page.info().page
-                const lastPage = table.page.info().pages
-                let pageAfterDelete = currentPage
-                const isAtLastPage = currentPage === lastPage - 1;
-                if (selectAll.is(':checked') && isAtLastPage) {
-                  pageAfterDelete = currentPage - 1;
-                }
-                setTimeout(() => {
-                  table.page(pageAfterDelete).draw('page')
-                })
+                goToCurrentPage(table, true)
                 toastr.success(response.message)
               } else {
                 toastr.error(response.message)

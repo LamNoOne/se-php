@@ -409,6 +409,16 @@ function getDeleteByIdsSQLPrepareStatement($conn, $table, $ids)
     return $stmt;
 }
 
+// $multiColumns = [
+//     [
+//         'column' => 'orderId',
+//         'value' => 1
+//     ],
+//     [
+//         'column' => 'productId',
+//         'value' => 2
+//     ]
+// ]
 function getDeleteByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns = [])
 {
     $deleteStatement = "DELETE FROM `$table`";
