@@ -217,6 +217,7 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
 
 function getPlaceholderQueryByIdSQL($projection = [], $join = [], $tableContainId = '')
 {
+    print_r($join);
     $sqlClauses = [];
 
     // handle select clause
@@ -445,9 +446,15 @@ function getCreateSQLPrepareStatement($conn, $table, $object)
     $array = [];
     $columns = [];
     foreach ($properties as $property) {
-        $property->setAccessible(true);
-        $array[$property->getName()] = $property->getValue($object);
-        $columns[] = $property->getName();
+        if (
+            $property->getName() !== 'id'
+            && $property->getName() !== 'createdAt'
+            && $property->getName() !== 'updatedAt'
+        ) {
+            $property->setAccessible(true);
+            $array[$property->getName()] = $property->getValue($object);
+            $columns[] = $property->getName();
+        }
     }
 
     $insertStatement = "INSERT INTO `$table`";
