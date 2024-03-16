@@ -392,7 +392,7 @@ function getQueryByIdSQLPrepareStatement(
 
 function getDeleteByIdSQLPrepareStatement($conn, $table, $id)
 {
-    $sql = "DELETE FROM $table WHERE id = :id";
+    $sql = "DELETE FROM `$table` WHERE `id` = :id";
     $stmt = $conn->prepare($sql);
     $stmt->bindValue(':id', $id, PDO::PARAM_INT);
     return $stmt;
@@ -401,11 +401,29 @@ function getDeleteByIdSQLPrepareStatement($conn, $table, $id)
 function getDeleteByIdsSQLPrepareStatement($conn, $table, $ids)
 {
     $placeholders = implode(',', array_fill(0, count($ids), '?'));
-    $sql = "DELETE FROM $table WHERE id IN ($placeholders)";
+    $sql = "DELETE FROM `$table` WHERE `id` IN ($placeholders)";
     $stmt = $conn->prepare($sql);
     foreach ($ids as $key => $id) {
         $stmt->bindValue($key + 1, $id, PDO::PARAM_INT);
     }
+    return $stmt;
+}
+
+function getDeleteByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns = [])
+{
+    $deleteStatement = "DELETE FROM `$table`";
+    $whereConditions = array_map(function ($item) {
+        return "`{$item['column']}`=:{$item['column']}";
+    }, $multiColumns);
+
+    $deleteStatement .= ' WHERE ' . implode(' AND ', $whereConditions);
+
+    $stmt = $conn->prepare($deleteStatement);
+
+    foreach ($multiColumns as $item) {
+        $stmt->bindValue(":{$item['column']}", $item['value'], PDO::PARAM_STR);
+    }
+
     return $stmt;
 }
 
@@ -439,7 +457,7 @@ function getUpdateByIdSQLPrepareStatement($conn, $table, $id, $dataToUpdate = []
     foreach ($dataToUpdate as $key => $value) {
         $keyValuePairs[] = "`$key`=:$key";
     }
-    $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs) . " WHERE id=:id";
+    $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs) . " WHERE `id`=:id";
     $stmt = $conn->prepare($updateStatement);
     foreach ($dataToUpdate as $key => $value) {
         $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
@@ -457,7 +475,7 @@ function getUpdateByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns
     $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs);
 
     $whereConditions = array_map(function ($item) {
-        return "{$item['column']}=:{$item['column']}";
+        return "`{$item['column']}`=:{$item['column']}";
     }, $multiColumns);
 
     $updateStatement .= ' WHERE ' . implode(' AND ', $whereConditions);

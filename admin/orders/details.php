@@ -402,10 +402,9 @@ if (!$order) {
                   <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/edit.svg" alt="img" />
                 </a>
                 <a
-                  class="action"
+                  class="action delete-btn"
                   data-product-id="${row.id}"
-                  data-orderId="${row.orderId}"
-                  id="delete-btn"
+                  data-order-id="${row.orderId}"
                   href="javascript:void(0)"
                 >
                   <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
@@ -435,59 +434,59 @@ if (!$order) {
       },
     })
 
-    // handle add item
-    const addFormId = '#addForm'
-    const addModalId = '#addModal'
-    const addForm = $(addFormId)
-    const addModal = $(addModalId)
-    const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
-    addFormSubmitButton.click(function() {
-      addForm.submit()
-    })
-    addForm.validate({
-      rules: {
-        name: {
-          required: true
-        }
-      },
-    })
-    addForm.submit(async function(event) {
-      try {
-        event.preventDefault()
-        if ($(this).valid()) {
-          const data = addForm.serializeArray().reduce((acc, item) => {
-            return {
-              ...acc,
-              [item.name]: item.value
-            }
-          }, {})
+    // // handle add item
+    // const addFormId = '#addForm'
+    // const addModalId = '#addModal'
+    // const addForm = $(addFormId)
+    // const addModal = $(addModalId)
+    // const addFormSubmitButton = $(addModalId + ' .modal-footer button[type="submit"]')
+    // addFormSubmitButton.click(function() {
+    //   addForm.submit()
+    // })
+    // addForm.validate({
+    //   rules: {
+    //     name: {
+    //       required: true
+    //     }
+    //   },
+    // })
+    // addForm.submit(async function(event) {
+    //   try {
+    //     event.preventDefault()
+    //     if ($(this).valid()) {
+    //       const data = addForm.serializeArray().reduce((acc, item) => {
+    //         return {
+    //           ...acc,
+    //           [item.name]: item.value
+    //         }
+    //       }, {})
 
-          const response = await $.ajax({
-            url: '<?php echo ADD_CATEGORY_API; ?>',
-            type: 'POST',
-            dataType: 'json',
-            data,
-          })
-          if (response.status) {
-            table.ajax.reload(function(json) {
-              // Fix bug: put in setTimeout => added item and move last page
-              // but records are still at page = 1, limit = 10
-              // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
-              setTimeout(function() {
-                table.page(json.totalPages - 1).draw('page');
-              }, 0);
-              toastr.success('Add category successfully')
-            });
-          } else {
-            toastr.error(response.message)
-          }
-          clearForm(addModal, addForm);
-        }
-      } catch (error) {
-        clearForm(addModal, addForm);
-        toastr.error('Something went wrong')
-      }
-    })
+    //       const response = await $.ajax({
+    //         url: '<?php echo ADD_CATEGORY_API; ?>',
+    //         type: 'POST',
+    //         dataType: 'json',
+    //         data,
+    //       })
+    //       if (response.status) {
+    //         table.ajax.reload(function(json) {
+    //           // Fix bug: put in setTimeout => added item and move last page
+    //           // but records are still at page = 1, limit = 10
+    //           // Ref: https://datatables.net/forums/discussion/31857/page-draw-is-not-refreshing-the-rows-on-the-table
+    //           setTimeout(function() {
+    //             table.page(json.totalPages - 1).draw('page');
+    //           }, 0);
+    //           toastr.success('Add category successfully')
+    //         });
+    //       } else {
+    //         toastr.error(response.message)
+    //       }
+    //       clearForm(addModal, addForm);
+    //     }
+    //   } catch (error) {
+    //     clearForm(addModal, addForm);
+    //     toastr.error('Something went wrong')
+    //   }
+    // })
 
     // handle edit quantity of product
     $('#table').on('draw.dt', function(event, settings) {
@@ -571,12 +570,14 @@ if (!$order) {
         })
       })
     })
+
     // handle delete a item
-    $('#table tbody').on('click', '#delete-btn', function() {
-      const id = $(this).data('id')
+    $('#table tbody').on('click', '.delete-btn', function() {
+      const orderId = $(this).data('orderId')
+      const productId = $(this).data('productId')
       Swal
         .fire({
-          title: 'Delete Category?',
+          title: 'Delete Order Product?',
           text: 'This action cannot be reverted. Are you sure?',
           showCancelButton: true,
           confirmButtonText: 'Delete',
@@ -591,11 +592,12 @@ if (!$order) {
           try {
             if (result.isConfirmed) {
               const response = await $.ajax({
-                url: '<?php echo DELETE_CATEGORY_BY_ID_API ?>',
+                url: '<?php echo DELETE_ORDER_PRODUCT_API ?>',
                 type: 'POST',
                 dataType: 'json',
                 data: {
-                  id
+                  orderId,
+                  productId
                 },
               })
 
@@ -603,7 +605,7 @@ if (!$order) {
                 const pageInfo = table.page.info()
                 const numberItemsBeforeDelete = pageInfo.end - pageInfo.start
                 let currentPage = pageInfo.page
-                if (numberItemsBeforeDelete <= 1) {
+                if (numberItemsBeforeDelete === 1 && currentPage > 0) {
                   currentPage = currentPage - 1;
                 }
                 table.page(currentPage).draw('page')

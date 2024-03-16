@@ -143,3 +143,6 @@ if (!defined('GET_PRODUCTS_OF_ORDER_API'))
 
 if (!defined('UPDATE_ORDER_PRODUCT_API'))
   define('UPDATE_ORDER_PRODUCT_API', APP_URL . '/admin/orders/actions/update-order-product.php');
+
+if (!defined('DELETE_ORDER_PRODUCT_API'))
+  define('DELETE_ORDER_PRODUCT_API', APP_URL . '/admin/orders/actions/delete-order-product.php');
