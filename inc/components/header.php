@@ -143,7 +143,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                 </div>
                                 <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === ADMIN) : ?>
                                     <div class="top-right-header__header-go-to-admin">
-                                        <a style="font-size: 12px; font-weight: 500; padding: 3px 10px" class=" btn btn-primary" href="<?php APP_URL . '/admin/' ?>">
+                                        <a style="font-size: 12px; font-weight: 500; padding: 3px 10px" class=" btn btn-primary" href="<?php echo APP_URL . '/admin/' ?>">
                                             Admin
                                         </a>
                                     </div>
