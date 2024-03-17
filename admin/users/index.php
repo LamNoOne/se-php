@@ -49,6 +49,7 @@ Auth::requireAdmin($conn);
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Email</th>
+                <th>Role</th>
                 <th>Status</th>
                 <th>Created At</th>
                 <th>Action</th>
@@ -132,7 +133,7 @@ Auth::requireAdmin($conn);
         info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
-        [6, 'asc']
+        [8, 'asc']
       ],
       ajax: {
         url: '<?php echo GET_USERS_API; ?>',
@@ -185,15 +186,19 @@ Auth::requireAdmin($conn);
           targets: 5
         },
         {
-          name: 'status',
+          name: 'roleName',
           targets: 6
         },
         {
-          name: 'createdAt',
+          name: 'status',
           targets: 7
         },
         {
-          targets: 8,
+          name: 'createdAt',
+          targets: 8
+        },
+        {
+          targets: 9,
           orderable: false,
           searchable: false,
         },
@@ -248,6 +253,9 @@ Auth::requireAdmin($conn);
         },
         {
           data: 'email'
+        },
+        {
+          data: 'roleName'
         },
         {
           render: function(data, type, row, meta) {
