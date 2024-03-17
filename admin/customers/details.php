@@ -30,8 +30,8 @@ if (!$order) {
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Order Details</h3>
-        <h4>Full details of a order</h4>
+        <h3>Customer Details</h3>
+        <h4>Full details of a customer </h4>
       </div>
     </div>
 
@@ -67,47 +67,6 @@ if (!$order) {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 col-12">
-            <h6 class="fw-bold">Order Information</h6>
-            <div class="mt-3 mt-1">
-              <div class="row">
-                <div class="col-lg-6 d-flex gap-2 flex-column align-items-start">
-                  <p class="fw-bold me-1">ID:</p>
-                  <p class="fw-bold me-1">Shipping Phone:</p>
-                  <p class="fw-bold me-1">Shipping Address:</p>
-                  <p class="fw-bold me-1">Status:</p>
-                </div>
-                <div class="col-lg-6 d-flex gap-2 flex-column align-items-end">
-                  <p><?php echo $order->id ?></p>
-                  <p class="shippingPhone"><?php echo $order->phoneNumber ?></p>
-                  <p class="shippingAddress"><?php echo $order->shipAddress ?></p>
-                  <p class="status badges
-                  <?php
-                  $class = 'bg-lightgreen';
-                  if ($order->statusId == PENDING) {
-                    $class = 'bg-lightred';
-                  } else if ($order->statusId == PENDING_CANCEL) {
-                    $class = 'bg-lightyellow';
-                  } else if ($order->statusId == CANCELLED) {
-                    $class = 'bg-lightgrey';
-                  } else if ($order->statusId == PAID) {
-                    $class = 'bg-lightblue';
-                  } else if ($order->statusId == DELIVERING) {
-                    $class = 'bg-lightpurple';
-                  }
-                  echo $class;
-                  ?>">
-                    <?php echo $order->statusName ?>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="mt-5 d-flex justify-content-end">
-              <a href="javascript:void(0)" class="btn btn-primary" id="openEditModalButton">
-                Edit
-              </a>
             </div>
           </div>
         </div>

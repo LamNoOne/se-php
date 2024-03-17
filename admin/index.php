@@ -23,13 +23,13 @@ try {
 
   $getPendingOrdersResult = Order::getOrders(
     $conn,
-    [['field' => 'orderStatusId', 'value' => PENDING]],
+    [['field' => 'statusId', 'value' => PENDING]],
     $pagination,
     ['sortBy' => 'updatedAt', 'order' => 'DESC']
   );
   $getPendingCancelOrdersResult = Order::getOrders(
     $conn,
-    [['field' => 'orderStatusId', 'value' => PENDING_CANCEL]],
+    [['field' => 'statusId', 'value' => PENDING_CANCEL]],
     $pagination,
     ['sortBy' => 'updatedAt', 'order' => 'DESC']
   );
@@ -75,11 +75,11 @@ try {
 
   $countPendingOrdersResult = Order::count(
     $conn,
-    [['field' => 'orderStatusId', 'value' => PENDING]]
+    [['field' => 'statusId', 'value' => PENDING]]
   );
   $countPendingCancelOrdersResult = Order::count(
     $conn,
-    [['field' => 'orderStatusId', 'value' => PENDING_CANCEL]]
+    [['field' => 'statusId', 'value' => PENDING_CANCEL]]
   );
   $countOrdersResult = Order::count($conn, []);
   $countProductsResult = Product::count($conn, []);

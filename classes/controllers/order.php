@@ -468,8 +468,24 @@ class Order extends DataFetcher
         $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
     ) {
         try {
-            $filterConditions = [
+            $selectConditions = [
+                'id' => ['table' => TABLES['ORDER'], 'column' => 'id'],
+                'userId' => ['table' => TABLES['USER'], 'column' => 'userId'],
+                'customerName' => ['table' => TABLES['USER'], 'column' => 'firstName'],
+                'totalPrice' => [
+                    'aggregate' => 'SUM',
+                    'expression' =>
+                    TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
+                ],
+                'statusId' => ['table' => TABLES['ORDER_STATUS'], 'column' => 'id'],
+                'status' => ['table' => TABLES['ORDER_STATUS'], 'column' => 'name'],
+                'createdAt' => ['table' => TABLES['ORDER'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['ORDER'], 'column' => 'updatedAt']
+            ];
+
+            $sortConditions = [
                 'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
+                'userId' => [['table' => TABLES['USER'], 'column' => 'userId']],
                 'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
                 'totalPrice' => [[
                     'aggregate' => 'SUM',
@@ -481,18 +497,15 @@ class Order extends DataFetcher
                 'updatedAt' => [['table' => TABLES['ORDER'], 'column' => 'updatedAt']]
             ];
 
-            $sortConditions = [
-                'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
-                'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
-                'totalPrice' => [[
-                    'aggregate' => 'SUM',
-                    'expression' =>
-                    TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
-                ]],
-                'status' => [['table' => TABLES['ORDER_STATUS'], 'column' => 'name']],
-                'createdAt' => [['table' => TABLES['ORDER'], 'column' => 'createdAt']],
-                'updatedAt' => [['table' => TABLES['ORDER'], 'column' => 'updatedAt']]
-            ];
+            $selection = [];
+            foreach ($filter as $filterItem) {
+                $selectCondition = $selectConditions[$filterItem['field']];
+                $selectCondition['value'] = $filterItem['value'];
+                if (isset($filterItem['like']) && $filterItem['like'] !== NULL) {
+                    $selectCondition['like'] = $filterItem['like'];
+                }
+                $selection[] = $selectCondition;
+            }
 
             $sortCondition = $sortConditions[$sort['sortBy']];
             $orderBy = $sort['order'];
@@ -572,6 +585,7 @@ class Order extends DataFetcher
                     'column' => 'updatedAt'
                 ]
             ];
+
             $join =  [
                 'tables' => [
                     TABLES['ORDER'],
@@ -607,17 +621,7 @@ class Order extends DataFetcher
                     ]
                 ]
             ];
-            $selection = array_map(function ($filterItem) {
-                $selectionItem = [
-                    'table' => TABLES['ORDER'],
-                    'column' => $filterItem['field'],
-                    'value' => $filterItem['value']
-                ];
-                if (isset($filterItem['like'])) {
-                    $selectionItem['like'] = $filterItem['like'];
-                }
-                return $selectionItem;
-            }, $filter);
+
             $group = [
                 [
                     'table' => TABLES['ORDER_DETAIL'],
@@ -960,6 +964,31 @@ class Order extends DataFetcher
         $filter = [['field' => 'id', 'value' => '', 'like' => false]]
     ) {
         try {
+            $selectConditions = [
+                'id' => ['table' => TABLES['ORDER'], 'column' => 'id'],
+                'userId' => ['table' => TABLES['USER'], 'column' => 'userId'],
+                'customerName' => ['table' => TABLES['USER'], 'column' => 'firstName'],
+                'totalPrice' => [
+                    'aggregate' => 'SUM',
+                    'expression' =>
+                    TABLES['ORDER_DETAIL'] . '.price' . ' * ' . TABLES['ORDER_DETAIL'] . '.quantity'
+                ],
+                'statusId' => ['table' => TABLES['ORDER_STATUS'], 'column' => 'id'],
+                'statusName' => ['table' => TABLES['ORDER_STATUS'], 'column' => 'name'],
+                'createdAt' => ['table' => TABLES['ORDER'], 'column' => 'createdAt'],
+                'updatedAt' => ['table' => TABLES['ORDER'], 'column' => 'updatedAt']
+            ];
+
+            $selection = [];
+            foreach ($filter as $filterItem) {
+                $selectCondition = $selectConditions[$filterItem['field']];
+                $selectCondition['value'] = $filterItem['value'];
+                if (isset($filterItem['like']) && $filterItem['like'] !== NULL) {
+                    $selectCondition['like'] = $filterItem['like'];
+                }
+                $selection[] = $selectCondition;
+            }
+
             $projection =  [
                 [
                     'aggregate' => 'COUNT',
@@ -969,20 +998,18 @@ class Order extends DataFetcher
             ];
             $join =  [
                 'tables' => [
-                    TABLES['ORDER']
+                    TABLES['ORDER'],
+                    TABLES['ORDER_STATUS'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['ORDER'],
+                        'table2' => TABLES['ORDER_STATUS'],
+                        'column1' => 'orderStatusId',
+                        'column2' => 'id',
+                    ]
                 ]
             ];
-            $selection = array_map(function ($filterItem) {
-                $selectionItem = [
-                    'table' => TABLES['ORDER'],
-                    'column' => $filterItem['field'],
-                    'value' => $filterItem['value']
-                ];
-                if (isset($filterItem['like'])) {
-                    $selectionItem['like'] = $filterItem['like'];
-                }
-                return $selectionItem;
-            }, $filter);
 
             $stmt = getQuerySQLPrepareStatement(
                 $conn,
@@ -999,6 +1026,7 @@ class Order extends DataFetcher
                 'total' => $stmt->fetch()->total
             ]);
         } catch (Exception $e) {
+            print_r($e->getMessage());
             return Message::message(false, 'Something went wrong');
         }
     }
