@@ -98,7 +98,7 @@ if (!defined('TABLES')) define('TABLES', [
  * Define APIs
  */
 
-// Product APIs
+// Product API
 if (!defined('GET_PRODUCTS_API'))
   define('GET_PRODUCTS_API', APP_URL . '/admin/products/actions/get-products.php');
 
@@ -117,7 +117,7 @@ if (!defined('DELETE_PRODUCT_BY_ID_API'))
 if (!defined('DELETE_PRODUCT_BY_IDS_API'))
   define('DELETE_PRODUCT_BY_IDS_API', APP_URL . '/admin/products/actions/delete-by-ids.php');
 
-// Category APIs
+// Category API
 if (!defined('GET_CATEGORIES_API'))
   define('GET_CATEGORIES_API', APP_URL . '/admin/categories/actions/get-categories.php');
 
@@ -140,6 +140,9 @@ if (!defined('DELETE_CATEGORY_BY_IDS_API'))
 if (!defined('GET_ORDER_BY_ID_API'))
   define('GET_ORDER_BY_ID_API', APP_URL . '/admin/orders/actions/get-by-id.php');
 
+if (!defined('GET_ORDERS_BY_USER_ID_API'))
+  define('GET_ORDER_BY_USER_ID_API', APP_URL . '/admin/orders/actions/get-by-user-id.php');
+
 if (!defined('GET_ORDERS_API'))
   define('GET_ORDERS_API', APP_URL . '/admin/orders/actions/get-orders.php');
 
@@ -161,3 +164,7 @@ if (!defined('DELETE_ORDER_PRODUCTS_API'))
 // Order Status APIs
 if (!defined('GET_ORDER_STATUSES_API'))
   define('GET_ORDER_STATUSES_API', APP_URL . '/admin/order-statuses/actions/get-order-statuses.php');
+
+// Customer APIs
+if (!defined('GET_CUSTOMERS_API'))
+  define('GET_CUSTOMERS_API', APP_URL . '/admin/customers/actions/get-customers.php');

@@ -470,7 +470,7 @@ class Order extends DataFetcher
         try {
             $selectConditions = [
                 'id' => ['table' => TABLES['ORDER'], 'column' => 'id'],
-                'userId' => ['table' => TABLES['USER'], 'column' => 'userId'],
+                'userId' => ['table' => TABLES['USER'], 'column' => 'id'],
                 'customerName' => ['table' => TABLES['USER'], 'column' => 'firstName'],
                 'totalPrice' => [
                     'aggregate' => 'SUM',
@@ -485,7 +485,7 @@ class Order extends DataFetcher
 
             $sortConditions = [
                 'id' => [['table' => TABLES['ORDER'], 'column' => 'id']],
-                'userId' => [['table' => TABLES['USER'], 'column' => 'userId']],
+                'userId' => [['table' => TABLES['USER'], 'column' => 'id']],
                 'customerName' => [['table' => TABLES['USER'], 'column' => 'firstName']],
                 'totalPrice' => [[
                     'aggregate' => 'SUM',
