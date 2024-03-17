@@ -8,8 +8,8 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Order List</h3>
-        <h4>Manage customer orders</h4>
+        <h3>User List</h3>
+        <h4>Manage your users</h4>
       </div>
     </div>
 
@@ -17,6 +17,11 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       <div class="card-body">
         <div class="table-top">
           <div class="search-set">
+            <div class="search-path">
+              <a class="btn btn-danger btn-delete-by-select" id="deleteBySelectBtn">
+                <i class="fas fa-trash-alt"></i>
+              </a>
+            </div>
             <div class="search-input">
               <a class="btn btn-searchset">
                 <i class="fas fa-search"></i>
@@ -29,9 +34,17 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           <table class="table" id="table">
             <thead class="table-light">
               <tr>
+                <th>
+                  <label class="checkboxs">
+                    <input type="checkbox" id="select-all" />
+                    <span class="checkmarks"></span>
+                  </label>
+                </th>
                 <th>ID</th>
-                <th>Customer Name</th>
-                <th>Total Payment</th>
+                <th>Avatar</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
                 <th>Status</th>
                 <th>Created At</th>
                 <th>Action</th>
@@ -115,10 +128,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
-        [4, 'asc']
+        [6, 'asc']
       ],
       ajax: {
-        url: '<?php echo GET_ORDERS_API; ?>',
+        url: '<?php echo GET_USERS_API; ?>',
         type: 'GET',
         data: function(d, settings) {
           return {
@@ -142,27 +155,41 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         },
       },
       columnDefs: [{
-          name: 'id',
-          targets: 0
+          targets: 0,
+          orderable: false,
+          searchable: false,
         },
         {
-          name: 'customerName',
+          name: 'id',
           targets: 1
         },
         {
-          name: 'totalPrice',
-          targets: 2
+          targets: 2,
+          orderable: false,
+          searchable: false,
         },
         {
-          name: 'status',
+          name: 'firstName',
           targets: 3
         },
         {
-          name: 'createdAt',
+          name: 'lastName',
           targets: 4
         },
         {
-          targets: 5,
+          name: 'email',
+          targets: 5
+        },
+        {
+          name: 'status',
+          targets: 6
+        },
+        {
+          name: 'createdAt',
+          targets: 7
+        },
+        {
+          targets: 8,
           orderable: false,
           searchable: false,
         },
@@ -170,52 +197,66 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       columns: [{
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+                <label class="checkboxs">
+                  <input data-id=${row.id} type="checkbox" />
+                  <span class="checkmarks"></span>
+                </label>
+              `
+          }
+        },
+        {
+          render: function(data, type, row, meta) {
+            return `
+              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/users/details.php?id=${row.id}">
                 ${row.id}
               </a>
-            `
+              `
           }
         },
         {
           render: function(data, type, row, meta) {
             return `
               <div class="name-img-wrapper">
-                <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
-                  <img src="${row.customerImageUrl}" />
-                  <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
-                    ${row.customerFirstName} ${row.customerLastName}
-                  </a>
+                <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/users/details.php?id=${row.id}" class="product-img">
+                  <img src="${row.imageUrl}" />
                 </a
               </div>
             `
           }
         },
         {
-          data: 'totalPrice'
+          render: function(data, type, row, meta) {
+            return `
+              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/users/details.php?id=${row.id}">
+                ${row.firstName}
+              </a>
+              `
+          }
         },
         {
           render: function(data, type, row, meta) {
-            const pendingStatusId = <?php echo PENDING; ?>;
-            const pendingCancelStatusId = <?php echo PENDING_CANCEL; ?>;
-            const cancelledStatusId = <?php echo CANCELLED; ?>;
-            const paidStatusId = <?php echo PAID; ?>;
-            const deliveringStatusId = <?php echo DELIVERING; ?>;
-            const deliveredStatusId = <?php echo DELIVERED; ?>;
-            let badgesColorClass = 'bg-lightgreen'
-            if (row.statusId == pendingStatusId) {
-              badgesColorClass = 'bg-lightred'
-            } else if (row.statusId == pendingCancelStatusId) {
-              badgesColorClass = 'bg-lightyellow'
-            } else if (row.statusId == cancelledStatusId) {
-              badgesColorClass = 'bg-lightgrey'
-            } else if (row.statusId == paidStatusId) {
-              badgesColorClass = 'bg-lightblue'
-            } else if (row.statusId == deliveringStatusId) {
-              badgesColorClass = 'bg-lightpurple'
-            }
-
             return `
-              <span class="badges ${badgesColorClass}">${row.statusName}</span>
+              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/users/details.php?id=${row.id}">
+                ${row.lastName}
+              </a>
+              `
+          }
+        },
+        {
+          data: 'email'
+        },
+        {
+          render: function(data, type, row, meta) {
+            const isActive = Boolean(row.active)
+            return `
+              <div
+                class="status-toggle d-flex justify-content-between align-items-center"
+              >
+                <input ${isActive ? 'checked' : ''} data-id="${row.id}" id="user${row.id}" type="checkbox" class="check toggle-checkbox" />
+                <label for="user${row.id}" class="checktoggle">
+                  checkbox
+                </label>
+              </div>
             `
           }
         },
@@ -225,7 +266,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
               `

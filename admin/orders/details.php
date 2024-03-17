@@ -84,9 +84,21 @@ if (!$order) {
                   <p class="shippingPhone"><?php echo $order->phoneNumber ?></p>
                   <p class="shippingAddress"><?php echo $order->shipAddress ?></p>
                   <p class="status badges
-                    <?php
-                    echo $order->statusId == PENDING ? 'bg-lightred' : 'bg-lightgreen'
-                    ?>">
+                  <?php
+                  $class = 'bg-lightgreen';
+                  if ($order->statusId == PENDING) {
+                    $class = 'bg-lightred';
+                  } else if ($order->statusId == PENDING_CANCEL) {
+                    $class = 'bg-lightyellow';
+                  } else if ($order->statusId == CANCELLED) {
+                    $class = 'bg-lightgrey';
+                  } else if ($order->statusId == PAID) {
+                    $class = 'bg-lightblue';
+                  } else if ($order->statusId == DELIVERING) {
+                    $class = 'bg-lightpurple';
+                  }
+                  echo $class;
+                  ?>">
                     <?php echo $order->statusName ?>
                   </p>
                 </div>
@@ -106,12 +118,6 @@ if (!$order) {
       <div class="card-body">
         <div class="table-top">
           <div class="search-set">
-            <div class="search-path">
-              <a class="btn btn-filter" id="filter_search">
-                <img src="<?php echo APP_URL; ?>/admin/assets/img/icons/filter.svg" alt="img" />
-                <span><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/closes.svg" alt="img" /></span>
-              </a>
-            </div>
             <div class="search-path">
               <a class="btn btn-danger btn-delete-by-select" id="deleteBySelectBtn">
                 <i class="fas fa-trash-alt"></i>
@@ -490,7 +496,6 @@ if (!$order) {
               const currentPage = table.page.info().page;
               toggleUpdateOrderProduct();
               table.page(currentPage).draw('page')
-              totalPaymentBadge.text(response.data.totalPayment);
               toastr.success('Update quantity successfully')
               return;
             }
@@ -699,20 +704,40 @@ if (!$order) {
             data,
           })
           if (response.status) {
+            const pendingStatusId = <?php echo PENDING; ?>;
+            const pendingCancelStatusId = <?php echo PENDING_CANCEL; ?>;
+            const cancelledStatusId = <?php echo CANCELLED; ?>;
+            const paidStatusId = <?php echo PAID; ?>;
+            const deliveringStatusId = <?php echo DELIVERING; ?>;
+            const deliveredStatusId = <?php echo DELIVERED; ?>;
+            let badgesColorClass = 'bg-lightgreen'
+
             $('.card .shippingPhone').text(data.phoneNumber)
             $('.card .shippingAddress').text(data.shipAddress)
             const currentStatus = orderStatuses.find(
               status => status.id === data.orderStatusId
             )
+            if (currentStatus.id == pendingStatusId) {
+              badgesColorClass = 'bg-lightred'
+            } else if (currentStatus.id == pendingCancelStatusId) {
+              badgesColorClass = 'bg-lightyellow'
+            } else if (currentStatus.id == cancelledStatusId) {
+              badgesColorClass = 'bg-lightgrey'
+            } else if (currentStatus.id == paidStatusId) {
+              badgesColorClass = 'bg-lightblue'
+            } else if (currentStatus.id == deliveringStatusId) {
+              badgesColorClass = 'bg-lightpurple'
+            }
             $('.card .status')
               .text(currentStatus.name)
-              .removeClass('bg-lightgreen')
               .removeClass('bg-lightred')
-              .addClass(
-                currentStatus.id == <?php echo PENDING ?> ?
-                'bg-lightred' :
-                'bg-lightgreen'
-              )
+              .removeClass('bg-lightyellow')
+              .removeClass('bg-lightgrey')
+              .removeClass('bg-lightred')
+              .removeClass('bg-lightblue')
+              .removeClass('bg-lightpurple')
+              .removeClass('bg-lightgreen')
+              .addClass(badgesColorClass)
             toastr.success('Edit order successfully')
           } else {
             toastr.error(response.message)
@@ -721,7 +746,6 @@ if (!$order) {
         }
       } catch (error) {
         editModalBootstrapInstance.hide()
-        console.log(error);
         toastr.error('Something went wrong')
       }
     })

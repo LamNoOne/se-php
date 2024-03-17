@@ -268,6 +268,7 @@ require_once dirname(__DIR__) . "/inc/init.php"
 		})
 		$(document).on('click', '#toggle_btn', function() {
 			if ($('body').hasClass('mini-sidebar')) {
+				localStorage.removeItem('isActiveMiniSideBar')
 				$('body').removeClass('mini-sidebar')
 				$(this).addClass('active')
 				$('.subdrop + ul').slideDown()
@@ -275,8 +276,9 @@ require_once dirname(__DIR__) . "/inc/init.php"
 				setTimeout(function() {
 					$('body').removeClass('mini-sidebar')
 					$('.header-left').addClass('active')
-				}, 100)
+				}, 0)
 			} else {
+				localStorage.setItem('isActiveMiniSideBar', true)
 				$('body').addClass('mini-sidebar')
 				$(this).removeClass('active')
 				$('.subdrop + ul').slideUp()
@@ -284,10 +286,75 @@ require_once dirname(__DIR__) . "/inc/init.php"
 				setTimeout(function() {
 					$('body').addClass('mini-sidebar')
 					$('.header-left').removeClass('active')
-				}, 100)
+				}, 0)
 			}
 			return false
 		})
+
+
+		// CUSTOM
+		const autoToggleSideBar = () => {
+			const isActiveMiniSideBar = Boolean(localStorage.getItem('isActiveMiniSideBar'))
+			if (isActiveMiniSideBar) {
+				$('#toggle_btn').click()
+			}
+		}
+		const activeSideBarButton = () => {
+			const pages = {
+				product: $('li#productButton'),
+				sales: $('#salesButton'),
+				people: $('#peopleButton'),
+			}
+			const dashboardButton = $('#dashboardButton')
+			const currentPage = sessionStorage.getItem('currentPage')
+			if (!currentPage) {
+				dashboardButton.addClass('active')
+				return
+			}
+
+			const button = pages[currentPage];
+			if (!button) {
+				dashboardButton.addClass('active')
+				return
+			}
+			button.addClass('active')
+		}
+		const handleClickSubMenuItems = () => {
+			const dashboardLink = $('#dashboardLink')
+			const productListLink = $('#productListLink')
+			const categoryListLink = $('#categoryListLink')
+			const orderListLink = $('#orderListLink')
+			const customerListLink = $('#customerListLink')
+			const userListLink = $('#userListLink')
+			const logo = $('.header .header-left .logo')
+
+			logo.click(function() {
+				sessionStorage.removeItem('currentPage')
+			})
+			dashboardLink.click(function() {
+				sessionStorage.removeItem('currentPage')
+			})
+			productListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'product')
+			})
+			categoryListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'product')
+			})
+			orderListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'sales')
+			})
+			customerListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'people')
+			})
+			userListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'people')
+			})
+		}
+		autoToggleSideBar()
+		handleClickSubMenuItems()
+		activeSideBarButton()
+
+
 		if (localStorage.getItem('screenModeNightTokenState') == 'night') {
 			setTimeout(function() {
 				$('body').removeClass('mini-sidebar')
@@ -433,7 +500,7 @@ require_once dirname(__DIR__) . "/inc/init.php"
 
 		/* HANDLE CHECKBOX */
 		var selectAllItems = '#select-all'
-		var checkboxItem = ':checkbox:not([id="select-all"])'
+		var checkboxItem = ':checkbox:not([id="select-all"]):not(.toggle-checkbox)'
 		const toggleDeleteBySelectBtn = () => {
 			var numberCheckedItems = $(checkboxItem + ':checked').length
 			var deleteBySelectBtn = $('#deleteBySelectBtn')

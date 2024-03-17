@@ -169,19 +169,23 @@ class Category
     public static function getCategoryById($conn, $id)
     {
         try {
-            $projection =  [];
-            $join =  [
-                'tables' => [
-                    TABLES['CATEGORY']
-                ],
-            ];
-
-            $stmt = getQueryByIdSQLPrepareStatement(
+            $stmt = getQuerySQLPrepareStatement(
                 $conn,
-                $id,
-                $projection,
-                $join,
+                [],
+                [
+                    'tables' => [
+                        TABLES['CATEGORY']
+                    ]
+                ],
+                [
+                    [
+                        'table' => TABLES['CATEGORY'],
+                        'column' => 'id',
+                        'value' => $id
+                    ]
+                ]
             );
+
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');
@@ -190,7 +194,7 @@ class Category
                 'category' => $stmt->fetch()
             ]);
         } catch (Exception $e) {
-            return Message::message(false, 'Get category by id failed');
+            return Message::message(false, 'Something went wrong');
         }
     }
 

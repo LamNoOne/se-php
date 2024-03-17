@@ -1,5 +1,23 @@
 <?php
 require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once  dirname(dirname(__DIR__)) . "/inc/utils.php";
+$conn = require_once  dirname(dirname(__DIR__)) . "/inc/db.php";
+
+if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
+  return redirectByServer(APP_URL . '/admin/orders/');
+}
+if (!isset($_GET['id'])) {
+  return redirectByServer(APP_URL . '/admin/orders/');
+}
+
+$orderId = $_GET['id'];
+
+$customer = User::getUserById($conn, $orderId);
+
+if (!$customer) {
+  return redirect(APP_URL . '/admin/404.php');
+}
+
 ?>
 
 <?php require_once  dirname(__DIR__) . "/inc/components/header.php" ?>;
@@ -8,8 +26,46 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
   <div class="content">
     <div class="page-header">
       <div class="page-title">
-        <h3>Order List</h3>
-        <h4>Manage customer orders</h4>
+        <h3>Customer Details</h3>
+        <h4>Full details of a customer </h4>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-lg-12 col-md-12 col-12">
+            <h6 class="fw-bold">Customer Information</h6>
+            <div class="row gx-3 mt-3">
+              <div class="col-lg-2">
+                <img style="border-radius: 8px; width: 100%; height: 100%; object-fit: contain;" src="
+                  <?php
+                  echo $customer->imageUrl ?
+                    $customer->imageUrl
+                    : APP_URL . '/admin/assets/img/no-image.png'
+                  ?>">
+              </div>
+              <div class="col-lg-10 mt-1">
+                <div class="row">
+                  <div class="col-lg-2 d-flex gap-2 flex-column align-items-start">
+                    <p class="fw-bold me-1">Full Name:</p>
+                    <p class="fw-bold me-1">Email:</p>
+                    <p class="fw-bold me-1">Phone:</p>
+                    <p class="fw-bold me-1">Address:</p>
+                  </div>
+                  <div class="col-lg-10 d-flex gap-2 flex-column align-items-start">
+                    <p>
+                      <?php echo $customer->firstName . ' ' . $customer->lastName ?>
+                    </p>
+                    <p><?php echo $customer->phoneNumber ?></p>
+                    <p><?php echo $customer->email ?></p>
+                    <p><?php echo $customer->address ?></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -24,16 +80,15 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             </div>
           </div>
         </div>
-
         <div class="table-responsive">
           <table class="table" id="table">
             <thead class="table-light">
               <tr>
                 <th>ID</th>
-                <th>Customer Name</th>
                 <th>Total Payment</th>
                 <th>Status</th>
                 <th>Created At</th>
+                <th>Updated At</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -42,6 +97,9 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           </table>
         </div>
       </div>
+    </div>
+    <div class="d-flex gap-3">
+      <a class="btn btn-primary" href="<?php echo APP_URL; ?>/admin/orders">Back</a>
     </div>
   </div>
 </div>
@@ -56,11 +114,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
     const DEFAULT_SORT_BY = 'createdAt'
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
-
-    const clearForm = (modal, form) => {
-      modal.modal('hide');
-      form.find('input, textarea').val('')
-    }
+    const totalPaymentBadge = $('.card .table-bottom .badges')
 
     const goToCurrentPage = (table = {}, isDeleteItem = false, oldPageInfo = null) => {
       let pageInfo = table.page.info()
@@ -115,10 +169,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         info: '_START_ - _END_ of _TOTAL_ items'
       },
       order: [
-        [4, 'asc']
+        [3, 'desc']
       ],
       ajax: {
-        url: '<?php echo GET_ORDERS_API; ?>',
+        url: '<?php echo GET_ORDERS_BY_USER_ID_API . "?userId=$customer->id" ?>',
         type: 'GET',
         data: function(d, settings) {
           return {
@@ -137,7 +191,8 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
             recordsTotal: dataObj.data?.totalItems,
             recordsFiltered: dataObj.data?.totalItems,
             data: dataObj.data?.items,
-            totalPages: dataObj.data?.totalPages
+            totalPages: dataObj.data?.totalPages,
+            totalPayment: dataObj.data?.totalPayment
           });
         },
       },
@@ -146,19 +201,19 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           targets: 0
         },
         {
-          name: 'customerName',
+          name: 'totalPrice',
           targets: 1
         },
         {
-          name: 'totalPrice',
+          name: 'status',
           targets: 2
         },
         {
-          name: 'status',
+          name: 'createdAt',
           targets: 3
         },
         {
-          name: 'createdAt',
+          name: 'updatedAt',
           targets: 4
         },
         {
@@ -170,23 +225,12 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       columns: [{
           render: function(data, type, row, meta) {
             return `
-              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+              <a
+                class="text-linear-hover"
+                href="<?php echo APP_URL ?>/admin/orders/details.php?id=${row.id}"
+              >
                 ${row.id}
               </a>
-            `
-          }
-        },
-        {
-          render: function(data, type, row, meta) {
-            return `
-              <div class="name-img-wrapper">
-                <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
-                  <img src="${row.customerImageUrl}" />
-                  <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
-                    ${row.customerFirstName} ${row.customerLastName}
-                  </a>
-                </a
-              </div>
             `
           }
         },
@@ -223,11 +267,16 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           data: 'createdAt'
         },
         {
+          data: 'updatedAt'
+        },
+        {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
-                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
-              </a>
+              <div class="actions">
+                <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+                  <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
+                </a>
+              </div>
               `
           }
         },
@@ -235,7 +284,14 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
       initComplete: (settings, json) => {
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
-      }
+
+        // In order to switch to old page of deleted item
+        if (sessionStorage.getItem('pageInfo')) {
+          const pageInfo = JSON.parse(sessionStorage.getItem('pageInfo'));
+          sessionStorage.removeItem('pageInfo');
+          goToCurrentPage(table, true, pageInfo);
+        }
+      },
     })
   })
 </script>
