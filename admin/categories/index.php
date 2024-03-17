@@ -291,7 +291,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               <a class="action" data-id="${row.id}" id="delete-btn" href="javascript:void(0)">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
               </a>
-              `
+            `
           }
         },
       ],

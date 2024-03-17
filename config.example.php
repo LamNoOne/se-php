@@ -91,7 +91,9 @@ if (!defined('TABLES')) define('TABLES', [
   'ORDER_DETAIL' => 'orderdetail',
   'ORDER_STATUS' => 'orderstatus',
   'ROLE' => 'role',
-  'USER' => 'user'
+  'USER' => 'user',
+  'CART' => 'cart',
+  'CART_DETAIL' => 'cartdetail'
 ]);
 
 /**
@@ -175,3 +177,6 @@ if (!defined('GET_USERS_API'))
 
 if (!defined('UPDATE_USER_API'))
   define('UPDATE_USER_API', APP_URL . '/admin/users/actions/update-user.php');
+
+if (!defined('DELETE_USER_API'))
+  define('DELETE_USER_API', APP_URL . '/admin/users/actions/delete-by-id.php');

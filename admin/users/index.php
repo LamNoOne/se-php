@@ -266,10 +266,13 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         {
           render: function(data, type, row, meta) {
             return `
-              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.id}">
+              <a class="me-2 action details-btn" href="<?php echo APP_URL; ?>/admin/users/details.php?id=${row.id}">
                 <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/eye.svg" alt="img" />
               </a>
-              `
+              <a class="action delete-btn" data-id="${row.id}" href="javascript:void(0)">
+                <img class="action-icon" src="<?php echo APP_URL; ?>/admin/assets/img/icons/delete.svg" alt="img" />
+              </a>
+            `
           }
         },
       ],
@@ -308,6 +311,47 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
           }
         })
       })
+    })
+
+    // handle delete one user
+    $('#table tbody').on('click', '.delete-btn', function() {
+      const id = $(this).data('id')
+      Swal
+        .fire({
+          title: 'Delete User?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: '<?php echo DELETE_USER_API ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  id
+                },
+              })
+
+              if (response.status) {
+                goToCurrentPage(table, true)
+                toastr.success(response.message)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
     })
   })
 </script>
