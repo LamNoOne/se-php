@@ -31,10 +31,11 @@ if (isset($_GET['order'])) {
   $order = $_GET['order'];
 }
 
-$getItemsOfAllPageResult = Order::getOrders(
+$getItemsOfAllPageResult = User::getUsers(
   $conn,
   [
-    ['field' => 'id', 'value' => $search],
+    ['field' => 'firstName', 'value' => $search, 'like' => true],
+    ['field' => 'roleId', 'value' => CUSTOMER],
   ]
 );
 
@@ -42,14 +43,15 @@ if (!$getItemsOfAllPageResult['status']) {
   return throwStatusMessage($getItemsOfAllPageResult);
 }
 
-$itemsOfAllPage = $getItemsOfAllPageResult['data']['orders'];
+$itemsOfAllPage = $getItemsOfAllPageResult['data']['users'];
 
 $itemsPerPage = [];
 if ($limit > 0) {
-  $getItemsPerPageResult = Order::getOrders(
+  $getItemsPerPageResult = User::getUsers(
     $conn,
     [
-      ['field' => 'id', 'value' => $search],
+      ['field' => 'firstName', 'value' => $search, 'like' => true],
+      ['field' => 'roleId', 'value' => CUSTOMER],
     ],
     ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
     [['sortBy' => $sortBy, 'order' => $order]],
@@ -57,7 +59,7 @@ if ($limit > 0) {
   if (!$getItemsPerPageResult['status']) {
     return throwStatusMessage($getItemsOfAllPageResult);
   }
-  $itemsPerPage = $getItemsPerPageResult['data']['orders'];
+  $itemsPerPage = $getItemsPerPageResult['data']['users'];
 }
 
 $totalItems = count($itemsOfAllPage);
@@ -80,4 +82,4 @@ if (isset($_GET['draw'])) {
   $response['draw'] =  (int) $_GET['draw'];
 }
 
-throwStatusMessage(Message::messageData(true, 'Get orders successfully', $response));
+throwStatusMessage(Message::messageData(true, 'Get customers successfully', $response));
