@@ -329,6 +329,9 @@ if (!empty($_GET)) {
     // Define default selectors params
     const checkParams = ['operatingSystem', 'ram', 'screen'];
 
+    // select input search
+    const inputSearch = document.getElementById("input-search");
+
     // Select all elements with class "input-container"
     const inputContainers = document.querySelectorAll(".input-container");
 
@@ -388,6 +391,8 @@ if (!empty($_GET)) {
             inputMinPrice.value = selector.price[0];
             inputMaxPrice.value = selector.price[1];
         }
+
+        inputSearch.value = selector.search[0] ? selector.search[0] : "";
 
         // Activate input elements depend on query URL string
         inputChecks.forEach(inputCheck => {

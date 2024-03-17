@@ -21,39 +21,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = $data['message'];
             $user = $data['data'];
 
-            if (!$user->active) {
-                // If user is not active
+            // If user has not one time verified
+            if (!User::isVerifiedAccount($conn, $user->id)) {
                 $userId = $user->id;
-                // If user's otp still active
-                // Means that user does not verify OTP before
-                // If user logged again, must be confirmed OTP
-                $otp = OTP::getLatestOTPByUserId($conn, $userId);
-                if (!empty($otp) && $otp->otpStatus) {
-                    // disable old OTP
-                    OTP::disableOtp($conn, $otp->id);
-                    // create new OTP
-                    $otpCode = OTP::generateOTP();
-                    // Add new OTP to database
-                    $opt = new OTP($userId, $otpCode);
-                    $optResponse = $opt->createOTP($conn);
+                // create new OTP
+                $otpCode = OTP::generateOTP();
+                // Add new OTP to database
+                $opt = new OTP($userId, $otpCode);
+                $optResponse = $opt->createOTP($conn);
 
-                    if (!$optResponse['status'])
-                        return throwStatusMessage(Message::message(false, 'Cannot create an OTP'));
+                if (!$optResponse['status'])
+                    return throwStatusMessage(Message::message(false, 'Cannot create an OTP'));
 
-                    $firstName = $user->firstName;
-                    $lastName = $user->lastName;
-                    $subject = "Your verify code";
-                    $body = "<p>Dear $firstName $lastName </p> <h3>Your verify OTP code is $otpCode <br></h3>
+                $firstName = $user->firstName;
+                $lastName = $user->lastName;
+                $subject = "Your verify code";
+                $body = "<p>Dear $firstName $lastName </p> <h3>Your verify OTP code is $otpCode <br></h3>
                             <p>Please verify your email to complete setup <br></p>
                             <br><br>
                             <b>SE Shop</b>";
 
-                    $responseEmail = Mail::sendEmail($email, $firstName . $lastName, $subject, $body);
+                $responseEmail = Mail::sendEmail($email, $firstName . $lastName, $subject, $body);
 
-                    if (!$responseEmail['status']) return throwStatusMessage(Message::message(false, 'Send OTP failed'));
-                    return throwStatusMessage(Message::messageData(true, 'Send OTP to email successfully', ['redirect' => APP_URL . "/auth/verification.php?verification_token=". base64_encode($optResponse['data']['otpId']) ."&email=" . base64_encode($email)]));
-                }
-                return throwStatusMessage(Message::message(false, "User is not active"));
+                if (!$responseEmail['status']) return throwStatusMessage(Message::message(false, 'Send OTP failed'));
+                return throwStatusMessage(Message::messageData(true, 'Send OTP to email successfully', ['redirect' => APP_URL . "/auth/verification.php?verification_token=" . base64_encode($optResponse['data']['otpId']) . "&email=" . base64_encode($email)]));
             }
             $_SESSION['username'] = $user->username;
             $_SESSION['firstName'] = $user->firstName;

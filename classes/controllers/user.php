@@ -26,7 +26,7 @@ class User extends OAuth
         $phoneNumber = null,
         $address = null,
         $roleId = 3,
-        $active = 0
+        $active = 1
     ) {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -112,6 +112,22 @@ class User extends OAuth
                 if (!$oauthRegister->register($conn)) throw new Exception("User registration failed");
             }
             return $userId;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public static function isVerifiedAccount($conn, $email)
+    {
+        try {
+            $user = static::getUserByEmail($conn, $email);
+            if (empty($user)) throw new Exception('User not found');
+            $allOTP = OTP::getAllOTPByUserId($conn, $user->id);
+            if (empty($allOTP)) return false;
+            foreach ($allOTP as $otp) {
+                if ($otp->otpStatus == 0) return true;
+            }
+            return false;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
