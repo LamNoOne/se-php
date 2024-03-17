@@ -2,6 +2,9 @@
 require_once dirname(dirname(dirname(__DIR__))) . '/inc/init.php';
 $conn = require_once dirname(dirname(dirname(__DIR__))) . '/inc/db.php';
 
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
   throwStatusMessage(Message::message(false, 'Method must be GET'));
   return;

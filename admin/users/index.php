@@ -1,5 +1,9 @@
 <?php
-require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
+require_once dirname(dirname(__DIR__)) . "/inc/init.php";
+$conn = require_once dirname(dirname(__DIR__)) . "/inc/db.php";
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 ?>
 
 <?php require_once  dirname(__DIR__) . "/inc/components/header.php" ?>;
