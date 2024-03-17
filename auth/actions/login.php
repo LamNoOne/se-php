@@ -21,8 +21,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = $data['message'];
             $user = $data['data'];
 
-            // If user has not one time verified
-            if (!User::isVerifiedAccount($conn, $user->id)) {
+            if(!$user->active) return throwStatusMessage(Message::message(false, 'Your account is not active'));
+
+            // If user has not verified
+            if (!$user->verified) {
                 $userId = $user->id;
                 // create new OTP
                 $otpCode = OTP::generateOTP();

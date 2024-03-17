@@ -32,21 +32,6 @@ class OTP
         }
     }
 
-    public static function getAllOTPByUserId($conn, $userId) {
-        try {
-            $query = "SELECT * FROM otp WHERE userId = :userId";
-            $stmt = $conn->prepare($query);
-            $stmt->bindValue(":userId", $userId, PDO::PARAM_INT);
-            $stmt->setFetchMode(PDO::FETCH_OBJ);
-            if (!$stmt->execute()) {
-                throw new Exception('Can not execute query');
-            }
-            return $stmt->fetchAll();
-        } catch (Exception $e) {
-            return Message::message(false, $e->getMessage());
-        }
-    }
-
     public static function getLatestOTPByUserId($conn, $userId) {
         try {
             $query = "SELECT * FROM otp WHERE userId = :userId ORDER BY id DESC LIMIT 1";

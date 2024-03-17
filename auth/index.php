@@ -289,7 +289,7 @@ if (isset($_SESSION['userId'])) {
             $("#submit-login").html("Loading...");
             try {
                 const response = await login(getLoginData())
-                response.status ? window.location.replace(response.data.redirect) : toastr.warning(response.message, "Wrong email or password");
+                response.status ? window.location.replace(response.data.redirect) : toastr.warning(response.message, "Something wrong");
             } catch (error) {
                 toastr.error(error.message, "User login failed");
             }

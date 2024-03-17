@@ -15,6 +15,7 @@ class User extends OAuth
     public $imageUrl;
     public $roleId;
     public $active;
+    public $verified;
 
     public function __construct(
         $firstName = null,
@@ -26,7 +27,8 @@ class User extends OAuth
         $phoneNumber = null,
         $address = null,
         $roleId = 3,
-        $active = 1
+        $active = 1,
+        $verified = 0
     ) {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
@@ -38,6 +40,7 @@ class User extends OAuth
         $this->imageUrl = $imageUrl;
         $this->roleId = $roleId;
         $this->active = $active;
+        $this->verified = $verified;
     }
 
     public static function authenticate($conn, $email, $password)
@@ -87,7 +90,8 @@ class User extends OAuth
                 $data['$phoneNumber'] ?? null,
                 $data['$address'] ?? null,
                 $data['$roleId'] ?? 3,
-                $data['$active'] ?? 1
+                $data['$active'] ?? 1,
+                $data['$verified'] ?? 1
             );
 
             $userResponse = $user->createUser($conn);
@@ -112,22 +116,6 @@ class User extends OAuth
                 if (!$oauthRegister->register($conn)) throw new Exception("User registration failed");
             }
             return $userId;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
-
-    public static function isVerifiedAccount($conn, $email)
-    {
-        try {
-            $user = static::getUserByEmail($conn, $email);
-            if (empty($user)) throw new Exception('User not found');
-            $allOTP = OTP::getAllOTPByUserId($conn, $user->id);
-            if (empty($allOTP)) return false;
-            foreach ($allOTP as $otp) {
-                if ($otp->otpStatus == 0) return true;
-            }
-            return false;
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
@@ -179,7 +167,7 @@ class User extends OAuth
     {
         try {
             // define user data pattern
-            $userPattern = ['lastName', 'firstName', 'imageUrl', 'phoneNumber', 'address', 'username', 'active'];
+            $userPattern = ['lastName', 'firstName', 'imageUrl', 'phoneNumber', 'address', 'username', 'verified'];
             // validate user data
             if (!Validation::validateData($userPattern, $userData)) {
                 throw new InvalidArgumentException('Invalid user data');
