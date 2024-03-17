@@ -702,6 +702,17 @@ require_once dirname(__DIR__) . "/inc/init.php"
 	/**
 	 * CUSTOM
 	 */
+	$('#logoutButton').click(async function() {
+		try {
+			const statusLogout = await $.ajax({
+				method: "POST",
+				url: "<?php echo APP_URL; ?>/auth/logout.php"
+			})
+		} catch (error) {} finally {
+			window.location.href = "<?php echo APP_URL; ?>";
+		}
+	})
+
 	const handleDefaultImage = () => {
 		$('img').each(function() {
 			const imgSrc = $(this).attr('src')

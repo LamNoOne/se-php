@@ -75,6 +75,7 @@ class Auth
             redirectByServer(APP_URL . '/auth/');
             exit();
         }
+        return true;
     }
     #Handle login
     public static function login()
