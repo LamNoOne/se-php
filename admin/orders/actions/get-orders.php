@@ -52,7 +52,7 @@ if ($limit > 0) {
       ['field' => 'id', 'value' => $search],
     ],
     ['offset' => ($page - 1)  * $limit, 'limit' => $limit],
-    [['sortBy' => $sortBy, 'order' => $order]],
+    ['sortBy' => $sortBy, 'order' => $order],
   );
   if (!$getItemsPerPageResult['status']) {
     return throwStatusMessage($getItemsOfAllPageResult);
