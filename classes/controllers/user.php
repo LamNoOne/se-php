@@ -71,7 +71,10 @@ class User extends OAuth
             $user = static::getUserByEmail($conn, $oData['email']);
             $userId = empty($user) ? static::signUpOAuth($conn, $oData) : $userId = static::signInOAuth($conn, $user->id, $oData);
             if (empty($userId)) throw new Exception("Can not authenticate user");
-            return static::getUserById($conn, $userId);
+            $authUser = static::getUserById($conn, $userId);
+            if (!$authUser->active)
+                return Message::message(false, "User is not active");
+            return Message::messageData(true, "Login successfully", $authUser);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
         }
@@ -468,7 +471,7 @@ class User extends OAuth
          * Write your code here
          */
         try {
-            $query = "SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, U.password, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
+            $query = "SELECT U.id, U.firstName, U.lastName, U.imageUrl, U.phoneNumber, U.email, U.address, U.username, U.password, U.active, U.verified, R.id as 'roleId', R.name as roleName, U.createdAt, U.updatedAt
                 FROM `user` U join `role` R on U.roleId = R.id
                 WHERE U.id = :userId";
             $stmt = $conn->prepare($query);

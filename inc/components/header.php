@@ -35,20 +35,24 @@ if ($gClient->getAccessToken()) {
     // Insert or update user data to the database 
     $gpUserData['oauthProvider'] = 'google';
 
-    $user = User::oAuthenticate($conn, $gpUserData);
-    Auth::login();
-    $_SESSION['username'] = $user->username;
-    $_SESSION['firstName'] = $user->firstName;
-    $_SESSION['lastName'] = $user->lastName;
-    $_SESSION['email'] = $user->email;
-    $_SESSION['userId'] = $user->id;
-    $_SESSION['image'] = $user->imageUrl;
-    $_SESSION['roleId'] = $user->roleId;
-    if ($user->phoneNumber !== NULL) {
-        $_SESSION['phoneNumber'] = $user->phoneNumber;
-    }
-    if ($user->address !== NULL) {
-        $_SESSION['address'] = $user->address;
+    $userData = User::oAuthenticate($conn, $gpUserData);
+    // If user is no longer support, no effect of google auth in this website
+    if ($userData['status']) {
+        $user = $userData['data'];
+        Auth::login();
+        $_SESSION['username'] = $user->username;
+        $_SESSION['firstName'] = $user->firstName;
+        $_SESSION['lastName'] = $user->lastName;
+        $_SESSION['email'] = $user->email;
+        $_SESSION['userId'] = $user->id;
+        $_SESSION['image'] = $user->imageUrl;
+        $_SESSION['roleId'] = $user->roleId;
+        if ($user->phoneNumber !== NULL) {
+            $_SESSION['phoneNumber'] = $user->phoneNumber;
+        }
+        if ($user->address !== NULL) {
+            $_SESSION['address'] = $user->address;
+        }
     }
 }
 ?>
