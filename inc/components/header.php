@@ -121,7 +121,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6 col-sm-6">
-                            <div class="top-right-header d-flex justify-content-end align-items-center">
+                            <div class="top-right-header d-flex justify-content-end align-items-center gap-2">
                                 <div class="top-right-header__header-contact header-contact">
                                     <div class="header-contact__phone-number d-flex align-items-center">
                                         <a class="phone-number text-decoration-none d-inline-block" href="tel:+(00) 1234 5678">Call Us: (00) 1234 5678</a>
@@ -141,6 +141,22 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                         </ul>
                                     </div>
                                 </div>
+                                <?php
+                                if (Auth::isLoggedIn()) {
+                                    $html = '
+                                    <div class="top-right-header__header-go-to-admin">
+                                        <a 
+                                            style="font-size: 12px; font-weight: 500; padding: 3px 10px"
+                                            href="' . APP_URL . '/admin/"' . '
+                                            "
+                                            class="btn btn-primary"
+                                        >
+                                            Admin
+                                        </a>
+                                    </div>';
+                                    echo $html;
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>

@@ -1,3 +1,21 @@
+<?php
+
+$userId = $_SESSION['userId'];
+
+$getUserResult = User::getUserByIdV2($conn, $userId);
+if (!$getUserResult['status']) {
+  redirectByServer(APP_URL . '/auth/');
+  exit();
+}
+
+$currentUser = $getUserResult['data'];
+if (!$currentUser) {
+  redirectByServer(APP_URL . '/auth/');
+  exit();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -53,17 +71,17 @@
       <ul class="nav user-menu">
         <li class="nav-item dropdown has-arrow main-drop">
           <a href="javascript:void(0);" class="dropdown-toggle nav-link userset" data-bs-toggle="dropdown">
-            <span class="user-img"><img src="<?php echo APP_URL; ?>/admin/assets/img/no-avatar-image.png" alt="" />
+            <span class="user-img"><img src="<?php echo $currentUser->imageUrl ? $currentUser->imageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" />
               <span class="status online"></span></span>
           </a>
           <div class="dropdown-menu menu-drop-user">
             <div class="profilename">
               <div class="profileset">
                 <span class="user-img">
-                  <img src="<?php echo APP_URL; ?>/admin/assets/img/no-avatar-image.png" alt="profile" />
+                  <img src="<?php echo $currentUser->imageUrl ? $currentUser->imageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" alt="profile" />
                   <span class="status online"></span></span>
                 <div class="profilesets">
-                  <h6>John Doe</h6>
+                  <h6><?php echo $currentUser->firstName . ' ' . $currentUser->lastName ?></h6>
                   <h5>Admin</h5>
                 </div>
               </div>
