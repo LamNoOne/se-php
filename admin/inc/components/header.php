@@ -72,7 +72,7 @@
                 <i class="me-2" data-feather="user"></i> My Profile</a>
               <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
               <hr class="m-0" />
-              <a class="dropdown-item logout" href="signin.html">
+              <a id="logoutButton" class="dropdown-item logout" href="javascript:void(0);">
                 <i class="me-2 fas fa-sign-out-alt"></i>
                 Logout
               </a>
