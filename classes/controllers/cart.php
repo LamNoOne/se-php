@@ -166,7 +166,7 @@ class Cart
             $cartId = static::getCartId($conn, $userId);
 
             // define query string
-            $query = "SELECT CD.productId, P.name, P.price, P.imageUrl, P.description, CD.quantity FROM cartdetail AS CD JOIN product AS P ON CD.productId = P.id WHERE cartId = :cartId";
+            $query = "SELECT CD.productId, P.name, P.price, P.imageUrl, P.description, P.stockQuantity, CD.quantity FROM cartdetail AS CD JOIN product AS P ON CD.productId = P.id WHERE cartId = :cartId";
 
             $stmt = $conn->prepare($query);
             $stmt->bindValue(':cartId', $cartId, PDO::PARAM_INT);
@@ -187,7 +187,7 @@ class Cart
             $cartId = static::getCartId($conn, $userId);
 
             // define query string
-            $query = "SELECT CD.productId, P.name, P.price, P.imageUrl, P.description, CD.quantity FROM cartdetail AS CD JOIN product AS P ON CD.productId = P.id WHERE cartId = :cartId AND productId = :productId";
+            $query = "SELECT CD.productId, P.name, P.price, P.imageUrl, P.description, P.stockQuantity, CD.quantity FROM cartdetail AS CD JOIN product AS P ON CD.productId = P.id WHERE cartId = :cartId AND productId = :productId";
 
             $stmt = $conn->prepare($query);
             $stmt->bindValue(':cartId', $cartId, PDO::PARAM_INT);

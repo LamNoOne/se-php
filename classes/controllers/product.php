@@ -270,6 +270,22 @@ class Product extends DataFetcher
         }
     }
 
+    public static function updateStockQuantity($conn, $productId, $stockQuantity)
+    {
+        try {
+            $sql = "UPDATE `product` SET `stockQuantity` = :stockQuantity WHERE id = :productId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":stockQuantity", $stockQuantity, PDO::PARAM_INT);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
     public static function deleteProduct($conn, $id)
     {
         try {

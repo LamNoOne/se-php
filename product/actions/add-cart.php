@@ -21,6 +21,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'quantity' => $quantity
         ];
         $message = Cart::addProductToCart($conn, $userId, $cartData);
+        if($message['status']) {
+            $product = Product::getProductById($conn, $productId);
+            $newStockQuantity = $product->stockQuantity - $quantity;
+            Product::updateStockQuantity($conn, $productId, $newStockQuantity);
+        }
         throwStatusMessage($message);
     }
 }

@@ -300,7 +300,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['product_id']) && isset(
                     toastr.warning(result.data.errorMessage, "Create Order")
                 }
             } else {
-                toastr.error("Error when creating order", "Create Order")
+                toastr.error(result.message, "Create Order")
             }
         })
     })

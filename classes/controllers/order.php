@@ -21,6 +21,29 @@ class Order extends DataFetcher
         $this->price = $price;
     }
 
+    public static function isOrderProductOutOfStock($conn, $productId, $quantity)
+    {
+        try {
+            $query = "SELECT stockQuantity FROM product WHERE id = :productId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            $product = $stmt->fetch();
+            if (!$product) {
+                return true;
+            }
+            if ($product->stockQuantity < $quantity) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public static function cancelOrder($conn, $orderId)
     {
         try {
@@ -85,6 +108,10 @@ class Order extends DataFetcher
             // validate orders data
             if (!Validation::validateData($createOrderPattern, $data)) {
                 throw new InvalidArgumentException('Invalid order data');
+            }
+
+            if(static::isOrderProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
+                return Message::message(false, 'Product is out of stock');
             }
 
             $stmt = $conn->prepare($createOrderStatement);
@@ -325,6 +352,7 @@ class Order extends DataFetcher
                     P.name,
                     P.description,
                     P.imageUrl,
+                    P.stockQuantity,
                     OD.createdAt,
                     OD.updatedAt
                     FROM 

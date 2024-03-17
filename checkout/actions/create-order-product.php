@@ -24,5 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isLoggedIn()) {
     ];
 
     $response = Order::createOrderByProduct($conn, $data);
+    if($response['status']) {
+        $product = Product::getProductById($conn, $productId);
+        $newProductStock = $product->stockQuantity - $productQuantity;
+        Product::updateStockQuantity($conn, $productId, $newProductStock);
+    }
     throwStatusMessage($response);
 }

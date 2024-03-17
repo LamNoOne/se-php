@@ -44,6 +44,7 @@ $productDetail = Product::getProductById($conn, $product_id);
                     <div class="product-desc-container">
                         <div class="product-desc d-flex flex-column gap-3">
                             <h3 class="product-desc__title mt"><?php echo $productDetail->name; ?></h3>
+                            <p class="m-0 fs-6 text-danger text-decoration-underline"><?php echo "Stock available: " . $productDetail->stockQuantity ?></p>
                             <p class="product-desc__desc m-0">
                                 <?php echo $productDetail->description; ?> is a high-performance, high-definition, high-quality, high-speed,
                                 high-definition, high-performance and high-definition graphics card that delivers a
