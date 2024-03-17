@@ -277,6 +277,19 @@ class User extends OAuth
         }
     }
 
+    public static function updateUserV2($conn, $id, $dataToUpdate)
+    {
+        try {
+            $stmt = getUpdateByIdSQLPrepareStatement($conn, TABLES['USER'], $id, $dataToUpdate);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update user successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
     public static function deleteUser($conn, $adminId, $userId)
     {
         /**

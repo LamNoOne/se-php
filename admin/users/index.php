@@ -247,7 +247,7 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         },
         {
           render: function(data, type, row, meta) {
-            const isActive = Boolean(row.active)
+            const isActive = parseInt(row.active)
             return `
               <div
                 class="status-toggle d-flex justify-content-between align-items-center"
@@ -277,6 +277,37 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         $('.dataTables_filter').appendTo('#tableSearch')
         $('.dataTables_filter').appendTo('.search-input')
       }
+    })
+
+    tableEle.on('draw.dt', function() {
+      // handle update status
+      $('table tbody tr').each(function() {
+        const toggleCheckbox = $(this).find('.toggle-checkbox')
+        toggleCheckbox.change(async function() {
+          try {
+            const id = $(this).data('id')
+            const active = $(this).is(':checked')
+            // call api
+            const response = await $.ajax({
+              url: '<?php echo UPDATE_USER_API ?>',
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                id,
+                active: active ? 1 : 0
+              }
+            })
+            if (!response.status) {
+              $(this).prop('checked', !active)
+              toastr.error('Something went wrong')
+              return;
+            }
+          } catch (error) {
+            $(this).prop('checked', !active)
+            toastr.error('Something went wrong')
+          }
+        })
+      })
     })
   })
 </script>

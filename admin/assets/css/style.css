@@ -6000,17 +6000,17 @@ span.select2-container.select2-container--default.select2-container--open {
 	cursor: pointer;
 	display: block;
 	font-size: 0;
-	height: 13px;
+	height: 16px;
+	width: 36px;
 	margin-bottom: 0;
 	position: relative;
-	width: 25px;
 }
 .checktoggle:after {
 	content: ' ';
 	display: block;
 	transform: translate(2px, -50%);
-	width: 10px;
-	height: 10px;
+	width: 13px;
+	height: 13px;
 	background-color: #fff;
 	transition: left 300ms ease, transform 300ms ease;
 	border-radius: 50%;
@@ -6018,7 +6018,7 @@ span.select2-container.select2-container--default.select2-container--open {
 	-webkit-transform: translate(2px, -50%);
 	-ms-transform: translate(2px, -50%);
 	position: absolute;
-	top: 50%;
+	top: calc(50% - 0.87px);
 	left: 0;
 }
 .check:checked + .checktoggle:after {

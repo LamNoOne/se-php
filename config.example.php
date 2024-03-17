@@ -172,3 +172,6 @@ if (!defined('GET_CUSTOMERS_API'))
 // User APIs
 if (!defined('GET_USERS_API'))
   define('GET_USERS_API', APP_URL . '/admin/users/actions/get-users.php');
+
+if (!defined('UPDATE_USER_API'))
+  define('UPDATE_USER_API', APP_URL . '/admin/users/actions/update-user.php');
