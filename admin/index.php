@@ -3,6 +3,9 @@ require_once  dirname(__DIR__) . "/inc/init.php";
 if (!isset($conn))
   $conn = require_once dirname(__DIR__) . "/inc/db.php";
 
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 $pendingOrders = [];
 $pendingCancelOrders = [];
 $orders = [];

@@ -3,6 +3,9 @@ require_once dirname(dirname(dirname(__DIR__))) . '/inc/init.php';
 $conn = require_once dirname(dirname(dirname(__DIR__))) . '/inc/db.php';
 require_once dirname(dirname(dirname(__DIR__))) . '/inc/utils.php';
 
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   return throwStatusMessage(Message::message(false, 'Method must be POST'));
 }

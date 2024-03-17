@@ -514,7 +514,7 @@ class Product extends DataFetcher
             ];
             $selection = array_map(function ($filterItem) {
                 $selectionItem = [
-                    'table' => TABLES['ORDER'],
+                    'table' => TABLES['PRODUCT'],
                     'column' => $filterItem['field'],
                     'value' => $filterItem['value']
                 ];

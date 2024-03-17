@@ -2,6 +2,10 @@
 require_once dirname(dirname(dirname(__DIR__))) . '/inc/init.php';
 $conn = require_once dirname(dirname(dirname(__DIR__))) . '/inc/db.php';
 require_once dirname(dirname(dirname(__DIR__))) . '/inc/utils.php';
+
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 /*
 
 // Handle UI and edit product action

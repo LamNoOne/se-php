@@ -3,6 +3,9 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
 require_once  dirname(dirname(__DIR__)) . "/inc/utils.php";
 $conn = require_once  dirname(dirname(__DIR__)) . "/inc/db.php";
 
+Auth::requireLogin();
+Auth::requireAdmin($conn);
+
 if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
   return redirectByServer(APP_URL . '/admin/orders/');
 }
