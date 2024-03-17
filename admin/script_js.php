@@ -324,6 +324,8 @@ require_once dirname(__DIR__) . "/inc/init.php"
 			const productListLink = $('#productListLink')
 			const categoryListLink = $('#categoryListLink')
 			const orderListLink = $('#orderListLink')
+			const customerListLink = $('#customerListLink')
+			const userListLink = $('#userListLink')
 			const logo = $('.header .header-left .logo')
 
 			logo.click(function() {
@@ -340,6 +342,12 @@ require_once dirname(__DIR__) . "/inc/init.php"
 			})
 			orderListLink.click(function() {
 				sessionStorage.setItem('currentPage', 'sales')
+			})
+			customerListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'people')
+			})
+			userListLink.click(function() {
+				sessionStorage.setItem('currentPage', 'people')
 			})
 		}
 		autoToggleSideBar()

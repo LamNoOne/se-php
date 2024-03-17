@@ -141,7 +141,7 @@ if (!defined('GET_ORDER_BY_ID_API'))
   define('GET_ORDER_BY_ID_API', APP_URL . '/admin/orders/actions/get-by-id.php');
 
 if (!defined('GET_ORDERS_BY_USER_ID_API'))
-  define('GET_ORDER_BY_USER_ID_API', APP_URL . '/admin/orders/actions/get-by-user-id.php');
+  define('GET_ORDERS_BY_USER_ID_API', APP_URL . '/admin/orders/actions/get-by-user-id.php');
 
 if (!defined('GET_ORDERS_API'))
   define('GET_ORDERS_API', APP_URL . '/admin/orders/actions/get-orders.php');

@@ -96,7 +96,7 @@
         <div id="sidebar-menu" class="sidebar-menu">
           <ul>
             <li id="dashboardButton">
-              <a id="dashboardLink" href="<?php echo APP_URL; ?>/admin"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/dashboard.svg" alt="img" /><span>
+              <a id="dashboardLink" href="<?php echo APP_URL; ?>/admin/"><img src="<?php echo APP_URL; ?>/admin/assets/img/icons/dashboard.svg" alt="img" /><span>
                   Dashboard</span>
               </a>
             </li>
@@ -105,8 +105,8 @@
                   Product</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a id="productListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products">Product List</a></li>
-                <li><a id="categoryListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/categories">Category List</a></li>
+                <li><a id="productListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/products/">Product List</a></li>
+                <li><a id="categoryListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/categories/">Category List</a></li>
               </ul>
             </li>
             <li id="salesButton" class="submenu">
@@ -114,7 +114,7 @@
                   Sales</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a id="orderListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders">Order List</a></li>
+                <li><a id="orderListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders/">Order List</a></li>
               </ul>
             </li>
             <li id="peopleButton" class="submenu">
@@ -122,8 +122,8 @@
                   People</span>
                 <span class="menu-arrow"></span></a>
               <ul>
-                <li><a class="text-linear-hover" href="customers.html">Customer List</a></li>
-                <li><a class="text-linear-hover" href="users.html">User List</a></li>
+                <li><a id="customerListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/customers/">Customer List</a></li>
+                <li><a id="userListLink" class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/users/">User List</a></li>
               </ul>
             </li>
           </ul>

@@ -168,7 +168,13 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
         },
       ],
       columns: [{
-          data: 'id'
+          render: function(data, type, row, meta) {
+            return `
+              <a class="text-linear-hover" href="<?php echo APP_URL; ?>/admin/orders/details.php?id=${row.id}">
+                ${row.id}
+              </a>
+            `
+          }
         },
         {
           render: function(data, type, row, meta) {
@@ -176,10 +182,10 @@ require_once  dirname(dirname(__DIR__)) . "/inc/init.php";
               <div class="name-img-wrapper">
                 <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
                   <img src="${row.customerImageUrl}" />
+                  <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
+                    ${row.customerFirstName} ${row.customerLastName}
+                  </a>
                 </a
-                <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
-                  ${row.customerFirstName} ${row.customerLastName}
-                </a>
               </div>
             `
           }
