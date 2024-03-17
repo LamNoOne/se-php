@@ -88,7 +88,7 @@ class Order extends DataFetcher
                 throw new InvalidArgumentException('Invalid order data');
             }
 
-            if(Product::isProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
+            if (static::isOrderProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
                 return Message::message(false, 'Product is out of stock');
             }
 
@@ -672,6 +672,29 @@ class Order extends DataFetcher
             if ($duplicateKey[1] === 'name') {
                 return Message::message(false, "'$duplicateKey[0]' is available");
             }
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function updateOrderByUserId($conn, $userId, $dataToUpdate)
+    {
+        try {
+            $stmt = getUpdateByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['ORDER'],
+                [
+                    [
+                        'column' => 'userId',
+                        'value' => $userId
+                    ]
+                ],
+                $dataToUpdate
+            );
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update order successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
             return Message::message(false, 'Something went wrong');
         }
     }

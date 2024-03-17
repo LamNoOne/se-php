@@ -75,11 +75,11 @@ class Cart
 
             $product = Product::getProductById($conn, $cartData['productId']);
 
-            if(empty($product)) {
+            if (empty($product)) {
                 return Message::message(false, 'Product not found');
             }
 
-            if($product->stockQuantity < $cartData['quantity']) {
+            if ($product->stockQuantity < $cartData['quantity']) {
                 return Message::message(false, 'Product quantity is not enough');
             }
 
@@ -219,11 +219,11 @@ class Cart
             $quantity = $cartData['quantity'];
 
             $product = Product::getProductById($conn, $productId);
-            if(empty($product)) {
+            if (empty($product)) {
                 return Message::message(false, 'Product not found');
             }
 
-            if($product->stockQuantity < $quantity) {
+            if ($product->stockQuantity < $quantity) {
                 return Message::message(false, 'Product quantity is not enough');
             }
 
@@ -233,7 +233,7 @@ class Cart
             if ($productCartData['status'] && isset($productCartData['data']) && !empty($productCartData['data'])) {
                 // increase product cart quantity and call update cart
                 // $cartUpdate = [...$cartData, 'quantity' => $productCartData['data']->quantity + $quantity];
-                if($productCartData['data']->quantity + $quantity > $product->stockQuantity) {
+                if ($productCartData['data']->quantity + $quantity > $product->stockQuantity) {
                     return Message::message(false, 'Product quantity is not enough');
                 }
                 $cartUpdate = array_merge($cartData, ['quantity' => $productCartData['data']->quantity + $quantity]);
@@ -305,6 +305,54 @@ class Cart
             return Message::message(true, 'Delete all products from cart successfully');
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function deleteCartByUserId($conn, $userId)
+    {
+        try {
+            // get cart by userId
+            $getCartResult = Cart::getCartByUserId($conn, $userId);
+            if (!$getCartResult['status']) {
+                throw new Exception('Get cart by user id failed');
+            }
+            $cart = $getCartResult['data'];
+            if (!$cart) {
+                return Message::message(true, 'Cart not found');
+            }
+
+            // delete cart details
+            $stmt = getDeleteByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['CART_DETAIL'],
+                [
+                    [
+                        'column' => 'cartId',
+                        'value' => $cart->id
+                    ]
+                ]
+            );
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute sql statement');
+            }
+
+            // delete cart
+            $stmt = getDeleteByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['CART'],
+                [
+                    [
+                        'column' => 'userId',
+                        'value' => $userId
+                    ]
+                ]
+            );
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute sql statement');
+            }
+            return Message::message(true, 'Delete cart successfully');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
         }
     }
 }
