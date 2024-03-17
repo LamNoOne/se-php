@@ -88,7 +88,7 @@ class Order extends DataFetcher
                 throw new InvalidArgumentException('Invalid order data');
             }
 
-            if (static::isOrderProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
+            if (Product::isProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
                 return Message::message(false, 'Product is out of stock');
             }
 
