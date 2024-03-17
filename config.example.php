@@ -168,3 +168,7 @@ if (!defined('GET_ORDER_STATUSES_API'))
 // Customer APIs
 if (!defined('GET_CUSTOMERS_API'))
   define('GET_CUSTOMERS_API', APP_URL . '/admin/customers/actions/get-customers.php');
+
+// User APIs
+if (!defined('GET_USERS_API'))
+  define('GET_USERS_API', APP_URL . '/admin/users/actions/get-users.php');

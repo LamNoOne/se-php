@@ -500,7 +500,7 @@ require_once dirname(__DIR__) . "/inc/init.php"
 
 		/* HANDLE CHECKBOX */
 		var selectAllItems = '#select-all'
-		var checkboxItem = ':checkbox:not([id="select-all"])'
+		var checkboxItem = ':checkbox:not([id="select-all"]):not(.toggle-checkbox)'
 		const toggleDeleteBySelectBtn = () => {
 			var numberCheckedItems = $(checkboxItem + ':checked').length
 			var deleteBySelectBtn = $('#deleteBySelectBtn')
