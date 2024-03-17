@@ -286,6 +286,29 @@ class Product extends DataFetcher
         }
     }
 
+    public static function isProductOutOfStock($conn, $productId, $quantity)
+    {
+        try {
+            $query = "SELECT stockQuantity FROM product WHERE id = :productId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            $product = $stmt->fetch();
+            if (!$product) {
+                return true;
+            }
+            if ($product->stockQuantity < $quantity) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
     public static function deleteProduct($conn, $id)
     {
         try {

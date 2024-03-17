@@ -3,6 +3,7 @@ require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
 require_once dirname(__DIR__) . "/services/datafetcher.php";
 require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+require_once "product.php";
 
 class Order extends DataFetcher
 {
@@ -19,29 +20,6 @@ class Order extends DataFetcher
         $this->productId = $productId;
         $this->quantity = $quantity;
         $this->price = $price;
-    }
-
-    public static function isOrderProductOutOfStock($conn, $productId, $quantity)
-    {
-        try {
-            $query = "SELECT stockQuantity FROM product WHERE id = :productId";
-            $stmt = $conn->prepare($query);
-            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
-            $stmt->setFetchMode(PDO::FETCH_OBJ);
-            if (!$stmt->execute()) {
-                throw new PDOException('Cannot execute query');
-            }
-            $product = $stmt->fetch();
-            if (!$product) {
-                return true;
-            }
-            if ($product->stockQuantity < $quantity) {
-                return true;
-            }
-            return false;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
     }
 
     public static function cancelOrder($conn, $orderId)
@@ -110,7 +88,7 @@ class Order extends DataFetcher
                 throw new InvalidArgumentException('Invalid order data');
             }
 
-            if(static::isOrderProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
+            if(Product::isProductOutOfStock($conn, $data['productId'], $data['quantity'])) {
                 return Message::message(false, 'Product is out of stock');
             }
 

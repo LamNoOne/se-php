@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && Auth::isLoggedIn()) {
         foreach ($allOrderProduct as $product) {
             $productId = $product->productId;
             $quantity = $product->quantity;
-            if (Order::isOrderProductOutOfStock($conn, $productId, $quantity)) {
+            if (Product::isProductOutOfStock($conn, $productId, $quantity)) {
                 return throwStatusMessage(['status' => false, 'message' => "Some products out of stock"]);
             }
         }
