@@ -331,7 +331,7 @@ $outstandingProducts = Product::getAllProducts($conn, 4, 120);
                                                 <?php endif; ?>
                                             </button>
                                             <ul class="dropdown-menu" id="dropdown-menu-user">
-                                                <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === 1) : ?>
+                                                <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === ADMIN) : ?>
                                                     <li>
                                                         <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/">Go to Admin</a>
                                                     </li>

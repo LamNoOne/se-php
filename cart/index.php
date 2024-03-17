@@ -14,7 +14,7 @@ $allCartProducts = Cart::getAllProductFromCart($conn, $_SESSION['userId'])['data
                 <h1 class="shopping-cart__title mb-4">Shopping Cart</h1>
             </div>
             <?php if (!empty($allCartProducts)) : ?>
-                <div class="row">
+                <div class="row my-5">
                     <div class="col-9">
                         <div class="row">
                             <div class="col-5 d-flex align-items-start gap-4">

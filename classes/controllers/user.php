@@ -2,6 +2,7 @@
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/validation.php";
 require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+require_once dirname(dirname(__DIR__)) . "/config.php";
 require_once dirname(__DIR__) . "/controllers/oauth.php";
 class User extends OAuth
 {
@@ -26,7 +27,7 @@ class User extends OAuth
         $imageUrl = null,
         $phoneNumber = null,
         $address = null,
-        $roleId = 3,
+        $roleId = CUSTOMER,
         $active = 1,
         $verified = 0
     ) {
