@@ -186,9 +186,9 @@ Auth::requireAdmin($conn);
             return `
               <div class="name-img-wrapper">
                 <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
-                  <img src="${row.customerImageUrl}" />
+                  ${row.customerImageUrl ? '<img src="${row.customerImageUrl}" />' : ''}
                   <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
-                    ${row.customerFirstName} ${row.customerLastName}
+                    ${row.customerFirstName || ''} ${row.customerLastName || ''}
                   </a>
                 </a
               </div>

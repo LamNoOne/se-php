@@ -443,17 +443,23 @@ class Order extends DataFetcher
                         'table1' => TABLES['ORDER'],
                         'table2' => TABLES['USER'],
                         'column1' => 'userId',
-                        'column2' => 'id'
+                        'column2' => 'id',
+                        'type' => 'LEFT JOIN'
                     ]
                 ]
             ];
-
-            $stmt = getQueryByIdSQLPrepareStatement(
+            $selection = [
+                [
+                    'table' => TABLES['ORDER'],
+                    'column' => 'id',
+                    'value' => $id
+                ]
+            ];
+            $stmt = getQuerySQLPrepareStatement(
                 $conn,
-                $id,
                 $projection,
                 $join,
-                TABLES['ORDER']
+                $selection
             );
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
@@ -624,6 +630,7 @@ class Order extends DataFetcher
                         'table2' => TABLES['ORDER'],
                         'column1' => 'id',
                         'column2' => 'userId',
+                        'type' => 'LEFT JOIN'
                     ]
                 ]
             ];
