@@ -358,16 +358,22 @@ class Product extends DataFetcher
                 return Message::message(false, $validateResult['message']);
             }
 
-            $query = "DELETE FROM product WHERE id = $id";
+            $query = "DELETE FROM product WHERE id = :id";
 
             $stmt = $conn->prepare($query);
-            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
             if ($stmt->execute()) {
                 return Message::message(true, 'Delete product successfully');
             }
             return Message::messageData(true, 'Delete product failed');
         } catch (Exception $e) {
-            return Message::messageData(true, 'Delete product failed');
+            if (preg_match('/\b\d{4}\b/', $e->getMessage(), $matches)) {
+                $error_code = $matches[0];
+                if ($error_code === '1451') {
+                    return Message::message(false, 'This product is already in the customer\'s order');
+                }
+            }
+            return Message::message(false, 'Something went wrong');
         }
     }
 
@@ -383,9 +389,15 @@ class Product extends DataFetcher
             if ($stmt->execute()) {
                 return Message::message(true, 'Delete product by ids successfully');
             }
-            return Message::message(true, 'Delete product by ids failed');
+            return Message::message(false, 'Something went wrong');
         } catch (Exception $e) {
-            return Message::message(true, 'Delete product by ids failed');
+            if (preg_match('/\b\d{4}\b/', $e->getMessage(), $matches)) {
+                $error_code = $matches[0];
+                if ($error_code === '1451') {
+                    return Message::message(false, 'This products is already in the customer\'s order');
+                }
+            }
+            return Message::message(false, 'Something went wrong');
         }
     }
 
