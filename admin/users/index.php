@@ -365,5 +365,54 @@ Auth::requireAdmin($conn);
           }
         })
     })
+
+    // handle delete by select
+    $('#deleteBySelectBtn').click(function() {
+      const selectAll = tableEle.find('#select-all')
+      const checkedBoxes = tableEle.find(
+        'input[type="checkbox"]:checked:not([id="select-all"]):not(.toggle-checkbox)'
+      )
+      let checkedIds = [];
+      checkedBoxes.each(function() {
+        checkedIds = [...checkedIds, $(this).data('id')]
+      })
+
+      Swal
+        .fire({
+          title: 'Delete Selected Users?',
+          text: 'This action cannot be reverted. Are you sure?',
+          showCancelButton: true,
+          confirmButtonText: 'Delete',
+          confirmButtonClass: 'btn btn-danger',
+          cancelButtonClass: 'btn btn-cancel me-3 ms-auto',
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          buttonsStyling: !1,
+          reverseButtons: true
+        })
+        .then(async function(result) {
+          try {
+            if (result.isConfirmed) {
+              const response = await $.ajax({
+                url: '<?php echo DELETE_USERS_API; ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                  ids: checkedIds
+                },
+              })
+
+              if (response.status) {
+                goToCurrentPage(table, true)
+                toastr.success(response.message)
+              } else {
+                toastr.error(response.message)
+              }
+            }
+          } catch (error) {
+            toastr.error('Something went wrong')
+          }
+        })
+    })
   })
 </script>

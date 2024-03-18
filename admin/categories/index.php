@@ -500,7 +500,7 @@ Auth::requireAdmin($conn);
 
       Swal
         .fire({
-          title: 'Delete Selected Products?',
+          title: 'Delete Selected Categories?',
           text: 'This action cannot be reverted. Are you sure?',
           showCancelButton: true,
           confirmButtonText: 'Delete',

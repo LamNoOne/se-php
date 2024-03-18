@@ -306,6 +306,14 @@ class User extends OAuth
             if (!$deleteCartResult['status']) {
                 throw new Exception('Delete cart failed');
             }
+            $deleteOAuthResult = static::deleteOAuthByUserId($conn, $id);
+            if (!$deleteOAuthResult['status']) {
+                throw new Exception('Delete oauth failed');
+            }
+            $deleteOTPResult = OTP::deleteByUserId($conn, $id);
+            if (!$deleteOTPResult['status']) {
+                throw new Exception('Delete OTP failed');
+            }
             $updateOrderResult = Order::updateOrderByUserId($conn, $id, [
                 'userId' => NULL
             ]);
@@ -317,6 +325,61 @@ class User extends OAuth
                 throw new PDOException('Cannot execute sql statement');
             }
             return Message::message(true, 'Delete user successfully');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteUsers($conn, $ids)
+    {
+        try {
+            foreach ($ids as $id) {
+                $deleteCartResult = Cart::deleteCartByUserId($conn, $id);
+                if (!$deleteCartResult['status']) {
+                    throw new Exception('Delete cart failed');
+                }
+                $deleteOAuthResult = static::deleteOAuthByUserId($conn, $id);
+                if (!$deleteOAuthResult['status']) {
+                    throw new Exception('Delete oauth failed');
+                }
+                $deleteOTPResult = OTP::deleteByUserId($conn, $id);
+                if (!$deleteOTPResult['status']) {
+                    throw new Exception('Delete OTP failed');
+                }
+                $updateOrderResult = Order::updateOrderByUserId($conn, $id, [
+                    'userId' => NULL
+                ]);
+                if (!$updateOrderResult['status']) {
+                    throw new Exception('Update userId of orders failed');
+                }
+                $stmt = getDeleteByIdSQLPrepareStatement($conn, TABLES['USER'], $id);
+                if (!$stmt->execute()) {
+                    throw new PDOException('Cannot execute sql statement');
+                }
+            }
+            return Message::message(true, 'Delete users successfully');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteOAuthByUserId($conn, $userId)
+    {
+        try {
+            $stmt = getDeleteByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['OAUTH'],
+                [
+                    [
+                        'column' => 'userId',
+                        'value' => $userId
+                    ]
+                ]
+            );
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute sql statement');
+            }
+            return Message::message(true, 'Delete OAuth successfully');
         } catch (Exception $e) {
             return Message::message(false, 'Something went wrong');
         }

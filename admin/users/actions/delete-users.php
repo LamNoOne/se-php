@@ -17,5 +17,5 @@ if (!isset($_POST['ids'])) {
 
 $ids = $_POST['ids'];
 
-$result = Order::deleteByOrderProducts($conn, $ids);
+$result = User::deleteUsers($conn, $ids);
 throwStatusMessage($result);

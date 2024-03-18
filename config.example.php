@@ -179,3 +179,6 @@ if (!defined('UPDATE_USER_API'))
 
 if (!defined('DELETE_USER_API'))
   define('DELETE_USER_API', APP_URL . '/admin/users/actions/delete-by-id.php');
+
+if (!defined('DELETE_USERS_API'))
+  define('DELETE_USERS_API', APP_URL . '/admin/users/actions/delete-users.php');

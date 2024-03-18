@@ -2,6 +2,8 @@
 
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(dirname(__DIR__)) . "/config.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+
 class OTP
 {
     public $id;
@@ -32,7 +34,8 @@ class OTP
         }
     }
 
-    public static function getLatestOTPByUserId($conn, $userId) {
+    public static function getLatestOTPByUserId($conn, $userId)
+    {
         try {
             $query = "SELECT * FROM otp WHERE userId = :userId ORDER BY id DESC LIMIT 1";
             $stmt = $conn->prepare($query);
@@ -108,6 +111,28 @@ class OTP
             return Message::messageData(true, "OTP created successfully", ['otpId' => $otpId]);
         } catch (Exception $e) {
             return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function deleteByUserId($conn, $userId)
+    {
+        try {
+            $stmt = getDeleteByMultiColumnsSQLPrepareStatement(
+                $conn,
+                TABLES['OTP'],
+                [
+                    [
+                        'column' => 'userId',
+                        'value' => $userId
+                    ]
+                ]
+            );
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute sql statement');
+            }
+            return Message::message(true, 'Delete OTP successfully');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
         }
     }
 }
