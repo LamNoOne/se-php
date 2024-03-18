@@ -92,7 +92,9 @@ if (!defined('TABLES')) define('TABLES', [
   'ROLE' => 'role',
   'USER' => 'user',
   'CART' => 'cart',
-  'CART_DETAIL' => 'cartdetail'
+  'CART_DETAIL' => 'cartdetail',
+  'OAUTH' => 'oauth',
+  'OTP' => 'otp'
 ]);
 
 /**
