@@ -600,13 +600,111 @@ class Product extends DataFetcher
                 return Message::message(false, $validateResult['message']);
             }
 
-            $query = "
-                SELECT p.id, p.name, p.description, p.imageUrl, p.screen, p.operatingSystem, p.processor, p.ram, p.storageCapacity, p.weight, p.batteryCapacity, p.color, p.price, p.stockQuantity, p.createdAt, p.updatedAt, c.id as categoryId, c.name as categoryName
-                FROM product p JOIN category c on p.categoryId = c.id
-                WHERE p.id = $id
-            ";
+            $projection =  [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'name'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'description'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'imageUrl'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'screen'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'operatingSystem'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'processor'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'ram'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'storageCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'weight'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'batteryCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'color'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'price'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'stockQuantity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'updatedAt'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'id',
+                    'as' => 'categoryId'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'name',
+                    'as' => 'categoryName'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['PRODUCT'],
+                    TABLES['CATEGORY'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['PRODUCT'],
+                        'table2' => TABLES['CATEGORY'],
+                        'column1' => 'categoryId',
+                        'column2' => 'id',
+                        'type' => 'LEFT JOIN'
+                    ]
+                ]
+            ];
+            $selection = [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id',
+                    'value' => $id,
+                ]
+            ];
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+            );
 
-            $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException('Cannot execute query');

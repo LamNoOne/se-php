@@ -552,13 +552,12 @@ Auth::requireAdmin($conn);
         if (response.status) {
           const categories = response.data.items
           const categorySelect = addForm.find('select[name="categoryId"]')
+          categorySelect.append(`
+            <option value="" selected>Choose Category</option>
+          `)
           categories.forEach((category, index) => {
-            let selectedAttr = '';
-            if (index === 0) {
-              selectedAttr = 'selected'
-            }
             categorySelect.append(`
-              <option value="${category.id}" ${selectedAttr}>
+              <option value="${category.id}">
                 ${category.name}
               </option>
             `)
@@ -577,9 +576,6 @@ Auth::requireAdmin($conn);
     addForm.validate({
       rules: {
         name: {
-          required: true
-        },
-        categoryId: {
           required: true
         },
         image: {
@@ -684,6 +680,9 @@ Auth::requireAdmin($conn);
             'border': 'none'
           })
           editProductForm.find('input[name="currentImageUrl"]').val(product.imageUrl)
+          categorySelect.append(`
+            <option value="" selected>Choose Category</option>
+          `)
           categories.forEach((category) => {
             let selectedAttr = '';
             if (category.id === product.categoryId) {
