@@ -489,7 +489,11 @@ function getUpdateByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns
 {
     $keyValuePairs = [];
     foreach ($dataToUpdate as $key => $value) {
-        $keyValuePairs[] = "`$key`=:$key";
+        if ($value) {
+            $keyValuePairs[] = "`$key`=:$key";
+        } else {
+            $keyValuePairs[] = "`$key`=NULL";
+        }
     }
     $updateStatement = "UPDATE `$table` SET " . implode(',', $keyValuePairs);
 
@@ -502,7 +506,9 @@ function getUpdateByMultiColumnsSQLPrepareStatement($conn, $table, $multiColumns
     $stmt = $conn->prepare($updateStatement);
 
     foreach ($dataToUpdate as $key => $value) {
-        $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+        if ($value) {
+            $stmt->bindValue(":$key", $value, PDO::PARAM_STR);
+        }
     }
     foreach ($multiColumns as $item) {
         $stmt->bindValue(":{$item['column']}", $item['value'], PDO::PARAM_STR);

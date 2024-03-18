@@ -318,7 +318,6 @@ class User extends OAuth
             }
             return Message::message(true, 'Delete user successfully');
         } catch (Exception $e) {
-            print_r($e->getMessage());
             return Message::message(false, 'Something went wrong');
         }
     }
