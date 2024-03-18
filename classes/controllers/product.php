@@ -549,7 +549,8 @@ class Product extends DataFetcher
                         'table1' => TABLES['PRODUCT'],
                         'table2' => TABLES['CATEGORY'],
                         'column1' => 'categoryId',
-                        'column2' => 'id'
+                        'column2' => 'id',
+                        'type' => 'LEFT JOIN'
                     ]
                 ]
             ];
