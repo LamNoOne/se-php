@@ -45,7 +45,8 @@ function createFilter($key, $value, $operator = null)
  *          'table1' => string,
  *          'table2' => string,
  *          'column1' => string,
- *          'column2' => string
+ *          'column2' => string,
+ *          'type' => string // join type (LEFT JOIN | RIGHT JOIN | FULL JOIN)
  *      ]
  *  ]
  * @param array $selection The 2-dimension array contains conditions for selecting records
@@ -128,11 +129,13 @@ function getPlaceholderQuerySQL($projection = [], $join = [], $selection = [], $
         $sqlClauses[] = 'FROM ' . "`$tables[0]`";
     } else {
         $on = $join['on'];
+        $joinType = isset($on[0]['type']) && $on[0]['type']  ? $on[0]['type'] : 'JOIN';
         $joinClauses = [
-            "`{$tables[0]}` JOIN `{$tables[1]}` ON `{$on[0]['table1']}`.`{$on[0]['column1']}` = `{$on[0]['table2']}`.`{$on[0]['column2']}`"
+            "`{$tables[0]}` $joinType `{$tables[1]}` ON `{$on[0]['table1']}`.`{$on[0]['column1']}` = `{$on[0]['table2']}`.`{$on[0]['column2']}`"
         ];
         for ($i = 2; $i < count($tables); $i++) {
-            $joinClauses[] = "JOIN `{$tables[$i]}` ON `{$on[$i - 1]['table1']}`.`{$on[$i - 1]['column1']}` = `{$on[$i - 1]['table2']}`.`{$on[$i - 1]['column2']}`";
+            $joinType = isset($on[$i - 1]['type']) && $on[$i - 1]['type'] ? $on[$i - 1]['type'] : 'JOIN';
+            $joinClauses[] = "$joinType `{$tables[$i]}` ON `{$on[$i - 1]['table1']}`.`{$on[$i - 1]['column1']}` = `{$on[$i - 1]['table2']}`.`{$on[$i - 1]['column2']}`";
         }
         $sqlClauses[] = 'FROM ' . implode(" ", $joinClauses);
     }
