@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Mar 18, 2024 at 05:44 PM
+-- Generation Time: Mar 18, 2024 at 06:15 PM
 -- Server version: 8.0.31
 -- PHP Version: 7.4.33
 
@@ -20,6 +20,615 @@ SET time_zone = "+00:00";
 --
 -- Database: `se-php`
 --
+
+DELIMITER $$
+--
+-- Procedures
+--
+CREATE DEFINER=`root`@`localhost` PROCEDURE `createCartFromOrder` (IN `p_orderId` INT, OUT `p_cartId` INT, OUT `p_errorMessage` VARCHAR(255))   create_cart_from_order:BEGIN
+    DECLARE v_cartId INT;
+    
+    -- Declare variables for error handling
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction on exception
+        ROLLBACK;
+        SET p_errorMessage = 'An error occurred during the cart population process';
+    END;
+
+    -- Start a transaction
+    START TRANSACTION;
+
+    -- Find the cartId for the given orderId
+    SELECT C.id INTO v_cartId
+    FROM `order` AS O
+    JOIN `cart` AS C
+    ON O.userId = C.userId
+    WHERE O.id = p_orderId;
+
+    -- Check if the orderId exists
+    IF v_cartId IS NULL THEN
+        -- Handle the case where orderId does not exist
+        SET p_errorMessage = 'Order does not exist';
+        ROLLBACK;
+        LEAVE create_cart_from_order;
+    END IF;
+
+    -- Insert products from orderdetail into cartdetail
+    INSERT INTO cartdetail (cartId, productId, quantity)
+    SELECT v_cartId, productId, quantity
+    FROM orderdetail
+    WHERE orderId = p_orderId;
+
+    -- Set output parameters
+    SET p_cartId = v_cartId;
+    SET p_errorMessage = NULL;
+
+    -- Commit the transaction
+    COMMIT;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `createOrderDirectlyProduct` (IN `p_userId` INT, IN `p_productId` INT, IN `p_quantity` INT, IN `p_shipAddress` VARCHAR(200), IN `p_phoneNumber` VARCHAR(11), OUT `p_orderId` INT, OUT `p_errorMessage` VARCHAR(255))   create_order_directly_product:BEGIN
+    -- Declare variables
+    DECLARE productPrice FLOAT;
+    
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction on exception
+        ROLLBACK;
+        SET p_errorMessage = 'An error occurred during the checkout process';
+    END;
+
+    -- Start a transaction
+    START TRANSACTION;
+
+    -- Find the price of the selected product
+    SELECT price INTO productPrice
+    FROM `product`
+    WHERE id = p_productId;
+
+    -- Check if the product exists
+    IF productPrice IS NULL THEN
+        SET p_errorMessage = 'Selected product does not exist';
+        ROLLBACK;
+        LEAVE create_order_directly_product;
+    END IF;
+
+    -- Create a new order
+    INSERT INTO `order` (orderStatusId, userId, shipAddress, phoneNumber)
+    VALUES (1, p_userId, p_shipAddress, p_phoneNumber);
+
+    -- Get the last inserted order ID
+    SET p_orderId = LAST_INSERT_ID();
+
+    -- Insert order details for the selected product
+    INSERT INTO `orderdetail` (orderId, productId, quantity, price)
+    VALUES (p_orderId, p_productId, p_quantity, productPrice);
+
+    -- Commit the transaction
+    COMMIT;
+
+    -- Set error message to NULL as there was no error
+    SET p_errorMessage = NULL;
+
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `createOrderSelectedProductCart` (IN `p_userId` INT, IN `p_productIds` VARCHAR(255), IN `p_shipAddress` VARCHAR(200), IN `p_phoneNumber` VARCHAR(11), OUT `p_orderId` INT, OUT `p_errorMessage` VARCHAR(255))   create_order_selected_product_cart:BEGIN
+    DECLARE cartId INT;
+    DECLARE productId INT;
+
+    -- Declare variables for error handling
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        -- Rollback the transaction on exception
+        ROLLBACK;
+        SET p_errorMessage = 'An error occurred during the selected checkout process';
+    END;
+
+    -- Start a transaction
+    START TRANSACTION;
+
+    -- Find the cartId for the given userId
+    -- The cartId in cartdetail check product in cart
+    SELECT CD.cartId INTO cartId
+    FROM user U JOIN cart C ON U.id = c.userId
+    JOIN cartdetail CD ON C.id = CD.cartId 
+    WHERE U.id= p_userId LIMIT 1;
+
+    -- Exit if no cart is found for the given userId
+    IF cartId IS NULL THEN
+        -- Handle the case where no cart is found
+        SET p_errorMessage = 'No product found in cart for the given user';
+        ROLLBACK;
+        LEAVE create_order_selected_product_cart;
+    END IF;
+
+    -- Create a new order
+    INSERT INTO `order` (orderStatusId, userId, shipAddress, phoneNumber)
+    VALUES (1, p_userId, p_shipAddress, p_phoneNumber);
+
+    -- Get the last inserted order ID
+    SET p_orderId = LAST_INSERT_ID();
+
+    -- Iterate over the product IDs in the comma-separated list
+    product_loop: LOOP
+        -- Exit the loop if there are no more product IDs
+        IF p_productIds IS NULL OR LENGTH(p_productIds) = 0 THEN
+            LEAVE product_loop;
+        END IF;
+
+        -- Extract the next product ID
+        SET productId = CAST(SUBSTRING_INDEX(p_productIds, ',', 1) AS UNSIGNED);
+
+        -- Remove the extracted product ID from the list
+        SET p_productIds = TRIM(BOTH ',' FROM SUBSTRING(p_productIds, LENGTH(productId) + 2));
+
+        -- Copy selected cart detail to order detail
+        INSERT INTO orderdetail (orderId, productId, quantity, price)
+        SELECT p_orderId, cd.productId, cd.quantity, p.price
+        FROM cartdetail cd JOIN product p ON cd.productId = p.id
+        WHERE cd.cartId = cartId AND cd.productId = productId;
+
+        -- Delete selected product from cart
+        DELETE FROM cartdetail WHERE cartdetail.cartId = cartId AND cartdetail.productId = productId;
+    END LOOP;
+
+    -- Commit the transaction
+    COMMIT;
+
+END$$
+
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart`
+--
+
+CREATE TABLE `cart` (
+  `id` int UNSIGNED NOT NULL,
+  `userId` int UNSIGNED NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`id`, `userId`, `createdAt`, `updatedAt`) VALUES
+(1, 1, '2024-02-26 05:52:42', '2024-02-26 05:52:42'),
+(2, 2, '2024-02-26 05:52:49', '2024-02-26 05:52:49'),
+(19, 21, '2024-03-06 03:36:06', '2024-03-06 03:36:06'),
+(20, 22, '2024-03-06 03:58:40', '2024-03-06 03:58:40'),
+(47, 49, '2024-03-13 14:12:18', '2024-03-13 14:12:18'),
+(53, 55, '2024-03-17 10:33:42', '2024-03-17 10:33:42'),
+(56, 112, '2024-03-18 10:02:23', '2024-03-18 10:02:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cartdetail`
+--
+
+CREATE TABLE `cartdetail` (
+  `cartId` int UNSIGNED NOT NULL,
+  `productId` int UNSIGNED NOT NULL,
+  `quantity` int NOT NULL DEFAULT '1',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `cartdetail`
+--
+
+INSERT INTO `cartdetail` (`cartId`, `productId`, `quantity`, `createdAt`, `updatedAt`) VALUES
+(47, 9, 3, '2024-03-18 01:11:32', '2024-03-18 01:11:32'),
+(47, 13, 3, '2024-03-18 01:11:32', '2024-03-18 01:11:32'),
+(47, 597, 3, '2024-03-18 01:11:32', '2024-03-18 01:11:32');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `category`
+--
+
+CREATE TABLE `category` (
+  `id` tinyint UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `category`
+--
+
+INSERT INTO `category` (`id`, `name`, `description`, `createdAt`, `updatedAt`) VALUES
+(1, 'Smartphone', 'Smartphone', '2023-11-26 16:19:52', '2023-11-26 16:19:52'),
+(2, 'Laptop', 'Laptop', '2023-11-26 16:20:15', '2023-11-26 16:20:15'),
+(3, 'Accessory', 'Accessories', '2023-11-26 07:45:29', '2023-11-27 14:10:22'),
+(4, 'Studio', 'Studio', '2023-11-26 07:45:42', '2023-11-26 07:45:42'),
+(5, 'Camera', 'Camera', '2023-11-26 07:45:51', '2023-11-26 07:45:51'),
+(6, 'PC', 'PC, Monitor', '2023-11-26 07:46:07', '2023-11-27 09:29:35'),
+(7, 'TV', 'Television', '2023-11-26 07:46:22', '2023-11-30 18:01:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `oauth`
+--
+
+CREATE TABLE `oauth` (
+  `id` int NOT NULL,
+  `userId` int UNSIGNED NOT NULL,
+  `oauth_provider` enum('google','facebook','twitter','linkedin') CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'google',
+  `oauth_uid` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+--
+-- Dumping data for table `oauth`
+--
+
+INSERT INTO `oauth` (`id`, `userId`, `oauth_provider`, `oauth_uid`, `createdAt`, `updatedAt`) VALUES
+(2, 49, 'google', '106532501609063407994', '2024-03-13 14:12:18', '2024-03-13 14:12:18'),
+(7, 55, 'google', '109010350405611140258', '2024-03-17 10:33:42', '2024-03-17 10:33:42'),
+(10, 112, 'google', '103253268965711854952', '2024-03-18 10:02:23', '2024-03-18 10:02:23');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `order`
+--
+
+CREATE TABLE `order` (
+  `id` int UNSIGNED NOT NULL,
+  `orderStatusId` tinyint UNSIGNED NOT NULL,
+  `userId` int UNSIGNED DEFAULT NULL,
+  `shipAddress` varchar(100) DEFAULT NULL,
+  `phoneNumber` varchar(11) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `order`
+--
+
+INSERT INTO `order` (`id`, `orderStatusId`, `userId`, `shipAddress`, `phoneNumber`, `createdAt`, `updatedAt`) VALUES
+(1, 2, 2, '1234 ST', '0834480248', '2024-03-02 09:29:47', '2024-03-02 09:29:47'),
+(2, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:11:32', '2024-03-02 10:11:32'),
+(3, 1, 2, '123Tower', '0834480248', '2024-03-02 10:13:51', '2024-03-02 10:13:51'),
+(4, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:16:57', '2024-03-02 10:16:57'),
+(5, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:17:26', '2024-03-02 10:17:26'),
+(6, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:18:40', '2024-03-02 10:18:40'),
+(7, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:19:16', '2024-03-02 10:19:16'),
+(8, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 10:19:38', '2024-03-02 10:19:38'),
+(9, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 12:27:38', '2024-03-02 12:27:38'),
+(10, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 12:48:27', '2024-03-02 12:48:27'),
+(11, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 12:51:03', '2024-03-02 12:51:03'),
+(12, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 12:58:40', '2024-03-02 12:58:40'),
+(13, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 13:05:12', '2024-03-02 13:05:12'),
+(14, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 13:05:45', '2024-03-02 13:05:45'),
+(15, 1, 2, 'ABC Tower', '0832038769', '2024-03-02 13:08:07', '2024-03-02 13:08:07'),
+(16, 1, 2, 'ABC Tower', '0832038769', '2024-03-03 01:28:44', '2024-03-03 01:28:44'),
+(17, 1, 2, '1234 ST ADDRESS', '0932038767', '2024-03-03 03:51:21', '2024-03-03 03:51:21'),
+(18, 2, 2, '1234 STATUAS', '0832038769', '2024-03-03 09:06:03', '2024-03-03 09:06:03'),
+(19, 2, 2, 'ABC Tower', '0832038769', '2024-03-03 09:16:28', '2024-03-03 09:16:28'),
+(20, 2, 2, 'ABC Tower', '0832038769', '2024-03-03 09:17:09', '2024-03-03 09:17:09'),
+(21, 2, 2, 'ABC Tower', '0832038769', '2024-03-03 09:25:35', '2024-03-03 09:25:35'),
+(22, 1, 2, 'SaiGon HomeTown', '0123456789', '2024-03-05 08:22:59', '2024-03-05 08:22:59'),
+(23, 2, 2, 'ABC Tower', '0832038769', '2024-03-05 14:37:23', '2024-03-05 14:37:23'),
+(24, 2, 2, 'ABC Tower', '0832038769', '2024-03-05 15:11:27', '2024-03-05 15:11:27'),
+(25, 2, 2, 'ABC Tower', '0832038769', '2024-03-05 15:12:46', '2024-03-05 15:12:46'),
+(26, 2, 2, 'ABC Tower', '0832038769', '2024-03-05 16:40:10', '2024-03-05 16:40:10'),
+(30, 2, 2, 'ABC Tower', '0832038769', '2024-03-05 16:46:50', '2024-03-05 16:46:50'),
+(31, 2, 21, 'BenTre City', '0834480248', '2024-03-06 03:37:09', '2024-03-06 03:37:09'),
+(32, 2, 2, 'ABC Tower', '0832038769', '2024-03-06 03:57:57', '2024-03-06 03:57:57'),
+(33, 2, 22, 'NEW BenTre City ', '0834480248', '2024-03-06 04:05:39', '2024-03-06 04:05:39'),
+(34, 2, 22, 'NEW BENTRE', '0834480248', '2024-03-06 04:12:52', '2024-03-06 04:12:52'),
+(35, 2, 22, '1234 NEW ST', '0834480248', '2024-03-06 04:13:32', '2024-03-06 04:13:32'),
+(36, 2, 22, 'SAI GON TOWER', '0934581249', '2024-03-07 11:07:56', '2024-03-07 11:07:56'),
+(37, 2, 22, 'SAI GON TOWER', '0934581249', '2024-03-09 14:30:03', '2024-03-09 14:30:03'),
+(38, 2, 2, 'ABC Tower', '0832038769', '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(39, 2, 2, 'Ben Tre', '0832038769', '2024-03-11 08:29:34', '2024-03-11 08:29:34'),
+(40, 2, 2, 'Ben Tre City', '0832038769', '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(41, 2, 49, 'BenTre City', '0834480248', '2024-03-13 15:15:44', '2024-03-13 15:15:44'),
+(42, 2, 49, '1234 ST Ben Tre', '0834480248', '2024-03-16 10:32:46', '2024-03-16 10:32:46'),
+(43, 2, 49, '1234 Ben Tre', '0834480248', '2024-03-16 10:37:15', '2024-03-16 10:37:15'),
+(44, 2, 49, '1234 Ben tre', '0834480248', '2024-03-16 10:41:13', '2024-03-16 10:41:13'),
+(45, 2, 49, '1234 ST Ben Tre', '0834480248', '2024-03-16 10:43:20', '2024-03-16 10:43:20'),
+(46, 2, 49, '5233tr', '0852525235', '2024-03-16 10:49:58', '2024-03-16 10:49:58'),
+(47, 2, 49, 't34t34g', '0976865858', '2024-03-16 10:51:35', '2024-03-16 10:51:35'),
+(48, 2, 49, 'eryeryeywr', '0980879067', '2024-03-16 10:53:17', '2024-03-16 10:53:17'),
+(49, 2, 49, '634g3rgr', '0907897696', '2024-03-16 10:59:49', '2024-03-16 10:59:49'),
+(50, 2, 49, 't5t34t3grg', '0532058056', '2024-03-16 11:00:56', '2024-03-16 11:00:56'),
+(51, 2, 49, '123 Ha Noi', '0834490248', '2024-03-16 11:02:58', '2024-03-16 11:02:58'),
+(52, 5, 49, 'yeyery', '0870906796', '2024-03-16 11:34:12', '2024-03-16 11:34:12'),
+(53, 5, 49, '1234', '0523058035', '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(54, 5, 49, '74574', '0907697696', '2024-03-16 13:49:17', '2024-03-16 13:49:17'),
+(55, 6, 49, 'yeywe', '0780780870', '2024-03-16 14:30:06', '2024-03-16 14:30:06'),
+(56, 6, 49, '676', '0546456865', '2024-03-16 14:39:54', '2024-03-16 14:39:54'),
+(57, 6, 49, 'y43y34y', '0835364363', '2024-03-17 02:53:03', '2024-03-17 02:53:03'),
+(58, 6, 49, '4363436', '0790769556', '2024-03-17 02:53:18', '2024-03-17 02:53:18'),
+(59, 1, 49, '1234', '0998658565', '2024-03-17 03:04:55', '2024-03-17 03:04:55'),
+(60, 1, 49, 't325', '0976978986', '2024-03-17 03:09:27', '2024-03-17 03:09:27'),
+(61, 2, 49, 'Ben Tre', '0834480248', '2024-03-17 04:56:31', '2024-03-17 04:56:31'),
+(62, 1, 49, '1234 Ben Tre', '0834480248', '2024-03-17 04:58:07', '2024-03-17 04:58:07'),
+(63, 2, 49, '1234 Ben Tre', '0834480248', '2024-03-17 04:58:11', '2024-03-17 04:58:11'),
+(64, 2, 49, 'Ben Tre', '0834480248', '2024-03-17 05:05:38', '2024-03-17 05:05:38'),
+(65, 2, 49, 'Ben Tre', '0834480248', '2024-03-17 05:06:49', '2024-03-17 05:06:49'),
+(66, 2, 49, '123 Ben Tre', '0834480248', '2024-03-17 05:09:19', '2024-03-17 05:09:19'),
+(67, 2, 49, '1234', '0834480248', '2024-03-17 06:12:52', '2024-03-17 06:12:52'),
+(68, 2, 49, 'Ho Chi Minh City', '0834480249', '2024-03-17 06:13:46', '2024-03-17 06:13:46'),
+(69, 6, 49, '1234 ben Tre', '0834480248', '2024-03-17 08:48:56', '2024-03-17 08:48:56'),
+(70, 5, 49, '1234', '0834480248', '2024-03-17 11:03:31', '2024-03-17 11:03:31'),
+(71, 2, 49, '1234', '0834480248', '2024-03-17 11:27:19', '2024-03-17 11:27:19'),
+(72, 5, 49, '123', '0834480248', '2024-03-17 11:29:52', '2024-03-17 11:29:52'),
+(73, 2, 49, 'Ben Tre', '0834480329', '2024-03-18 01:05:08', '2024-03-18 01:05:08'),
+(74, 6, 49, 'Ben Tre', '0834480329', '2024-03-18 01:48:13', '2024-03-18 01:48:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderdetail`
+--
+
+CREATE TABLE `orderdetail` (
+  `orderId` int UNSIGNED NOT NULL,
+  `productId` int UNSIGNED NOT NULL,
+  `quantity` int UNSIGNED NOT NULL,
+  `price` bigint UNSIGNED NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `orderdetail`
+--
+
+INSERT INTO `orderdetail` (`orderId`, `productId`, `quantity`, `price`, `createdAt`, `updatedAt`) VALUES
+(1, 2, 6, 198, '2024-03-02 09:29:47', '2024-03-02 09:29:47'),
+(1, 7, 3, 121, '2024-03-02 09:29:47', '2024-03-02 09:29:47'),
+(2, 13, 9, 1249, '2024-03-02 10:11:32', '2024-03-02 10:11:32'),
+(2, 493, 3, 499, '2024-03-02 10:11:32', '2024-03-02 10:11:32'),
+(2, 498, 1, 499, '2024-03-02 10:11:32', '2024-03-02 10:11:32'),
+(3, 111, 5, 558, '2024-03-02 10:13:51', '2024-03-02 10:13:51'),
+(4, 9, 6, 799, '2024-03-02 10:16:57', '2024-03-02 10:16:57'),
+(5, 105, 3, 799, '2024-03-02 10:17:26', '2024-03-02 10:17:26'),
+(6, 4, 2, 59, '2024-03-02 10:18:40', '2024-03-02 10:18:40'),
+(7, 14, 1, 799, '2024-03-02 10:19:16', '2024-03-02 10:19:16'),
+(8, 9, 1, 799, '2024-03-02 10:19:38', '2024-03-02 10:19:38'),
+(9, 11, 1, 1002, '2024-03-02 12:27:38', '2024-03-02 12:27:38'),
+(10, 482, 1, 999, '2024-03-02 12:48:27', '2024-03-02 12:48:27'),
+(11, 2, 1, 198, '2024-03-02 12:51:03', '2024-03-02 12:51:03'),
+(12, 6, 1, 321, '2024-03-02 12:58:40', '2024-03-02 12:58:40'),
+(13, 2, 1, 198, '2024-03-02 13:05:12', '2024-03-02 13:05:12'),
+(13, 102, 1, 102, '2024-03-02 13:05:12', '2024-03-02 13:05:12'),
+(14, 105, 1, 799, '2024-03-02 13:05:45', '2024-03-02 13:05:45'),
+(14, 481, 1, 999, '2024-03-02 13:05:45', '2024-03-02 13:05:45'),
+(15, 29, 2, 756, '2024-03-02 13:08:07', '2024-03-02 13:08:07'),
+(15, 107, 1, 855, '2024-03-02 13:08:07', '2024-03-02 13:08:07'),
+(16, 15, 3, 189, '2024-03-03 01:28:44', '2024-03-03 01:28:44'),
+(16, 105, 1, 799, '2024-03-03 01:28:44', '2024-03-03 01:28:44'),
+(17, 8, 2, 499, '2024-03-03 03:51:21', '2024-03-03 03:51:21'),
+(17, 13, 3, 1249, '2024-03-03 03:51:21', '2024-03-03 03:51:21'),
+(18, 6, 2, 321, '2024-03-03 09:06:03', '2024-03-03 09:06:03'),
+(19, 1, 1, 121, '2024-03-03 09:16:28', '2024-03-03 09:16:28'),
+(20, 5, 1, 1999, '2024-03-03 09:17:09', '2024-03-03 09:17:09'),
+(21, 16, 1, 145, '2024-03-03 09:25:35', '2024-03-03 09:25:35'),
+(22, 105, 5, 799, '2024-03-05 08:22:59', '2024-03-05 08:22:59'),
+(23, 13, 1, 1249, '2024-03-05 14:37:23', '2024-03-05 14:37:23'),
+(23, 102, 1, 102, '2024-03-05 14:37:23', '2024-03-05 14:37:23'),
+(24, 5, 5, 1999, '2024-03-05 15:11:27', '2024-03-05 15:11:27'),
+(25, 1, 1, 121, '2024-03-05 15:12:46', '2024-03-05 15:12:46'),
+(26, 5, 3, 1999, '2024-03-05 16:40:10', '2024-03-05 16:40:10'),
+(26, 10, 1, 167, '2024-03-05 16:40:10', '2024-03-05 16:40:10'),
+(30, 205, 1, 1999, '2024-03-05 16:46:50', '2024-03-05 16:46:50'),
+(31, 7, 1, 121, '2024-03-06 03:37:09', '2024-03-06 03:37:09'),
+(32, 3, 1, 111, '2024-03-06 03:57:57', '2024-03-06 03:57:57'),
+(33, 14, 2, 799, '2024-03-06 04:05:39', '2024-03-06 04:05:39'),
+(34, 10, 1, 167, '2024-03-06 04:12:52', '2024-03-06 04:12:52'),
+(34, 591, 1, 1002, '2024-03-06 04:12:52', '2024-03-06 04:12:52'),
+(35, 204, 2, 2999, '2024-03-06 04:13:32', '2024-03-06 04:13:32'),
+(36, 1, 1, 121, '2024-03-07 11:07:56', '2024-03-07 11:07:56'),
+(37, 2, 1, 198, '2024-03-09 14:30:03', '2024-03-09 14:30:03'),
+(37, 29, 1, 756, '2024-03-09 14:30:03', '2024-03-09 14:30:03'),
+(38, 3, 1, 111, '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(38, 5, 3, 1999, '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(38, 10, 1, 167, '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(38, 13, 1, 1249, '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(38, 102, 1, 102, '2024-03-10 03:43:25', '2024-03-10 03:43:25'),
+(39, 5, 1, 1999, '2024-03-11 08:29:34', '2024-03-11 08:29:34'),
+(39, 486, 1, 999, '2024-03-11 08:29:34', '2024-03-11 08:29:34'),
+(40, 7, 1, 121, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 216, 1, 121, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 304, 1, 59, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 481, 1, 999, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 497, 2, 499, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 575, 1, 121, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(40, 592, 1, 1002, '2024-03-11 13:44:18', '2024-03-11 13:44:18'),
+(41, 102, 1, 102, '2024-03-13 15:15:44', '2024-03-13 15:15:44'),
+(41, 481, 1, 999, '2024-03-13 15:15:44', '2024-03-13 15:15:44'),
+(42, 101, 1, 111, '2024-03-16 10:32:46', '2024-03-16 10:32:46'),
+(43, 7, 1, 121, '2024-03-16 10:37:15', '2024-03-16 10:37:15'),
+(44, 6, 1, 321, '2024-03-16 10:41:13', '2024-03-16 10:41:13'),
+(45, 4, 1, 59, '2024-03-16 10:43:20', '2024-03-16 10:43:20'),
+(46, 2, 1, 198, '2024-03-16 10:49:58', '2024-03-16 10:49:58'),
+(47, 2, 1, 198, '2024-03-16 10:51:35', '2024-03-16 10:51:35'),
+(48, 104, 1, 599, '2024-03-16 10:53:17', '2024-03-16 10:53:17'),
+(49, 401, 1, 89, '2024-03-16 10:59:49', '2024-03-16 10:59:49'),
+(50, 572, 1, 121, '2024-03-16 11:00:56', '2024-03-16 11:00:56'),
+(50, 574, 2, 121, '2024-03-16 11:00:56', '2024-03-16 11:00:56'),
+(51, 14, 1, 799, '2024-03-16 11:02:58', '2024-03-16 11:02:58'),
+(51, 572, 1, 121, '2024-03-16 11:02:58', '2024-03-16 11:02:58'),
+(51, 574, 2, 121, '2024-03-16 11:02:58', '2024-03-16 11:02:58'),
+(52, 2, 1, 198, '2024-03-16 11:34:12', '2024-03-16 11:34:12'),
+(52, 11, 1, 1002, '2024-03-16 11:34:12', '2024-03-16 11:34:12'),
+(53, 14, 1, 799, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 401, 1, 89, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 402, 1, 89, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 481, 1, 999, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 485, 1, 999, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 572, 1, 121, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(53, 574, 2, 121, '2024-03-16 13:45:59', '2024-03-16 13:45:59'),
+(54, 6, 1, 321, '2024-03-16 13:49:17', '2024-03-16 13:49:17'),
+(55, 102, 1, 102, '2024-03-16 14:30:06', '2024-03-16 14:30:06'),
+(56, 6, 1, 321, '2024-03-16 14:39:54', '2024-03-16 14:39:54'),
+(57, 1, 1, 121, '2024-03-17 02:53:03', '2024-03-17 02:53:03'),
+(58, 1, 1, 121, '2024-03-17 02:53:18', '2024-03-17 02:53:18'),
+(59, 1, 4, 121, '2024-03-17 03:04:55', '2024-03-17 03:04:55'),
+(60, 1, 4, 121, '2024-03-17 03:09:27', '2024-03-17 03:09:27'),
+(61, 4, 2, 59, '2024-03-17 04:56:31', '2024-03-17 04:56:31'),
+(61, 597, 3, 1988, '2024-03-17 04:56:31', '2024-03-17 04:56:31'),
+(62, 481, 1, 999, '2024-03-17 04:58:07', '2024-03-17 04:58:07'),
+(63, 481, 1, 999, '2024-03-17 04:58:11', '2024-03-17 04:58:11'),
+(64, 1, 1, 121, '2024-03-17 05:05:38', '2024-03-17 05:05:38'),
+(65, 481, 1, 999, '2024-03-17 05:06:49', '2024-03-17 05:06:49'),
+(66, 1, 1, 121, '2024-03-17 05:09:19', '2024-03-17 05:09:19'),
+(67, 101, 1, 111, '2024-03-17 06:12:52', '2024-03-17 06:12:52'),
+(68, 4, 2, 59, '2024-03-17 06:13:46', '2024-03-17 06:13:46'),
+(68, 9, 2, 799, '2024-03-17 06:13:46', '2024-03-17 06:13:46'),
+(68, 13, 2, 1249, '2024-03-17 06:13:46', '2024-03-17 06:13:46'),
+(68, 597, 3, 1988, '2024-03-17 06:13:46', '2024-03-17 06:13:46'),
+(69, 13, 1, 1249, '2024-03-17 08:48:56', '2024-03-17 08:48:56'),
+(70, 5, 1, 1999, '2024-03-17 11:03:31', '2024-03-17 11:03:31'),
+(71, 9, 1, 799, '2024-03-17 11:27:19', '2024-03-17 11:27:19'),
+(72, 6, 3, 321, '2024-03-17 11:29:52', '2024-03-17 11:29:52'),
+(72, 9, 2, 799, '2024-03-17 11:29:52', '2024-03-17 11:29:52'),
+(73, 3, 2, 111, '2024-03-18 01:05:08', '2024-03-18 01:05:08'),
+(73, 105, 3, 799, '2024-03-18 01:05:08', '2024-03-18 01:05:08'),
+(74, 4, 2, 59, '2024-03-18 01:48:13', '2024-03-18 01:48:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `orderstatus`
+--
+
+CREATE TABLE `orderstatus` (
+  `id` tinyint UNSIGNED NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `orderstatus`
+--
+
+INSERT INTO `orderstatus` (`id`, `name`, `createdAt`, `updatedAt`) VALUES
+(1, 'Pending', '2023-11-26 16:16:15', '2023-11-26 16:16:15'),
+(2, 'Paid', '2023-11-26 16:16:24', '2023-11-26 16:16:24'),
+(3, 'Delivering', '2023-11-26 16:16:34', '2023-11-26 16:16:34'),
+(4, 'Delivered', '2023-11-26 16:16:44', '2023-11-26 16:16:44'),
+(5, 'Pending cancel', '2024-03-16 13:29:53', '2024-03-16 13:29:53'),
+(6, 'Cancelled', '2024-03-16 13:29:53', '2024-03-16 13:29:53');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `otp`
+--
+
+CREATE TABLE `otp` (
+  `id` int NOT NULL,
+  `userId` int UNSIGNED NOT NULL,
+  `otpCode` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `otpStatus` tinyint(1) NOT NULL DEFAULT '1',
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `otp`
+--
+
+INSERT INTO `otp` (`id`, `userId`, `otpCode`, `otpStatus`, `createdAt`) VALUES
+(1, 49, '569188', 0, '2024-03-17 08:47:19'),
+(2, 49, '401530', 1, '2024-03-17 10:19:43'),
+(3, 49, '139299', 0, '2024-03-17 10:19:47');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `payment`
+--
+
+CREATE TABLE `payment` (
+  `id` int NOT NULL,
+  `order_id` int UNSIGNED NOT NULL,
+  `invoice_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `transaction_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `payer_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payer_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payer_email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payer_country` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `merchant_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `merchant_email` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `paid_amount` float(10,2) NOT NULL,
+  `paid_amount_currency` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `payment_source` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `payment_status` varchar(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`id`, `order_id`, `invoice_id`, `transaction_id`, `payer_id`, `payer_name`, `payer_email`, `payer_country`, `merchant_id`, `merchant_email`, `paid_amount`, `paid_amount_currency`, `payment_source`, `payment_status`, `createdAt`, `updatedAt`) VALUES
+(2, 15, '9R895017MP774140Y', '9XX54883MM232261R', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 2367.00, 'USD', 'paypal', 'COMPLETED', '2024-03-02 09:25:53', '2024-03-03 01:37:10'),
+(3, 16, '47D866831S457804R', '57A0544252937084U', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1366.00, 'USD', 'paypal', 'COMPLETED', '2024-03-02 19:28:29', '2024-03-03 01:37:10'),
+(4, 17, '72M719190J585454L', '65K870064R784691V', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 4745.00, 'USD', 'paypal', 'COMPLETED', '2024-03-02 21:51:05', '2024-03-03 03:51:56'),
+(10, 19, '0P5887855H8152617', '4F369667TW0463947', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-03 03:16:13', '2024-03-03 09:16:41'),
+(11, 20, '6KW40187PP030471B', '1CD94967TX304192J', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1999.00, 'USD', 'paypal', 'COMPLETED', '2024-03-03 03:16:53', '2024-03-03 09:17:29'),
+(12, 21, '4YL39325GP739221X', '84C33967FC572811V', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 145.00, 'USD', 'paypal', 'COMPLETED', '2024-03-03 03:25:19', '2024-03-03 09:25:49'),
+(13, 23, '2HC921292H283613G', '0D934860J8344191V', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1351.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 08:37:12', '2024-03-05 14:37:52'),
+(14, 24, '8J522480JY0703601', '34636450XT380670C', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 9995.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 09:11:37', '2024-03-05 15:12:20'),
+(15, 25, '81L69875W9649343H', '63A71823GD100341N', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 09:12:31', '2024-03-05 15:13:02'),
+(16, 26, '69287245TX746060A', '8NM33111UH108364X', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 6164.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 10:39:58', '2024-03-05 16:40:34'),
+(17, 30, '1CU54817SD206621M', '98173766KL863394F', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1999.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 10:46:34', '2024-03-05 16:47:04'),
+(18, 31, '3KJ51788F6508224C', '1VN04209RP4157819', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 21:36:53', '2024-03-06 03:37:31'),
+(19, 32, '7BS11708YN7237835', '4K76015503461750F', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 111.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 21:57:40', '2024-03-06 03:58:17'),
+(20, 33, '3W960534PG2593107', '7RG36120RP355143L', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1598.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 22:05:21', '2024-03-06 04:05:51'),
+(21, 34, '672392592T937853E', '1HV522526K424134N', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1169.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 22:12:35', '2024-03-06 04:13:06'),
+(22, 35, '4Y029083MT724263P', '62442555E6439534M', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 5998.00, 'USD', 'paypal', 'COMPLETED', '2024-03-05 22:13:14', '2024-03-06 04:13:44'),
+(23, 36, '9DY595426E470171A', '2WX51441XW093350B', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-07 05:07:40', '2024-03-07 11:08:20'),
+(24, 37, '8AV56119LY4511504', '3B361896FM190614G', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 954.00, 'USD', 'paypal', 'COMPLETED', '2024-03-09 08:29:44', '2024-03-09 14:35:42'),
+(25, 38, '3UW59670GV5231806', '1LR93732UA045030C', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 7626.00, 'USD', 'paypal', 'COMPLETED', '2024-03-09 22:55:55', '2024-03-10 04:56:48'),
+(26, 39, '251882601S821932J', '5B764681N8846674R', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 2998.00, 'USD', 'paypal', 'COMPLETED', '2024-03-11 02:29:15', '2024-03-11 08:29:55'),
+(27, 40, '1AB80357CW6777622', '00547442CU969452V', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 3421.00, 'USD', 'paypal', 'COMPLETED', '2024-03-11 07:44:12', '2024-03-11 13:45:02'),
+(28, 41, '51054535PF029994B', '7YU58775A4162602A', 'VTQWDKYKKB68N', 'Lam Client', 'sb-lgptq29434958@personal.example.com', 'US', 'QJDPB4GGR6A4Q', 'sb-6bdrv29335663@business.example.com', 1101.00, 'USD', 'paypal', 'COMPLETED', '2024-03-13 09:15:24', '2024-03-13 15:16:21'),
+(29, 42, '96H79253WS018181M', '82F131921F967991A', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 111.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:32:31', '2024-03-16 10:33:34'),
+(30, 43, '4R8632259T190312B', '8NL42657RU935525Y', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:36:55', '2024-03-16 10:37:28'),
+(31, 44, '2343811730575584F', '3V912587G6765134L', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 321.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:40:53', '2024-03-16 10:41:26'),
+(32, 45, '21602604MK6870157', '73S032634U3482014', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 59.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:43:03', '2024-03-16 10:43:40'),
+(33, 46, '37172682NB295533T', '60R375329U095054F', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 198.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:49:39', '2024-03-16 10:50:11'),
+(34, 47, '1N7581052D122580T', '650384955G848915F', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 198.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:51:16', '2024-03-16 10:51:48'),
+(35, 48, '1FC46776969002042', '6R4038023K4848151', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 599.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:52:58', '2024-03-16 10:53:32'),
+(36, 49, '9VV65502JB593114A', '5P522822D0594711G', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 89.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 03:59:29', '2024-03-16 11:00:01'),
+(37, 50, '83483861KT3547258', '8SM85769FN9244258', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 363.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 04:00:37', '2024-03-16 11:01:14'),
+(38, 51, '7CH75127E26133144', '1FS652035L027735U', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 1162.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 04:02:38', '2024-03-16 11:03:10'),
+(39, 52, '80B324247N894502W', '5YX024237F267535T', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 1200.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 04:33:56', '2024-03-16 11:34:40'),
+(40, 53, '23X40014FF197914Y', '6CB97459MW579002P', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 3338.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 06:45:40', '2024-03-16 13:46:20'),
+(41, 54, '48S43250SN435912S', '5NW76062E37962421', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 321.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 06:48:56', '2024-03-16 13:49:36'),
+(42, 61, '6XJ353053C5568341', '0KM07440453923431', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 6082.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 21:56:12', '2024-03-17 04:57:04'),
+(43, 64, '31J40886378467518', '4KL055292E998394U', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 22:05:36', '2024-03-17 05:06:10'),
+(44, 65, '49B69217BF387961T', '8TS74611E4335060U', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 999.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 22:06:30', '2024-03-17 05:07:01'),
+(45, 63, '22906628KG559245U', '2GS59324U2299260D', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 999.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 22:06:49', '2024-03-17 05:07:21'),
+(46, 66, '2HC83981UP3087844', '2VT160182V9792613', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 121.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 22:08:59', '2024-03-17 05:09:31'),
+(47, 67, '2R204382PF5222846', '4DF54387JY8704800', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 111.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 23:12:32', '2024-03-17 06:13:13'),
+(48, 68, '9U473706EV6027616', '55E3538659375923J', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 10178.00, 'USD', 'paypal', 'COMPLETED', '2024-03-16 23:13:26', '2024-03-17 06:13:58'),
+(49, 70, '1ML113142U305825L', '7JW85959J39362749', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 1999.00, 'USD', 'paypal', 'COMPLETED', '2024-03-17 04:03:15', '2024-03-17 11:03:56'),
+(50, 71, '7UU516412T083202H', '7BP1990617662223B', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 799.00, 'USD', 'paypal', 'COMPLETED', '2024-03-17 04:26:59', '2024-03-17 11:27:38'),
+(51, 72, '63269419CM3822310', '2KT86750W7223011K', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 2561.00, 'USD', 'paypal', 'COMPLETED', '2024-03-17 04:29:38', '2024-03-17 11:30:11'),
+(52, 73, '2E166937TP386993Y', '2K405347SU9371037', '8T5N8GPHA8GWW', 'John Doe', 'sb-wfuto29987851@personal.example.com', 'US', 'EEUTMRT3PJ76S', 'sb-vjv5z29820868@business.example.com', 2619.00, 'USD', 'paypal', 'COMPLETED', '2024-03-17 18:04:48', '2024-03-18 01:05:27');
 
 -- --------------------------------------------------------
 
@@ -706,9 +1315,142 @@ INSERT INTO `product` (`id`, `categoryId`, `name`, `description`, `imageUrl`, `s
 (649, 7, 'Sony Oled TV', 'Sony Oled  TV', 'https://res.cloudinary.com/dtnpgltl4/image/upload/v1701101142/se-shop/products/w1uhetg3vxufxtlgv2j0.webp', '4K | IPS', 'Windows', 'AMD', 1, 1, 1.20, 555, 'Blue', 799, 9999, '2023-11-27 16:05:44', '2023-11-27 16:05:44'),
 (650, 7, 'Sony Oled TV', 'Sony Oled  TV', 'https://res.cloudinary.com/dtnpgltl4/image/upload/v1701101144/se-shop/products/nhbrdzpaplxa7prpjfxk.webp', '4K | IPS', 'Windows', 'AMD', 1, 1, 1.20, 555, 'Blue', 999, 9999, '2023-11-27 16:05:47', '2023-11-27 16:05:47');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `role`
+--
+
+CREATE TABLE `role` (
+  `id` tinyint UNSIGNED NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `description` varchar(100) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `role`
+--
+
+INSERT INTO `role` (`id`, `name`, `description`, `createdAt`, `updatedAt`) VALUES
+(1, 'Admin', 'Administrators have full rights on the system', '2023-11-26 16:12:48', '2023-11-26 16:12:48'),
+(3, 'Customer', 'Potential customers of the system', '2024-03-18 08:03:29', '2024-03-18 08:03:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user`
+--
+
+CREATE TABLE `user` (
+  `id` int UNSIGNED NOT NULL,
+  `roleId` tinyint UNSIGNED DEFAULT '3',
+  `lastName` varchar(50) DEFAULT NULL,
+  `firstName` varchar(30) DEFAULT NULL,
+  `imageUrl` varchar(200) DEFAULT NULL,
+  `phoneNumber` varchar(11) DEFAULT NULL,
+  `email` varchar(50) NOT NULL,
+  `address` varchar(100) DEFAULT NULL,
+  `username` varchar(40) NOT NULL,
+  `password` varchar(200) DEFAULT NULL,
+  `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `active` tinyint(1) DEFAULT '1',
+  `verified` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+--
+-- Dumping data for table `user`
+--
+
+INSERT INTO `user` (`id`, `roleId`, `lastName`, `firstName`, `imageUrl`, `phoneNumber`, `email`, `address`, `username`, `password`, `createdAt`, `updatedAt`, `active`, `verified`) VALUES
+(1, 1, 'Kiet', 'Doan Anh', 'https://res.cloudinary.com/dtnpgltl4/image/upload/v1701524065/se-shop/avatars/fosl7a4zqb3uaha814iu.webp', '0834480241', 'doankietdev@gmail.com', 'Q. Tân Bình, TP. Hồ Chí Minh', 'doankietdev', '$2y$10$qIgrAx3YW0dYj54RBhiRXOXV7KG.SCo4RzZ/R3wu5Q/CXamY6vBSq', '2023-11-28 11:18:46', '2023-12-02 13:34:25', 1, 1),
+(2, 1, 'Dac', 'Lam', 'http://localhost/ct06n_nhom01_source/uploads/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1-4.jpg', '0832038769', 'admin@gmail.com', 'Ben Tre City', 'daclam', '$2y$10$lv5S.6RGSVrjpvraIL4C3.EchaG2RATyYWN5T9Dvff1cJkH/zeYmm', '2023-12-02 13:37:21', '2023-12-02 13:40:40', 1, 1),
+(21, 3, 'trannguyen', 'daclam', 'http://localhost/ct06n_nhom01_source/uploads/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1-3.jpg', NULL, 'daclam@gmail.com', NULL, 'daclam123', '$2y$10$FLDs7XBsGlKKaCznx1dWW.8bftXnM.O1LDvYEVNzBYiCwEq9yxoTK', '2024-03-06 03:36:06', '2024-03-06 03:36:06', 1, 1),
+(22, 3, 'halo', 'halo', 'http://localhost/ct06n_nhom01_source/uploads/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1-2.jpg', '0934581249', 'halo@gmail.com', 'SAI GON TOWER', 'halohalo', '$2y$10$groqtaBNN.enRmCZxIQ3febO4mh.o9bXK3XwsA6mzFKlbBM4jb6ay', '2024-03-06 03:58:40', '2024-03-06 03:58:40', 1, 1),
+(49, 3, 'Tran Nguyen', 'Dac Lam', 'http://localhost/ct06n_nhom01_source/uploads/MicrosoftTeams-image551ad57e01403f080a9df51975ac40b6efba82553c323a742b42b1c71c1e45f1-1.jpg', '0834480329', 'trannguyendaclam@gmail.com', 'Ben Tre', 'trannguyendaclam@gmail.com', '$2y$10$2vxErHwLk56NOASZ/N4FAuVGt4AkB3oghMk6Wl6E6VFpZVPRwGoTS', '2024-03-13 14:12:18', '2024-03-13 14:12:18', 1, 1),
+(55, 1, 'Trần Nguyễn', 'Đắc Lãm', 'https://lh3.googleusercontent.com/a/ACg8ocIV8VjL3ewot9HufTVRDiUQM2e4jzjBSeCImZKUW3cg8w=s96-c', NULL, 'daclamtrannguyen@gmail.com', NULL, 'daclamtrannguyen@gmail.com', NULL, '2024-03-17 10:33:42', '2024-03-17 10:33:42', 1, 1),
+(112, 3, 'Legend', 'Se', 'https://lh3.googleusercontent.com/a/ACg8ocJmnbtjKbY8UAz5-ocpIWC-UkPbdDQdhQBHUXxQ5boo=s96-c', NULL, 'segroupdemo@gmail.com', NULL, 'segroupdemo@gmail.com', NULL, '2024-03-18 10:02:23', '2024-03-18 10:02:23', 1, 1);
+
+--
+-- Triggers `user`
+--
+DELIMITER $$
+CREATE TRIGGER `autoCreateCart` AFTER INSERT ON `user` FOR EACH ROW BEGIN
+    INSERT INTO cart (userId) VALUES (NEW.id);
+END
+$$
+DELIMITER ;
+
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `cart`
+--
+ALTER TABLE `cart`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `cartdetail`
+--
+ALTER TABLE `cartdetail`
+  ADD PRIMARY KEY (`cartId`,`productId`),
+  ADD KEY `productId` (`productId`);
+
+--
+-- Indexes for table `category`
+--
+ALTER TABLE `category`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `oauth`
+--
+ALTER TABLE `oauth`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `order`
+--
+ALTER TABLE `order`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `orderStatusId` (`orderStatusId`),
+  ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `orderdetail`
+--
+ALTER TABLE `orderdetail`
+  ADD PRIMARY KEY (`orderId`,`productId`),
+  ADD KEY `productId` (`productId`);
+
+--
+-- Indexes for table `orderstatus`
+--
+ALTER TABLE `orderstatus`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `otp`
+--
+ALTER TABLE `otp`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `userId` (`userId`);
+
+--
+-- Indexes for table `payment`
+--
+ALTER TABLE `payment`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `invoice_id` (`invoice_id`),
+  ADD UNIQUE KEY `order_id` (`order_id`);
 
 --
 -- Indexes for table `product`
@@ -718,8 +1460,61 @@ ALTER TABLE `product`
   ADD KEY `categoryId` (`categoryId`);
 
 --
+-- Indexes for table `role`
+--
+ALTER TABLE `role`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `user`
+--
+ALTER TABLE `user`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `phoneNumber` (`phoneNumber`),
+  ADD KEY `roleId` (`roleId`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+
+--
+-- AUTO_INCREMENT for table `category`
+--
+ALTER TABLE `category`
+  MODIFY `id` tinyint UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `oauth`
+--
+ALTER TABLE `oauth`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `order`
+--
+ALTER TABLE `order`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+
+--
+-- AUTO_INCREMENT for table `otp`
+--
+ALTER TABLE `otp`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `payment`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `product`
@@ -728,14 +1523,71 @@ ALTER TABLE `product`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=652;
 
 --
+-- AUTO_INCREMENT for table `user`
+--
+ALTER TABLE `user`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=113;
+
+--
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `cart`
+--
+ALTER TABLE `cart`
+  ADD CONSTRAINT `Cart_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `cartdetail`
+--
+ALTER TABLE `cartdetail`
+  ADD CONSTRAINT `CartDetail_ibfk_1` FOREIGN KEY (`cartId`) REFERENCES `cart` (`id`),
+  ADD CONSTRAINT `CartDetail_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`id`);
+
+--
+-- Constraints for table `oauth`
+--
+ALTER TABLE `oauth`
+  ADD CONSTRAINT `oauth_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `order`
+--
+ALTER TABLE `order`
+  ADD CONSTRAINT `Order_ibfk_1` FOREIGN KEY (`orderStatusId`) REFERENCES `orderstatus` (`id`),
+  ADD CONSTRAINT `Order_ibfk_3` FOREIGN KEY (`userId`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `orderdetail`
+--
+ALTER TABLE `orderdetail`
+  ADD CONSTRAINT `orderdetail_ibfk_1` FOREIGN KEY (`orderId`) REFERENCES `order` (`id`),
+  ADD CONSTRAINT `orderdetail_ibfk_2` FOREIGN KEY (`productId`) REFERENCES `product` (`id`);
+
+--
+-- Constraints for table `otp`
+--
+ALTER TABLE `otp`
+  ADD CONSTRAINT `otp_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`);
+
+--
+-- Constraints for table `payment`
+--
+ALTER TABLE `payment`
+  ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `order` (`id`);
 
 --
 -- Constraints for table `product`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`categoryId`) REFERENCES `category` (`id`);
+
+--
+-- Constraints for table `user`
+--
+ALTER TABLE `user`
+  ADD CONSTRAINT `User_ibfk_2` FOREIGN KEY (`roleId`) REFERENCES `role` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
