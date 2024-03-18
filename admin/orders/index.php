@@ -62,6 +62,8 @@ Auth::requireAdmin($conn);
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
 
+    handleDefaultImageForTable()
+
     const clearForm = (modal, form) => {
       modal.modal('hide');
       form.find('input, textarea').val('')
@@ -186,7 +188,7 @@ Auth::requireAdmin($conn);
             return `
               <div class="name-img-wrapper">
                 <a class="product-img details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}" class="product-img">
-                  ${row.customerImageUrl ? '<img src="${row.customerImageUrl}" />' : ''}
+                  <img src="${row.customerImageUrl || '<?php APP_URL . '/admin/assets/img/no-image.png' ?>'}">
                   <a class="text-linear-hover details-btn" href="<?php echo APP_URL; ?>/admin/customers/details.php?id=${row.customerId}">
                     ${row.customerFirstName || ''} ${row.customerLastName || ''}
                   </a>

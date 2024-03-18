@@ -75,6 +75,8 @@ Auth::requireAdmin($conn);
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
 
+    handleDefaultImageForTable()
+
     const clearForm = (modal, form) => {
       modal.modal('hide');
       form.find('input, textarea').val('')

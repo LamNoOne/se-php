@@ -721,7 +721,6 @@ require_once dirname(__DIR__) . "/inc/init.php"
 			}
 			const img = new Image()
 			img.src = imgSrc
-
 			img.onerror = () => {
 				$(this).attr(
 					'src',
@@ -729,6 +728,21 @@ require_once dirname(__DIR__) . "/inc/init.php"
 				)
 			}
 		})
+	}
+
+	const handleDefaultImageForTable = () => {
+		var parentElement = document.querySelector('table tbody');
+		var observer = new MutationObserver(function(mutations) {
+			mutations.forEach(function(mutation) {
+				if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+					handleDefaultImage()
+				}
+			});
+		});
+		var config = {
+			childList: true
+		};
+		observer.observe(parentElement, config);
 	}
 
 	const previewImage = () => {

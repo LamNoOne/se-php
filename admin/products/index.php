@@ -329,6 +329,8 @@ Auth::requireAdmin($conn);
     const DEFAULT_ORDER = 'asc'
     const tableEle = $('#table')
 
+    handleDefaultImageForTable()
+
     const clearForm = (form) => {
       const previewImage = form.find('.preview-image')
       const fileName = previewImage.find('.file-name')
