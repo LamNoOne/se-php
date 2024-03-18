@@ -36,12 +36,6 @@ $allPages = $allOrdersData['totalPage'];
                             <span>Order History</span>
                         </a>
                     </li>
-                    <li>
-                        <button type="button" class="customer-manager__btn-list__item">
-                            <img class="object-fit-contain" src="../assets/img/exit.svg" alt="logout">
-                            <span>Log Out</span>
-                        </button>
-                    </li>
                 </ul>
             </div>
             <div class="col-10 px-4">

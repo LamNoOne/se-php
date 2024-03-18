@@ -3,3 +3,4 @@ uploads/*
 config.php
 .dockerignore
 Dockerfile
+docker-compose.yml
