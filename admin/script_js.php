@@ -716,9 +716,6 @@ require_once dirname(__DIR__) . "/inc/init.php"
 	const handleDefaultImage = () => {
 		$('img').each(function() {
 			const imgSrc = $(this).attr('src')
-			if (!imgSrc || imgSrc === '') {
-				return
-			}
 			const img = new Image()
 			img.src = imgSrc
 			img.onerror = () => {

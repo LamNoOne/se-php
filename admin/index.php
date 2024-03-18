@@ -210,7 +210,7 @@ try {
                       <td>
                         <div class="name-img-wrapper">
                           <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>" />
-                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" alt="" />
+                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-image.png' ?>" alt="" />
                           </a>
                           <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>">
                             <?php
@@ -262,7 +262,7 @@ try {
                       <td>
                         <div class="name-img-wrapper">
                           <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>" />
-                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" alt="" />
+                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-image.png' ?>" alt="" />
                           </a>
                           <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>">
                             <?php
@@ -314,7 +314,7 @@ try {
                       <td>
                         <div class="name-img-wrapper">
                           <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>" />
-                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" alt="" />
+                          <img src="<?php echo $order->customerImageUrl ? $order->customerImageUrl : APP_URL . '/admin/assets/img/no-image.png' ?>" alt="" />
                           </a>
                           <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$order->customerId"; ?>">
                             <?php
@@ -427,7 +427,7 @@ try {
                       <td>
                         <div class="name-img-wrapper">
                           <a class="product-img" href="<?php echo APP_URL . "/admin/customers/details.php?id=$customer->id" ?>">
-                            <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : APP_URL . '/admin/assets/img/no-avatar-image.png' ?>" />
+                            <img src="<?php echo $customer->imageUrl ? $customer->imageUrl : APP_URL . '/admin/assets/img/no-image.png' ?>" />
                           </a>
                           <a class="text-linear-hover" href="<?php echo APP_URL . "/admin/customers/details.php?id=$customer->id" ?>">
                             <?php echo $customer->firstName . ' ' . $customer->lastName ?>
