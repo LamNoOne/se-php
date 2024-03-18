@@ -270,6 +270,47 @@ class Product extends DataFetcher
         }
     }
 
+
+
+    public static function updateProductByCategoryId(
+        $conn,
+        $categoryId,
+        $dataToUpdate = []
+    ) {
+        try {
+            // normalize before update
+            $dataToUpdate = array_map(function ($value) {
+                return $value === '' ? null : $value;
+            }, $dataToUpdate);
+
+            $validateResult = Product::validateUpdate($dataToUpdate);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            // create dynamic update statement
+            $sql = "UPDATE `product` SET ";
+            foreach ($dataToUpdate as $key => $value) {
+                if ($value === null) {
+                    $sql .= "`$key` = NULL, ";
+                } else {
+                    $sql .= "`$key` = '$value', ";
+                }
+            }
+            $sql = rtrim($sql, ', ');
+            $sql .= " WHERE categoryId = $categoryId";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Product');
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update product successfully');
+            }
+            return Message::message(false, 'Update product failed');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
     public static function updateStockQuantity($conn, $productId, $stockQuantity)
     {
         try {

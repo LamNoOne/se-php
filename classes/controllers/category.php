@@ -138,6 +138,13 @@ class Category
     public static function deleteCategory($conn, $id)
     {
         try {
+            $updateCategoryResult = Product::updateProductByCategoryId($conn, $id, [
+                'categoryId' => NULL
+            ]);
+
+            if (!$updateCategoryResult['status']) {
+                throw new Exception('Update product failed');
+            }
             $stmt = getDeleteByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id);
             if ($stmt->execute()) {
                 return Message::message(true, 'Delete category successfully');
