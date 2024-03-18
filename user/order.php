@@ -68,26 +68,26 @@ $allPages = $allOrdersData['totalPage'];
                                         <span style="background-color: <?php echo getStatus($orders->status); ?>;" class="order-status border border-black border-opacity-10 py-2 px-3 text-black text-opacity-50 text-decoration-none d-flex justify-content-center align-items-center mt-3">Status: <?php echo $orders->status; ?></span>
                                         <div class="order-btn-control d-flex gap-3 justify-content-end align-items-center">
                                             <?php if ($orders->orderStatusId != CANCELLED && $orders->orderStatusId != PENDING_CANCEL) : ?>
-                                                <div class="cancel-form">
+                                                <div class="cancel-form" data-index="<?php echo $orders->id; ?>">
                                                     <!-- Button trigger modal -->
-                                                    <button type="button" class="btn btn-cancel-order align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3 btn-cancel-primary" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                                    <button type="button" class="btn btn-cancel-order align-self-end text-decoration-none d-flex justify-content-center align-items-center mt-3 btn-cancel-primary" data-bs-toggle="modal" data-bs-target="<?php echo "#cancelModal-" . $orders->id; ?>">
                                                         Cancel
                                                     </button>
 
                                                     <!-- Modal -->
-                                                    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="<?php echo "cancelModal-" . $orders->id; ?>" tabindex="-1" aria-labelledby="<?php echo "cancelModalLabel-" . $orders->id; ?>" aria-hidden="true">
                                                         <div class="modal-dialog modal-dialog-centered">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h1 class="modal-title text-primary fs-5" id="cancelModalLabel">Cancel Confirmation</h1>
+                                                                    <h1 class="modal-title text-primary fs-5" id="<?php echo "cancelModalLabel-" . $orders->id; ?>">Cancel Confirmation</h1>
                                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                                 </div>
                                                                 <div class="modal-body fs-6">
                                                                     Are you sure want to cancel?
                                                                 </div>
                                                                 <div class="modal-footer d-flex justify-content-between align-items-center flex-nowrap">
-                                                                    <button type="button" class="btn w-100 d-inline-block btn-secondary btn-cancel-control btn-cancel-cancel" data-bs-dismiss="modal">Cancel</button>
-                                                                    <button type="button" data-index="<?php echo $orders->id; ?>" class="btn w-100 d-inline-block btn-primary btn-cancel-control btn-cancel-confirm">Yes</button>
+                                                                    <button type="button" class="btn w-100 d-inline-block btn-secondary btn-cancel-cancel" data-bs-dismiss="modal">Cancel</button>
+                                                                    <button type="button" data-index="<?php echo $orders->id; ?>" id="<?php echo "button-cancel-" . $orders->id; ?>" class="btn w-100 d-inline-block btn-primary btn-cancel-control btn-cancel-confirm">Yes</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -159,14 +159,14 @@ $allPages = $allOrdersData['totalPage'];
                 }
             })
         })
-        
+
         const allBtnCancelOrder = $(".btn-cancel-control").get();
         console.log(allBtnCancelOrder)
         allBtnCancelOrder.forEach(function(el) {
             el.addEventListener("click", async function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 const orderId = $(this).data("index");
-
                 try {
                     const cancelOrderResponse = await $.ajax({
                         method: "POST",

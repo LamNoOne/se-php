@@ -1,8 +1,8 @@
-## SE_PHP
+## CT06N NHOM 01 DU AN MON LAP TRINH WEB
 
-## File db.sql in sql folder
-### Using phpAdmin, create "se-php" schema, import "se-php.sql"
-### Folder "procedure" is not important
+## Import ct06n_nhom01.sql to ct06n_nhom01 schema
+### Using php version 7.4
 
 ## Config your base project url
 ### Go to config.php, change "APP_URL" 
+### BASE_NAME means you located at www/ct06n_nhom01_source, APP_URL will be equal to 'http://localhost/ct06n_nhom01_source'
