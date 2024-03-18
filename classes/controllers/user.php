@@ -93,7 +93,7 @@ class User extends OAuth
                 $data['imageUrl'],
                 $data['$phoneNumber'] ?? null,
                 $data['$address'] ?? null,
-                $data['$roleId'] ?? 3,
+                $data['$roleId'] ?? CUSTOMER,
                 $data['$active'] ?? 1,
                 $data['$verified'] ?? 1
             );
@@ -141,8 +141,8 @@ class User extends OAuth
 
             // create user
             $insertStmt = "INSERT INTO 
-                user (lastName, firstName, imageUrl, phoneNumber, email, address, username, password, active) 
-                VALUES (:lastName, :firstName, :imageUrl, :phoneNumber, :email, :address, :username, :password, :active)";
+                user (lastName, firstName, imageUrl, phoneNumber, email, address, username, password, active, verified) 
+                VALUES (:lastName, :firstName, :imageUrl, :phoneNumber, :email, :address, :username, :password, :active, :verified)";
             $stmt = $conn->prepare($insertStmt);
             $password_hash = $this->password ? password_hash($this->password, PASSWORD_DEFAULT) : null;
             // $stmt->bindValue(":password", $password_hash, PDO::PARAM_STR);
@@ -156,6 +156,7 @@ class User extends OAuth
                 ":username" => $this->username,
                 ":password" => $password_hash,
                 ":active" => $this->active,
+                ":verified" => $this->verified
             ]);
             if (!$status)
                 return Message::message(false, "Can not create user at this time");

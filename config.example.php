@@ -45,7 +45,7 @@ if (!defined("CANCELLED")) define("CANCELLED", 6);
  * Define role
  */
 if (!defined("ADMIN")) define("ADMIN", 1);
-if (!defined("CUSTOMER")) define("CUSTOMER", 2);
+if (!defined("CUSTOMER")) define("CUSTOMER", 3);
 
 /**
  * Debug mode
