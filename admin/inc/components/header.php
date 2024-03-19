@@ -86,9 +86,9 @@ if (!$currentUser) {
                 </div>
               </div>
               <hr class="m-0" />
+              <a class="dropdown-item" href="<?php echo APP_URL ?>/"><i class="me-2" data-feather="settings"></i>Go To Customer</a>
               <a class="dropdown-item" href="profile.html">
                 <i class="me-2" data-feather="user"></i> My Profile</a>
-              <a class="dropdown-item" href="generalsettings.html"><i class="me-2" data-feather="settings"></i>Settings</a>
               <hr class="m-0" />
               <a id="logoutButton" class="dropdown-item logout" href="javascript:void(0);">
                 <i class="me-2 fas fa-sign-out-alt"></i>
