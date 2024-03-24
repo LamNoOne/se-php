@@ -87,8 +87,8 @@ if (!$currentUser) {
               </div>
               <hr class="m-0" />
               <a class="dropdown-item" href="<?php echo APP_URL ?>/"><i class="me-2" data-feather="settings"></i>Go To Customer</a>
-              <a class="dropdown-item" href="profile.html">
-                <i class="me-2" data-feather="user"></i> My Profile</a>
+              <a class="dropdown-item" href="<?php echo APP_URL ?>/user/">
+                <i class="me-2" data-feather="user"></i>My Account</a>
               <hr class="m-0" />
               <a id="logoutButton" class="dropdown-item logout" href="javascript:void(0);">
                 <i class="me-2 fas fa-sign-out-alt"></i>
@@ -102,9 +102,9 @@ if (!$currentUser) {
       <div class="dropdown mobile-user-menu">
         <a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
         <div class="dropdown-menu dropdown-menu-right">
-          <a class="dropdown-item" href="profile.html">My Profile</a>
-          <a class="dropdown-item" href="generalsettings.html">Settings</a>
-          <a class="dropdown-item" href="signin.html">Logout</a>
+          <a class="dropdown-item" href="<?php echo APP_URL ?>/">Go To Customer</a>
+          <a class="dropdown-item" href="<?php echo APP_URL ?>/user/">My Account</a>
+          <a class="dropdown-item" href="javascript:void(0);">Logout</a>
         </div>
       </div>
     </div>
