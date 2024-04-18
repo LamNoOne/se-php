@@ -392,7 +392,7 @@ if (!empty($_GET)) {
             inputMaxPrice.value = selector.price[1];
         }
 
-        inputSearch.value = selector.search[0] ? selector.search[0] : "";
+        // inputSearch.value = selector.search[0] ? selector.search[0] : "";
 
         // Activate input elements depend on query URL string
         inputChecks.forEach(inputCheck => {
