@@ -4,11 +4,11 @@
 if ($_SERVER["REQUEST_METHOD"] !== "GET" || !isset($_GET["product_id"])) {
     redirect(APP_URL);
 }
-
-$conn = require_once "../inc/db.php";
+if (!isset($conn))
+    $conn = require_once "../inc/db.php";
 $product_id = $_GET["product_id"];
 $productDetail = Product::getProductById($conn, $product_id);
-// print_r($productDetail);
+
 ?>
 <div id="main-content" class="main-content">
     <div id="product-detail">
@@ -33,7 +33,7 @@ $productDetail = Product::getProductById($conn, $product_id);
                             <span class="add-to-cart__text"> Add to Cart </span>
                         </button>
 
-                        <button class="payment-paypal">
+                        <button class="payment-paypal" id="payment-paypal">
                             <img class="payment-paypal__img" src="<?php echo APP_URL; ?>/assets/img/payment.svg" alt="pay-with-paypal" />
                         </button>
                     </div>
@@ -44,6 +44,7 @@ $productDetail = Product::getProductById($conn, $product_id);
                     <div class="product-desc-container">
                         <div class="product-desc d-flex flex-column gap-3">
                             <h3 class="product-desc__title mt"><?php echo $productDetail->name; ?></h3>
+                            <p class="m-0 fs-6 text-danger text-decoration-underline"><?php echo "Stock available: " . $productDetail->stockQuantity ?></p>
                             <p class="product-desc__desc m-0">
                                 <?php echo $productDetail->description; ?> is a high-performance, high-definition, high-quality, high-speed,
                                 high-definition, high-performance and high-definition graphics card that delivers a
@@ -126,22 +127,56 @@ $productDetail = Product::getProductById($conn, $product_id);
 <script src="<?php echo APP_URL; ?>/js/body/product-detail.js"></script>
 <script>
     $(document).ready(function() {
-        $("#btn-add-to-cart").on("click", function(e) {
+        $("#btn-add-to-cart").on("click", async function(e) {
+
             e.preventDefault();
-            const productId = $(this).val();
-            const quantity = $('#product-detail__quantity__input').val();
-            $.ajax({
-                url: "actions/add-cart.php",
-                method: "POST",
-                data: {
-                    productId,
-                    quantity
-                },
-                success: function(data) {
-                    // $status = JSON.parse(data);
-                    console.log(data)
+
+            // get userId from session
+            let userId = "<?php echo isset($_SESSION['userId']) ? $_SESSION['userId'] : '' ?>";
+
+            // if userId is not exist, require login => navigate to login
+            if (userId === '')
+                window.location.href = "<?php echo APP_URL; ?>/auth/";
+
+            // parse params to integer
+            userId = parseInt(userId)
+            const productId = parseInt($(this).val());
+            const quantity = parseInt($('#product-detail__quantity__input').val());
+
+            // use async await to handle success and error messages
+            try {
+                const addCart = await $.ajax({
+                    url: "actions/add-cart.php",
+                    method: "POST",
+                    data: {
+                        userId,
+                        productId,
+                        quantity
+                    }
+                });
+                const addCartInfo = JSON.parse(addCart)
+                // ra console xem, sẽ trẻ về object javascript
+                console.log(addCartInfo);
+                if (addCartInfo.status) {
+                    toastr.success(addCartInfo.message, "Add cart");
+                    // if cart product is already in cart, not increase cart count
+                    if(!addCartInfo?.data?.modified) {
+                        const productCartQuantity = $(".cart-btn__count").html();
+                        $(".cart-btn__count").html(parseInt(productCartQuantity) + 1);
+                    }
+                } else {
+                    toastr.warning(addCartInfo.message, "Warning");
                 }
-            });
+            } catch (error) {
+                toastr.warning(error, "Error");
+            }
         });
+
+        $("#payment-paypal").on("click", function (e) {
+            e.preventDefault();
+            const quantity = parseInt($("#product-detail__quantity__input").val());
+            const productId =parseInt("<?php echo $product_id; ?>");
+            window.location.href = `<?php echo APP_URL; ?>/checkout?product_id=${productId}&quantity=${quantity}`;
+        })
     });
 </script>

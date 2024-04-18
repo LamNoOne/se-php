@@ -1,0 +1,176 @@
+#customer-manager {
+    margin-top      : 7rem;
+    padding-top     : 2rem;
+    background-color: #f4f6f8;
+
+    .no-cart {
+        padding-bottom: 5rem;
+
+        &__img {
+            img {
+                width : 12rem;
+                height: 12rem;
+            }
+        }
+
+        &__desc {
+            font-size  : 1rem;
+            font-weight: 500;
+            color      : rgba(black, 0.75);
+        }
+
+        &__btn {
+            padding         : 0.5rem 1rem;
+            font-size       : 1rem;
+            color           : white;
+            cursor          : pointer;
+            background-color: $primary_color;
+        }
+    }
+
+    .img-user {
+        width : 5rem;
+        height: 5rem;
+    }
+
+    .customer-manager__btn-list {
+        border-radius   : 0.5rem;
+        background-color: #f6fbfc;
+        padding         : 0.5rem;
+
+        &__item {
+            display         : flex;
+            justify-content : start;
+            align-items     : center;
+            gap             : 0.5rem;
+            border          : 1px solid transparent;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
+            font-weight     : 500;
+            background-color: transparent;
+            width           : 100%;
+            text-align      : start;
+            padding         : 0.25rem 0.5rem;
+            border-radius   : 0.5rem;
+            margin          : 0.25rem 0;
+
+            img {
+                width: 1.2rem;
+            }
+        }
+
+        &__item:hover {
+            background-color: rgba($primary_color, 0.2);
+            color           : $primary_color;
+            border          : 1px solid $primary_color;
+
+            img {
+                filter: invert(16%) sepia(94%) saturate(4747%) hue-rotate(222deg) brightness(105%) contrast(101%);
+            }
+        }
+    }
+
+    .order-item {
+        background-color: #fff;
+        border-radius   : 0.5rem;
+        padding         : 1rem;
+
+        .order-status {
+            color        : white !important;
+            border-radius: 0.25rem;
+            height       : 2.5rem;
+        }
+
+        img {
+            width : 4rem;
+            height: 4rem;
+        }
+
+        &__desc {
+            font-size  : 0.875rem;
+            font-family: Poppins;
+        }
+
+        &__price {
+            font-size  : 0.875rem;
+            font-family: Poppins;
+            font-weight: 600;
+            color      : red;
+        }
+
+        &__time {
+            span {
+                font-size  : 0.8125rem;
+                font-family: Poppins;
+                font-weight: normal;
+                color      : #999;
+            }
+
+            .subtotal-price {
+                font-size  : 0.875rem;
+                font-family: Poppins;
+                font-weight: 600;
+                color      : red;
+            }
+        }
+
+        .btn-order-detail {
+            border          : none;
+            padding-left    : 1rem;
+            padding-right   : 1rem;
+            height          : 2.5rem;
+            border-radius   : 0.25rem;
+            background-color: $primary_color;
+            color           : white;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
+
+            &:hover {
+                background-color: $secondary_color;
+            }
+        }
+
+        .continue-payment {
+            border          : none;
+            padding-left    : 1rem;
+            padding-right   : 1rem;
+            height          : 2.5rem;
+            border-radius   : 0.25rem;
+            background-color: $primary_color;
+            color           : white;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
+
+            &:hover {
+                background-color: $secondary_color;
+            }
+        }
+
+        .btn-cancel-order {
+            border          : none;
+            padding-left    : 1rem;
+            padding-right   : 1rem;
+            height          : 2.5rem;
+            border-radius   : 0.25rem;
+            background-color: rgb(104, 98, 98);
+            color           : white;
+            font-size       : 0.875rem;
+            font-family     : Poppins;
+
+            &:hover {
+                background-color: rgb(69, 66, 66);
+            }
+        }
+
+        .btn-watch-detail {
+            font-size    : 0.875rem;
+            font-family  : Poppins;
+            border-radius: 0.25rem;
+
+            &:hover {
+                text-decoration : underline !important;
+                background-color: rgba(0, 0, 0, 0.025);
+            }
+        }
+    }
+}

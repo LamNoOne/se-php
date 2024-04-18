@@ -3,96 +3,93 @@
 
         // ==========================Search Bar Header ========================== //
         .search-bar-container {
-            position    : relative;
-            height      : 100%;
-            margin-right: -12px;
-            display     : flex;
-            align-items : center;
+            position   : relative;
+            height     : 100%;
+            display    : flex;
+            align-items: center;
 
-            .search {
-                align-self      : center;
+            .search-item {
+                cursor: pointer;
+            }
+
+            .search-box {
                 position        : absolute;
-                right           : 0;
-                width           : 50px;
-                height          : 50px;
-                background-color: $search_background;
-                border-radius   : 4rem;
-                padding         : 10px;
-                overflow        : hidden;
-                transition      : width .5s cubic-bezier(.9, 0, .3, .9);
+                z-index         : 9999;
+                top             : 3.6rem;
+                left            : 0;
+                width           : 100%;
+                height          : fit-content;
+                border-radius   : 0.25rem;
+                background-color: white;
+                box-shadow      : 0 0 0 1px rgba(0, 0, 0, 0.05);
 
-                &__input {
-                    border          : none;
-                    outline         : none;
-                    width           : calc(100% - 64px);
-                    height          : 100%;
-                    color           : $color_search_bar;
-                    background-color: $search_background;
-                    border-radius   : 4rem;
-                    padding-left    : 14px;
-                    font-size       : $primary_font_size;
+                .title-box {
+                    background-color: #f3f3f3;
+                    margin          : 0;
+                    padding         : 0.5rem 1rem;
+                    font-size       : 0.9rem;
                     font-weight     : 500;
-                    opacity         : 0;
-                    pointer-events  : none;
-                    transition      : opacity 1.5s;
+                    color           : #555;
+                }
 
-                    &:-webkit-autofill {
-                        box-shadow: 0 0 0 100px white inset;
+                .product-box {
+
+                    .product-name {
+                        color        : #333;
+                        font-weight  : 600;
+                        font-size    : 0.8rem;
+                        padding-left : 0.5rem;
+                        padding-right: 0.5rem;
                     }
-                }
 
-                &__button {
-                    width           : 30px;
-                    height          : 30px;
-                    background-color: rgba($primary_color, 0.3);
-                    border-radius   : 50%;
-                    position        : absolute;
-                    top             : 0;
-                    bottom          : 0;
-                    right           : 10px;
-                    margin          : auto;
-                    display         : grid;
-                    place-items     : center;
-                    cursor          : pointer;
-                    transition      : transform .6s cubic-bezier(.9, 0, .3, .9);
-                }
+                    .product-container {
+                        padding        : 0.5rem;
+                        text-decoration: none;
+                        gap            : 1rem;
 
-                &__icon,
-                &__close {
-                    color     : rgba(black, 0.8);
-                    font-size : 1rem;
-                    position  : absolute;
-                    transition: opacity .5s cubic-bezier(.9, 0, .3, .9);
-                }
+                        .product-image {
+                            width     : 3rem;
+                            height    : 3rem;
+                            object-fit: contain;
+                        }
 
-                &__icon {
-                    opacity: 1;
-                }
+                        &:hover {
+                            background-color: #f3f3f3;
+                        }
 
-                &__close {
-                    opacity: 0;
+                        .product-info {
+                            .product-title {
+                                color      : #333;
+                                font-weight: 600;
+                                font-size  : 0.8rem;
+                            }
+
+                            .product-price {
+                                font-size  : 0.8rem;
+                                color      : red;
+                                font-weight: 600;
+                                gap        : 0.5rem;
+
+                                .product-old-price {
+                                    font-size      : 0.8rem;
+                                    color          : #555;
+                                    font-weight    : 500;
+                                    text-decoration: line-through;
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
-            .show-search {
-                width: 100%;
-
-                & .search__input {
-                    opacity       : 1;
-                    pointer-events: initial;
-                }
-
-                & .search__button {
-                    transform: rotate(90deg);
-                }
-
-                & .search__icon {
-                    opacity: 0;
-                }
-
-                & .search__close {
-                    opacity: 1;
-                }
+            .search-box-layout {
+                z-index         : 10;
+                background-color: rgba(0, 0, 0, 0.15);
+                position        : fixed;
+                top             : 0;
+                left            : 0;
+                right           : 0;
+                bottom          : 0;
             }
         }
     }

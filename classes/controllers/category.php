@@ -1,6 +1,7 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
-class Category extends Message
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+class Category
 {
 
     public $id;
@@ -9,37 +10,204 @@ class Category extends Message
     public $createdAt;
     public $updatedAt;
 
-    public function __construct($id, $name, $description)
-    {
-        $this->id = $id;
-        $this->name = $name;
-        $this->description = $description;
+    public function __construct(
+        $data = []
+    ) {
+        $data = Category::removeBannedFields($data);
+        $data = deleteFieldsHasEmptyString($data);
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
     }
 
-    public static function createCategory($conn, $categoryData)
+    private static function removeBannedFields($fields)
     {
-        /**
-         * Write your code here
-         */
+        $copiedFields = $fields;
+        $bannedFields = ['id', 'createdAt', 'updatedAt'];
+        foreach ($bannedFields as $bannedField) {
+            if (array_key_exists($bannedField, $copiedFields)) {
+                unset($copiedFields[$bannedField]);
+            }
+        }
+        return $copiedFields;
     }
 
-    public static function updateCategory($conn, $categoryData)
+    private static function validateCreate($formData)
     {
-        /**
-         * Write your code here
-         */
+        $result = Validator::required($formData, [
+            'categoryId',
+            'name',
+            'imageUrl',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::url($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
     }
 
-    public static function deleteCategory($conn, $categoryId)
+    private static function validateDeleteByIds($formData)
     {
-        /**
-         * Write your code here
-         */
+        $result = Validator::required($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::array($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    public function createCategory($conn)
+    {
+        try {
+            $stmt = getCreateSQLPrepareStatement($conn, TABLES['CATEGORY'], $this);
+            if (!$stmt->execute()) {
+                return Message::message(false, 'Something went wrong');
+            }
+            return Message::message(true, 'Add product successfully');
+        } catch (Exception $e) {
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
+                return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
+            }
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function updateCategory($conn, $id, $dataToUpdate)
+    {
+        try {
+            $stmt = getUpdateByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id, $dataToUpdate);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update category successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            $duplicateKey = getDuplicateKeyWhenSQLInsertUpdate($e);
+            if (empty($duplicateKey)) {
+                return Message::message(false, 'Something went wrong');
+            }
+            if ($duplicateKey[1] === 'name') {
+                return Message::message(false, "'$duplicateKey[0]' is available");
+            }
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteCategory($conn, $id)
+    {
+        try {
+            $updateCategoryResult = Product::updateProductByCategoryId($conn, $id, [
+                'categoryId' => NULL
+            ]);
+
+            if (!$updateCategoryResult['status']) {
+                throw new Exception('Update product failed');
+            }
+            $stmt = getDeleteByIdSQLPrepareStatement($conn, TABLES['CATEGORY'], $id);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete category successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteByIds($conn, $ids)
+    {
+        try {
+            $validateResult = Category::validateDeleteByIds(['ids' => $ids]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $stmt = getDeleteByIdsSQLPrepareStatement($conn, TABLES['CATEGORY'], $ids);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete category by ids successfully');
+            }
+            throw new PDOException('Cannot execute sql statement');
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function getCategoryById($conn, $id)
+    {
+        try {
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                [],
+                [
+                    'tables' => [
+                        TABLES['CATEGORY']
+                    ]
+                ],
+                [
+                    [
+                        'table' => TABLES['CATEGORY'],
+                        'column' => 'id',
+                        'value' => $id
+                    ]
+                ]
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Get category by id successfully', [
+                'category' => $stmt->fetch()
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, 'Something went wrong');
+        }
     }
 
     public static function getAllCategories($conn)
     {
-        $query = "SELECT * FROM categories";
+        $query = "SELECT * FROM category";
         try {
             $stmt = $conn->prepare($query);
             $stmt->setFetchMode(PDO::FETCH_CLASS, "Category");
@@ -47,6 +215,59 @@ class Category extends Message
             return $stmt->fetchAll();
         } catch (PDOException $e) {
             return Message::message(false, "Can not get all categories" . $e->getMessage());
+        }
+    }
+
+    /**
+     $pagination = ['limit' => 10, 'offset' => 0]
+     */
+    public static function getCategories(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]],
+        $pagination = [],
+        $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
+    ) {
+        try {
+            $projection =  [];
+            $join =  [
+                'tables' => [
+                    TABLES['CATEGORY']
+                ],
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['ORDER'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+            $sort = [
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => $sort['sortBy'],
+                    'order' => $sort['order']
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+                $pagination,
+                $sort
+            );
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return Message::message(false, 'Get categories failed');
         }
     }
 }

@@ -12,6 +12,10 @@ body {
     height          : -webkit-fit-content;
     height          : -moz-fit-content;
     height          : fit-content;
+
+    #main-content {
+        margin-top: 7rem;
+    }
 }
 
 .checked {
@@ -24,5 +28,11 @@ body {
 
 .blur {
     -webkit-filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
-            filter: invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
+    filter        : invert(56%) sepia(0%) saturate(3735%) hue-rotate(321deg) brightness(97%) contrast(74%);
+}
+
+.error {
+    font-size : 0.875rem;
+    font-style: italic;
+    color     : red;
 }

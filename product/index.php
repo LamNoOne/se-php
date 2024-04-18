@@ -7,19 +7,30 @@ $parsedParams = array();
 // Check if there are query parameters in the URL
 if (!empty($_GET)) {
     // Get connection
-    $conn = require_once "../inc/db.php";
+    if (!isset($conn))
+        $conn = require_once "../inc/db.php";
     // Loop through each parameter
     foreach ($_GET as $key => $value) {
         // Check if the value contains commas
         if ($key !== 'page' && $key !== 'orderby') {
-            if (strpos($value, ',') !== false) {
-                // If it does, split the value into an array using commas as separators
-                $parsedParams[$key] = explode(',', $value);
-                // Trim each value to remove leading/trailing spaces
-                $parsedParams[$key] = array_map('trim', $parsedParams[$key]);
+            // if the value contains commas
+            if (strpos($value, ',')) {
+                // convert comma string to array
+                $_values = array_map('trim', explode(',', $value));
+                if ($key === 'price') {
+                    $parsedParams = [...$parsedParams, createFilter($key, $_values, "BETWEEN")];
+                    continue;
+                }
+
+                $parsedParams = [...$parsedParams, createFilter($key, $_values, "IN")];
             } else {
+                if ($key === 'search') {
+                    // $parsedParams = [...$parsedParams, createFilter("`product`.name", "%$value%", "LIKE")];
+                    $parsedParams = [...$parsedParams, createFilter("`product`.description", "%$value%", "LIKE")];
+                    continue;
+                }
                 // If it doesn't contain commas, use the value as is
-                $parsedParams[$key] = $value;
+                $parsedParams = [...$parsedParams, createFilter($key, $value)];
             }
         }
     }
@@ -48,13 +59,17 @@ if (!empty($_GET)) {
     if (!empty($parsedParams)) {
         // Apply filters
         $selectors['filters'] = $parsedParams;
+
         // Get product object
-        $selectedProducts = Product::getProductsByCategory($conn, $selectors);
+        $selectedProducts = Product::getAllProductsByCondition($conn, $selectors);
+
         // Get all products
         $allProducts = $selectedProducts['data'];
         // Get total pages
         $allPages = $selectedProducts['totalPage'];
     }
+
+    $allCategories = Category::getAllCategories($conn);
 } else {
     // If url is not valid
     redirect(APP_URL);
@@ -62,7 +77,7 @@ if (!empty($_GET)) {
 ?>
 
 <div id="main-content" class="main-content">
-    <div id="promotion-slider">
+    <div id="promotion-slider" class="d-none d-sm-block">
         <div class="container">
             <div class="row">
                 <div class="single-promotion position-relative">
@@ -87,27 +102,22 @@ if (!empty($_GET)) {
         <!-- Description product page and control button sort, grid layout -->
         <div class="container">
             <div class="row">
-                <div class="col-2">
+                <div class="col-2 d-none d-sm-block">
                     <div class="product-filter">
                         <div class="category-filter pb-3">
                             <h6 class="filter-title">Category</h6>
                             <ul class="category-list list-unstyled d-flex flex-column gap-1 m-0">
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '1') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=1">Smartphone</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '2') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=2">Laptop</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '3') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=3">Accessory</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '4') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=4">Studio</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '5') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=5">Camera</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '6') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=6">PC</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '7') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=7">TV</a></li>
-                                <li class="category-item"><a class="<?php echo (verifyCategory($_GET['categoryId'], '8') ? 'active' : '') ?>" href="<?php echo APP_URL; ?>/product?categoryId=8">Product</a></li>
+                                <?php foreach ($allCategories as $key => $category) : ?>
+                                    <li class="category-item"><a class="<?php echo isset($_GET['categoryId']) && $key + 1 == $_GET['categoryId'] ? "active" : "" ?>" href="<?php echo APP_URL; ?>/product?categoryId=<?php echo $category->id; ?>"><?php echo $category->name; ?></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
 
                         <div class="price-filter py-3">
                             <h6 class="filter-title">Price</h6>
-                            <form action="" method="" class="d-flex gap-1">
+                            <form action="" method="" class="d-flex flex-column flex-xl-row gap-1">
                                 <input class="price-filter--min" placeholder="Min" type="number" name="min" id="min-number" min="0" pattern="[0-9]*" />
-                                <span>-</span>
+                                <span class="d-none d-xl-block">-</span>
                                 <input class="price-filter--max" placeholder="Max" type="number" name="max" id="max-number" min="0" pattern="[0-9]*" />
                                 <button class="price-filter__btn-price" type="button">
                                     <i class="fa-solid fa-play"></i>
@@ -125,10 +135,10 @@ if (!empty($_GET)) {
                                     <input type="checkbox" value="MacOS" name="operatingSystem" id="macOS" /><label for="macOS">MacOS</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="Logitech" name="operatingSystem" id="logitech" /><label for="logitech">Logitech</label>
+                                    <input type="checkbox" value="iOS" name="operatingSystem" id="apple" /><label for="apple">iSO</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
-                                    <input type="checkbox" value="Apple" name="operatingSystem" id="apple" /><label for="apple">Apple</label>
+                                    <input type="checkbox" value="Logitech" name="operatingSystem" id="logitech" /><label for="logitech">Logitech</label>
                                 </li>
                                 <li class="input-container d-flex align-items-center gap-2 filter-item">
                                     <input type="checkbox" value="Windows" name="operatingSystem" id="windows" /><label for="windows">Windows</label>
@@ -179,9 +189,9 @@ if (!empty($_GET)) {
                         </div>
                     </div>
                 </div>
-                <div class="col-10">
-                    <div class="row position-relative mb-5">
-                        <div class="col">
+                <div class="col-12 col-sm-10">
+                    <div class="row position-relative mb-5 d-none d-sm-block">
+                        <div class="col d-none d-sm-flex">
                             <div class="page-product-desc d-flex align-items-center">
                                 <p class="m-0">Items <span>1</span>-<span>35</span> of <span>61</span></p>
                             </div>
@@ -203,44 +213,54 @@ if (!empty($_GET)) {
                         </div>
                     </div>
                     <div class="row">
-                        <?php foreach ($allProducts as $product) : ?>
-                            <div class="mb-2 col col-sm-6 col-lg-4 col-xl-3">
-                                <div class="card-product-detail" data-index="<?php echo $product->id; ?>">
-                                    <div class="item-status d-flex">
-                                        <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                        <span class="true">&nbsp;in stock</span>
-                                    </div>
-                                    <div class="image-container">
-                                        <img class="object-fit-contain" src="<?php echo $product->imageUrl; ?>" alt="cpu" />
-                                    </div>
-                                    <div class="evaluation d-flex align-items-center">
-                                        <div class="star-check d-flex">
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star checked"></span>
-                                            <span class="fa fa-star"></span>
+                        <?php if (!empty($allProducts)) : ?>
+                            <?php foreach ($allProducts as $product) : ?>
+                                <div class="mb-2 col-6 col-lg-4 col-xl-3">
+                                    <div class="card-product-detail" data-index="<?php echo $product->id; ?>">
+                                        <div class="item-status d-flex">
+                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
+                                            <span class="true">&nbsp;in stock</span>
                                         </div>
-                                        <div class="star-review">
-                                            <span>Reviews (4)</span>
+                                        <div class="image-container">
+                                            <img class="object-fit-contain" src="<?php echo $product->imageUrl; ?>" alt="cpu" />
                                         </div>
-                                    </div>
-                                    <div class="title-container">
-                                        <p class="product-title">
-                                            <?php echo $product->description; ?>
-                                        </p>
-                                    </div>
-                                    <div class="price-container d-flex flex-column align-items-start">
-                                        <span class="old-price">$<?php echo $product->price; ?></span>
-                                        <span class="new-price">$<?php echo $product->price; ?></span>
+                                        <div class="evaluation d-flex align-items-center">
+                                            <div class="star-check d-flex">
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star checked"></span>
+                                                <span class="fa fa-star"></span>
+                                            </div>
+                                            <div class="star-review">
+                                                <span>Reviews (4)</span>
+                                            </div>
+                                        </div>
+                                        <div class="title-container">
+                                            <p class="product-title">
+                                                <?php echo $product->description; ?>
+                                            </p>
+                                        </div>
+                                        <div class="price-container d-flex flex-column align-items-start">
+                                            <span class="old-price">$<?php echo $product->price; ?></span>
+                                            <span class="new-price">$<?php echo $product->price; ?></span>
+                                        </div>
                                     </div>
                                 </div>
+                            <?php endforeach; ?>
+                        <?php else : ?>
+                            <div class="search-no-result d-flex flex-column justify-content-center align-items-center">
+                                <h3 class="m-0 search-no-result__title">Search No Result</h3>
+                                <p class="m-0 search-no-result__desc">We're sorry. We cannot find any matches for your search term.</p>
+                                <i class="search-no-result__icon fa-solid fa-magnifying-glass"></i>
                             </div>
-                        <?php endforeach; ?>
+                        <?php endif; ?>
                     </div>
-                    <div class="row">
-                        <div id="pagination" class="py-3"></div>
-                    </div>
+                    <?php if (!empty($allProducts)) : ?>
+                        <div class="row">
+                            <div id="pagination" class="py-3"></div>
+                        </div>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -309,16 +329,26 @@ if (!empty($_GET)) {
     // Define default selectors params
     const checkParams = ['operatingSystem', 'ram', 'screen'];
 
+    // select input search
+    const inputSearch = document.getElementById("input-search");
+
     // Select all elements with class "input-container"
     const inputContainers = document.querySelectorAll(".input-container");
 
     // Select all input with type checkbox
     const inputChecks = document.querySelectorAll("input[type=checkbox]");
 
-    // Construct the base URL
-    const baseUrl = "http://localhost/se-php/product/";
+    // Select button filter price
+    const btnFilterPrice = document.querySelector(".price-filter__btn-price");
 
-    // Function to convert object to query string
+    // Min / Max input filter price
+    const inputMinPrice = document.querySelector("#min-number");
+    const inputMaxPrice = document.querySelector("#max-number");
+
+    // Construct the base URL
+    const baseUrl = "<?php echo APP_URL; ?>/product/";
+
+    // Function to convert object to filtered query string
     function objectToQueryString(obj) {
         const queryString = Object.keys(obj)
             .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(obj[key])}`)
@@ -342,18 +372,29 @@ if (!empty($_GET)) {
 
         // Split the query string by "&" to get individual key-value pairs
         const pairs = strSelector.split("&");
+        // console.log(`PAIR::${pairs}`)
 
         // Iterate over each key-value pair
         pairs.forEach((pair) => {
             // Split each pair by "=" to separate key and value
             const [key, value] = pair.split("=");
+            // console.log(`KEY::${key} VALUE::${value}`)
 
             // Decode URI component to handle special characters properly
-            // Initialize an array for each key and store the value in it
+            // Initialize an array for each key and store the value in selectors array
             selector[key] = new Array(decodeURIComponent(value))[0].split(",");
         });
 
-        // Output the selector object after initializing it with query parameters
+        console.log(selector)
+
+        if (selector.hasOwnProperty("price")) {
+            inputMinPrice.value = selector.price[0];
+            inputMaxPrice.value = selector.price[1];
+        }
+
+        // inputSearch.value = selector.search[0] ? selector.search[0] : "";
+
+        // Activate input elements depend on query URL string
         inputChecks.forEach(inputCheck => {
             Object.keys(selector).forEach(key => {
                 if (checkParams.includes(String(key)) && selector[key].includes(inputCheck.value)) {
@@ -363,9 +404,38 @@ if (!empty($_GET)) {
         })
     }
 
-    /** Fix refresh page  */
+    // Filter with price
+    btnFilterPrice.addEventListener("click", (event) => {
+        event.preventDefault();
+        const min = parseInt(inputMinPrice.value);
+        const max = parseInt(inputMaxPrice.value);
+
+        if (isNaN(min) || isNaN(max)) {
+            return;
+        }
+
+        if (min > max) {
+            if (selector.hasOwnProperty('price')) {
+                delete selector.price;
+                navigateTo(baseUrl, selector);
+            }
+            return;
+        }
+
+        if (min === 0 && max === 0) {
+            if (selector.hasOwnProperty('price')) {
+                delete selector.price;
+                navigateTo(baseUrl, selector);
+            }
+            return;
+        }
+
+        selector['price'] = [min, max];
+        navigateTo(baseUrl, selector);
+    })
 
     // Add click event listener to each input container
+    // Create query URL string and navigate to output
     inputContainers.forEach((inputContainer) => {
         inputContainer.addEventListener("click", (event) => {
             // Check if the clicked element is a checkbox

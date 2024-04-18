@@ -1,14 +1,15 @@
 <?php
 require_once dirname(__DIR__) . "/services/message.php";
 require_once dirname(__DIR__) . "/services/datafetcher.php";
+require_once dirname(dirname(__DIR__)) . "/inc/utils.php";
+
 class Product extends DataFetcher
 {
-
     public $id;
     public $categoryId;
     public $name;
-    public $description;
     public $imageUrl;
+    public $description;
     public $screen;
     public $operatingSystem;
     public $processor;
@@ -22,8 +23,158 @@ class Product extends DataFetcher
     public $createdAt;
     public $updatedAt;
 
-    public function __construct()
+    public function __construct(
+        $fields = []
+    ) {
+        $fields = Product::removeBannedFields($fields);
+        $fields = deleteFieldsHasEmptyString($fields);
+        foreach ($fields as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->{$key} = $value;
+            }
+        }
+    }
+
+    private static function removeBannedFields($fields)
     {
+        $copiedFields = $fields;
+        $bannedFields = ['id', 'createdAt', 'updatedAt'];
+        foreach ($bannedFields as $bannedField) {
+            if (array_key_exists($bannedField, $copiedFields)) {
+                unset($copiedFields[$bannedField]);
+            }
+        }
+        return $copiedFields;
+    }
+
+    private static function validateCreate($formData)
+    {
+        $result = Validator::required($formData, [
+            'categoryId',
+            'name',
+            'imageUrl',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::url($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateUpdate($formData)
+    {
+        $result = Validator::integer($formData, [
+            'categoryId',
+            'ram',
+            'storageCapacity',
+            'batteryCapacity',
+            'price',
+            'stockQuantity',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::float($formData, [
+            'weight',
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::url($formData, [
+            'imageUrl'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateGetById($formData)
+    {
+        $result = Validator::required($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateDelete($formData)
+    {
+        $result = Validator::required($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::integer($formData, [
+            'id'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
+    }
+
+    private static function validateDeleteByIds($formData)
+    {
+        $result = Validator::required($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        $result = Validator::array($formData, [
+            'ids'
+        ]);
+        if (!$result['status']) {
+            return Message::message(false, $result['message']);
+        }
+
+        return Message::message(true, 'Validate successfully');
     }
 
     public static function paginationQuery($query, $limit, $offset)
@@ -38,28 +189,216 @@ class Product extends DataFetcher
         return $query;
     }
 
-    public static function createProduct($conn, $userId)
+    public function createProduct($conn)
     {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+        try {
+            // $validateResult = Product::validateCreate(get_object_vars($this));
+            // if (!$validateResult['status']) {
+            //     return Message::message(false, $validateResult['message']);
+            // }
+
+            $insert = "
+                INSERT INTO `product`(`categoryId`, `name`, `description`, `imageUrl`, `screen`, `operatingSystem`, `processor`, `ram`, `storageCapacity`, `weight`, `batteryCapacity`, `color`, `price`, `stockQuantity`)
+                VALUES (:categoryId, :name, :description, :imageUrl, :screen, :operatingSystem, :processor, :ram, :storageCapacity, :weight, :batteryCapacity, :color, :price, :stockQuantity)
+            ";
+            $stmt = $conn->prepare($insert);
+            $status = $stmt->execute([
+                ':categoryId' => $this->categoryId,
+                ':name' => $this->name,
+                ':description' => $this->description,
+                ':imageUrl' => $this->imageUrl,
+                ':screen' => $this->screen,
+                ':operatingSystem' => $this->operatingSystem,
+                ':processor' => $this->processor,
+                ':ram' => $this->ram,
+                ':storageCapacity' => $this->storageCapacity,
+                ':weight' => $this->weight,
+                ':batteryCapacity' => $this->batteryCapacity,
+                ':color' => $this->color,
+                ':price' => $this->price,
+                ':stockQuantity' => $this->stockQuantity,
+            ]);
+
+            if (!$status) {
+                throw new InvalidArgumentException('Add product failed');
+            }
+
+            return Message::messageData(true, 'Add product successfully', [
+                'id' => $conn->lastInsertId()
+            ]);
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
-    public static function updateProduct($conn, $userId)
-    {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+    public static function updateProduct(
+        $conn,
+        $id,
+        $dataToUpdate = []
+    ) {
+        try {
+            // normalize before update
+            $dataToUpdate = array_map(function ($value) {
+                return $value === '' ? null : $value;
+            }, $dataToUpdate);
+
+            $validateResult = Product::validateUpdate($dataToUpdate);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            // create dynamic update statement
+            $sql = "UPDATE `product` SET ";
+            foreach ($dataToUpdate as $key => $value) {
+                if ($value === null) {
+                    $sql .= "`$key` = NULL, ";
+                } else {
+                    $sql .= "`$key` = '$value', ";
+                }
+            }
+            $sql = rtrim($sql, ', ');
+            $sql .= " WHERE id = $id";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Product');
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update product successfully');
+            }
+            return Message::message(false, 'Update product failed');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
     }
 
-    public static function deleteProduct($conn, $userId)
+
+
+    public static function updateProductByCategoryId(
+        $conn,
+        $categoryId,
+        $dataToUpdate = []
+    ) {
+        try {
+            // normalize before update
+            $dataToUpdate = array_map(function ($value) {
+                return $value === '' ? null : $value;
+            }, $dataToUpdate);
+
+            $validateResult = Product::validateUpdate($dataToUpdate);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            // create dynamic update statement
+            $sql = "UPDATE `product` SET ";
+            foreach ($dataToUpdate as $key => $value) {
+                if ($value === null) {
+                    $sql .= "`$key` = NULL, ";
+                } else {
+                    $sql .= "`$key` = '$value', ";
+                }
+            }
+            $sql = rtrim($sql, ', ');
+            $sql .= " WHERE categoryId = $categoryId";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->setFetchMode(PDO::FETCH_CLASS, 'Product');
+            if ($stmt->execute()) {
+                return Message::message(true, 'Update product successfully');
+            }
+            return Message::message(false, 'Update product failed');
+        } catch (Exception $e) {
+            return Message::message(false, $e->getMessage());
+        }
+    }
+
+    public static function updateStockQuantity($conn, $productId, $stockQuantity)
     {
-        /**
-         * Write your code here
-         * Validate admin
-         */
+        try {
+            $sql = "UPDATE `product` SET `stockQuantity` = :stockQuantity WHERE id = :productId";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(":stockQuantity", $stockQuantity, PDO::PARAM_INT);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    public static function isProductOutOfStock($conn, $productId, $quantity)
+    {
+        try {
+            $query = "SELECT stockQuantity FROM product WHERE id = :productId";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            $product = $stmt->fetch();
+            if (!$product) {
+                return true;
+            }
+            if ($product->stockQuantity < $quantity) {
+                return true;
+            }
+            return false;
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    public static function deleteProduct($conn, $id)
+    {
+        try {
+            $validateResult = Product::validateDelete(['id' => $id]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $query = "DELETE FROM product WHERE id = :id";
+
+            $stmt = $conn->prepare($query);
+            $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete product successfully');
+            }
+            return Message::messageData(true, 'Delete product failed');
+        } catch (Exception $e) {
+            if (preg_match('/\b\d{4}\b/', $e->getMessage(), $matches)) {
+                $error_code = $matches[0];
+                if ($error_code === '1451') {
+                    return Message::message(false, 'This product is already in the customer\'s order');
+                }
+            }
+            return Message::message(false, 'Something went wrong');
+        }
+    }
+
+    public static function deleteByIds($conn, $ids)
+    {
+        try {
+            $validateResult = Product::validateDeleteByIds(['ids' => $ids]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $stmt = getDeleteByIdsSQLPrepareStatement($conn, TABLES['PRODUCT'], $ids);
+            if ($stmt->execute()) {
+                return Message::message(true, 'Delete product by ids successfully');
+            }
+            return Message::message(false, 'Something went wrong');
+        } catch (Exception $e) {
+            if (preg_match('/\b\d{4}\b/', $e->getMessage(), $matches)) {
+                $error_code = $matches[0];
+                if ($error_code === '1451') {
+                    return Message::message(false, 'This products is already in the customer\'s order');
+                }
+            }
+            return Message::message(false, 'Something went wrong');
+        }
     }
 
     /**
@@ -82,7 +421,7 @@ class Product extends DataFetcher
                 $stmt->bindParam(":offset", $offset, PDO::PARAM_INT);
             }
 
-            $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
             if (!$stmt->execute()) {
                 throw new PDOException($stmt->errorInfo());
             }
@@ -103,7 +442,7 @@ class Product extends DataFetcher
             $query = "SELECT * FROM product WHERE id = :productId";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(":productId", $productId, PDO::PARAM_INT);
-            $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+            $stmt->setFetchMode(PDO::FETCH_INTO, new Product());
             if (!$stmt->execute()) {
                 throw new PDOException($stmt->errorInfo());
             }
@@ -117,15 +456,323 @@ class Product extends DataFetcher
      * @param mixed $conn
      * @param string | int $categoryId
      */
-    public static function getProductsByCategory($conn, $queryData = [])
+    public static function getAllProductsByCondition($conn, $queryData = [])
     {
         try {
             $table = "product";
-            $dataFetcher = DataFetcher::getInstance($conn);
-            $products = $dataFetcher->fetchData($table, $queryData, "Product");
+            $dataFetcher = new DataFetcher($conn);
+            $products = $dataFetcher->fetchData($table, $queryData);
             return $products;
         } catch (PDOException $e) {
             return Message::message(false, "Can not get products by category: " . $e->getMessage());
+        }
+    }
+
+    public static function getAllProductsForAdmin(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]],
+        $pagination = [],
+        $sort =  ['sortBy' => 'createdAt', 'order' => 'ASC']
+    ) {
+        try {
+            $projection =  [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'name'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'description'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'imageUrl'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'screen'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'operatingSystem'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'processor'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'ram'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'storageCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'weight'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'batteryCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'color'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'price'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'stockQuantity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'updatedAt'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'id',
+                    'as' => 'categoryId'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'name',
+                    'as' => 'categoryName'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['PRODUCT'],
+                    TABLES['CATEGORY'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['PRODUCT'],
+                        'table2' => TABLES['CATEGORY'],
+                        'column1' => 'categoryId',
+                        'column2' => 'id',
+                        'type' => 'LEFT JOIN'
+                    ]
+                ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+            $sort = [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => $sort['sortBy'],
+                    'order' => $sort['order']
+                ]
+            ];
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+                $pagination,
+                $sort
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return $stmt->fetchAll();
+        } catch (Exception $e) {
+            return Message::message(false, 'Get all products failed');
+        }
+    }
+
+    public static function getProductByIdForAdmin($conn, $id)
+    {
+        try {
+            $validateResult = Product::validateDelete(['id' => $id]);
+            if (!$validateResult['status']) {
+                return Message::message(false, $validateResult['message']);
+            }
+
+            $projection =  [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'name'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'description'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'imageUrl'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'screen'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'operatingSystem'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'processor'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'ram'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'storageCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'weight'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'batteryCapacity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'color'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'price'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'stockQuantity'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'createdAt'
+                ],
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'updatedAt'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'id',
+                    'as' => 'categoryId'
+                ],
+                [
+                    'table' => TABLES['CATEGORY'],
+                    'column' => 'name',
+                    'as' => 'categoryName'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['PRODUCT'],
+                    TABLES['CATEGORY'],
+                ],
+                'on' => [
+                    [
+                        'table1' => TABLES['PRODUCT'],
+                        'table2' => TABLES['CATEGORY'],
+                        'column1' => 'categoryId',
+                        'column2' => 'id',
+                        'type' => 'LEFT JOIN'
+                    ]
+                ]
+            ];
+            $selection = [
+                [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => 'id',
+                    'value' => $id,
+                ]
+            ];
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection,
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return $stmt->fetch();
+        } catch (Exception $e) {
+            return Message::message(false, 'Get product by id failed');
+        }
+    }
+
+    public static function count(
+        $conn,
+        $filter = [['field' => 'id', 'value' => '', 'like' => false]]
+    ) {
+        try {
+            $projection =  [
+                [
+                    'aggregate' => 'COUNT',
+                    'expression' => '*',
+                    'as' => 'total'
+                ],
+            ];
+            $join =  [
+                'tables' => [
+                    TABLES['PRODUCT']
+                ]
+            ];
+            $selection = array_map(function ($filterItem) {
+                $selectionItem = [
+                    'table' => TABLES['PRODUCT'],
+                    'column' => $filterItem['field'],
+                    'value' => $filterItem['value']
+                ];
+                if (isset($filterItem['like'])) {
+                    $selectionItem['like'] = $filterItem['like'];
+                }
+                return $selectionItem;
+            }, $filter);
+
+            $stmt = getQuerySQLPrepareStatement(
+                $conn,
+                $projection,
+                $join,
+                $selection
+            );
+
+            $stmt->setFetchMode(PDO::FETCH_OBJ);
+            if (!$stmt->execute()) {
+                throw new PDOException('Cannot execute query');
+            }
+            return Message::messageData(true, 'Count products successfully', [
+                'total' => $stmt->fetch()->total
+            ]);
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+            return Message::message(false, 'Something went wrong');
         }
     }
 }

@@ -1,6 +1,77 @@
 <?php
 require_once dirname(__DIR__) . "/init.php";
-define("APP_URL", "http://localhost/se-php");
+?>
+
+<?php
+/**
+ * Handle Google OAuth
+ */
+
+if (isset($_GET['code'])) {
+    $gClient->fetchAccessTokenWithAuthCode($_GET['code']);
+    $_SESSION['token'] = $gClient->getAccessToken();
+    header('Location: ' . filter_var(GOOGLE_REDIRECT_URL, FILTER_SANITIZE_URL));
+}
+
+if (isset($_SESSION['token'])) {
+    $gClient->setAccessToken($_SESSION['token']);
+}
+
+if ($gClient->getAccessToken()) {
+    if (!isset($conn))
+        $conn = require_once dirname(__DIR__) . "/db.php";
+    // Get user profile data from google 
+    $gpUserProfile = $google_oauthV2->userinfo->get();
+
+    // Initialize google data
+    $gpUserData = array();
+    $gpUserData['oauthId'] = !empty($gpUserProfile['id']) ? $gpUserProfile['id'] : '';
+    $gpUserData['firstName'] = !empty($gpUserProfile['givenName']) ? $gpUserProfile['givenName'] : '';
+    $gpUserData['lastName'] = !empty($gpUserProfile['familyName']) ? $gpUserProfile['familyName'] : '';
+    $gpUserData['email'] = !empty($gpUserProfile['email']) ? $gpUserProfile['email'] : '';
+    $gpUserData['username'] = !empty($gpUserProfile['email']) ? $gpUserProfile['email'] : '';
+    $gpUserData['imageUrl'] = !empty($gpUserProfile['picture']) ? $gpUserProfile['picture'] : '';
+
+    // Insert or update user data to the database 
+    $gpUserData['oauthProvider'] = 'google';
+
+    $userData = User::oAuthenticate($conn, $gpUserData);
+    // If user is no longer support, no effect of google auth in this website
+    if ($userData['status']) {
+        $user = $userData['data'];
+        Auth::login();
+        $_SESSION['username'] = $user->username;
+        $_SESSION['firstName'] = $user->firstName;
+        $_SESSION['lastName'] = $user->lastName;
+        $_SESSION['email'] = $user->email;
+        $_SESSION['userId'] = $user->id;
+        $_SESSION['image'] = $user->imageUrl;
+        $_SESSION['roleId'] = $user->roleId;
+        if ($user->phoneNumber !== NULL) {
+            $_SESSION['phoneNumber'] = $user->phoneNumber;
+        }
+        if ($user->address !== NULL) {
+            $_SESSION['address'] = $user->address;
+        }
+    }
+}
+?>
+
+<?php
+// set default value for cart quantity
+$cartQuantity = 0;
+if (Auth::isLoggedIn()) {
+    if (!isset($conn))
+        $conn = require_once dirname(__DIR__) . '/db.php';
+    $cartDetail = Cart::getCartDetailByUserId($conn, $_SESSION['userId']);
+    $cartQuantity = count($cartDetail['data']);
+}
+
+if (!isset($conn))
+    $conn = require_once dirname(__DIR__) . '/db.php';
+$outstandingProducts = Product::getAllProducts($conn, 4, 120);
+
+// print_r($outstandingProducts);
 ?>
 <html lang="en">
 
@@ -13,14 +84,22 @@ define("APP_URL", "http://localhost/se-php");
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/css/main.css" />
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/bootstrap/css/bootstrap.css" />
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery-migrate.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/additional-methods.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="<?php echo APP_URL; ?>/assets/fontawesome/css/all.min.css" />
-    <script src="<?php echo APP_URL; ?>/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" type="text/css" href="<?php echo APP_URL; ?>/assets/slick/slick.css" />
     <!-- Add the new slick-theme.css if you want the default styling -->
     <link rel="stylesheet" type="text/css" href="<?php echo APP_URL; ?>/assets/slick/slick-theme.css" />
-    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/jquery-migrate.min.js"></script>
     <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/slick/slick.min.js"></script>
+    <script type="text/javascript" src="<?php echo APP_URL; ?>/assets/jquery/popper.min.js"></script>
+
+    <link href="<?php echo APP_URL; ?>/assets/toastr/toastr.min.css" rel="stylesheet" />
+    <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.min.js"></script>
+    <script src="<?php echo APP_URL; ?>/assets/toastr/toastr.config.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=<?php echo PAYPAL_SANDBOX ? PAYPAL_SANDBOX_CLIENT_ID : PAYPAL_PROD_CLIENT_ID; ?>&currency=<?php echo CURRENCY; ?>"></script>
 </head>
 
 <body>
@@ -46,10 +125,10 @@ define("APP_URL", "http://localhost/se-php");
                             </div>
                         </div>
                         <div class="col-xl-3 col-md-6 col-sm-6">
-                            <div class="top-right-header d-flex justify-content-end">
+                            <div class="top-right-header d-flex justify-content-end align-items-center gap-2">
                                 <div class="top-right-header__header-contact header-contact">
-                                    <div class="header-contact__phone-number">
-                                        <a class="phone-number text-decoration-none" href="tel:+(00) 1234 5678">Call Us: (00) 1234 5678</a>
+                                    <div class="header-contact__phone-number d-flex align-items-center">
+                                        <a class="phone-number text-decoration-none d-inline-block" href="tel:+(00) 1234 5678">Call Us: (00) 1234 5678</a>
                                     </div>
                                     <div class="header-contact__social-media">
                                         <ul class="social-media-list list-unstyled m-0">
@@ -66,6 +145,13 @@ define("APP_URL", "http://localhost/se-php");
                                         </ul>
                                     </div>
                                 </div>
+                                <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === ADMIN) : ?>
+                                    <div class="top-right-header__header-go-to-admin">
+                                        <a style="font-size: 12px; font-weight: 500; padding: 3px 10px" class=" btn btn-primary" href="<?php echo APP_URL . '/admin/' ?>">
+                                            Admin
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
@@ -74,15 +160,15 @@ define("APP_URL", "http://localhost/se-php");
         </div>
         <div class="main-header">
             <div class="container">
-                <div class="row">
-                    <div class="col-sm-2 col-lg-5 col-xl-6" id="main-header-menu">
+                <div class="row align-items-center">
+                    <div class="d-none d-sm-block col-2 col-lg-5 col-xl-6" id="main-header-menu">
                         <div class="main-header__menu d-flex align-items-center justify-content-between">
-                            <nav class="navbar navbar-expand-lg navbar-light bg-transparent w-100">
+                            <nav class="navbar navbar-header navbar-expand-lg navbar-light bg-white w-100">
                                 <div class="container-fluid p-0">
-                                    <a class="navbar-brand d-sm-none d-xl-block" href="#">
+                                    <a class="d-none d-lg-block navbar-brand d-sm-none d-xl-block" href="<?php echo APP_URL; ?>">
                                         <img src="<?php echo APP_URL; ?>/assets/img/logo.svg" alt="logo" />
                                     </a>
-                                    <button class="navbar-toggler mb-3" id="button-header-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                    <button class="navbar-toggler" id="button-header-collapse" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                                         <span class="navbar-toggler-icon"></span>
                                     </button>
                                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -96,162 +182,69 @@ define("APP_URL", "http://localhost/se-php");
                                                         <div class="list-item">
                                                             <ul class="list-item__detail list-unstyled text-start">
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=1">Smartphone</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=2">Laptop</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=3">Accessories</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=3">Accessories</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=4">Studio</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=4">Studio</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=5">Camera</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=5">Camera</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=6">PC, Monitor</a>
                                                                 </li>
                                                                 <li>
-                                                                    <a class="bg-transparent text-black text-decoration-none" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
+                                                                    <a class="bg-transparent text-black text-decoration-none d-block w-100" href="<?php echo APP_URL; ?>/product/?categoryId=7">Television</a>
                                                                 </li>
                                                             </ul>
                                                         </div>
                                                         <div class="list-item-detail">
                                                             <ul id="main-header__list-item-detail" class="list-item-detail__content list-unstyled d-flex flex-row gap-2">
-                                                                <li>
-                                                                    <div class="card-product-detail">
-                                                                        <div class="item-status d-flex">
-                                                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                                                            <span class="true">&nbsp;in stock</span>
-                                                                        </div>
-                                                                        <div class="image-container">
-                                                                            <img class="object-fit-contain" src="<?php echo APP_URL; ?>/assets/img/laptop_2.png" alt="cpu" />
-                                                                        </div>
-                                                                        <div class="evaluation d-flex align-items-center">
-                                                                            <div class="star-check d-flex">
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star"></span>
+                                                                <?php foreach ($outstandingProducts as $product) : ?>
+                                                                    <li>
+                                                                        <div class="card-product-detail">
+                                                                            <div class="item-status d-flex">
+                                                                                <?php if ($product->stockQuantity > 0) : ?>
+                                                                                    <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="status-product" />
+                                                                                    <span class="true">&nbsp;in stock</span>
+                                                                                <?php else : ?>
+                                                                                    <img src="assets/img/call.svg" alt="status-product" />
+                                                                                    <span class="false">&nbsp;check availability</span>
+                                                                                <?php endif; ?>
                                                                             </div>
-                                                                            <div class="star-review">
-                                                                                <span>Reviews (4)</span>
+                                                                            <div class="image-container">
+                                                                                <img class="object-fit-contain" src="<?php echo $product->imageUrl; ?>" alt="cpu" />
                                                                             </div>
-                                                                        </div>
-                                                                        <div class="title-container">
-                                                                            <p class="product-title">
-                                                                                EX DISPLAY : MSI Pro 16 Flex-036AU
-                                                                                15.6 MULTITOUCH All-In-On...
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="price-container d-flex flex-column align-items-start">
-                                                                            <span class="old-price">$499.00</span>
-                                                                            <span class="new-price">$499.00</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="card-product-detail">
-                                                                        <div class="item-status d-flex">
-                                                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                                                            <span class="true">&nbsp;in stock</span>
-                                                                        </div>
-                                                                        <div class="image-container">
-                                                                            <img class="object-fit-contain" src="<?php echo APP_URL; ?>/assets/img/cpu_1.png" alt="cpu" />
-                                                                        </div>
-                                                                        <div class="evaluation d-flex align-items-center">
-                                                                            <div class="star-check d-flex">
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star"></span>
+                                                                            <div class="evaluation d-flex align-items-center">
+                                                                                <div class="star-check d-flex">
+                                                                                    <span class="fa fa-star checked"></span>
+                                                                                    <span class="fa fa-star checked"></span>
+                                                                                    <span class="fa fa-star checked"></span>
+                                                                                    <span class="fa fa-star checked"></span>
+                                                                                    <span class="fa fa-star"></span>
+                                                                                </div>
+                                                                                <div class="star-review">
+                                                                                    <span>Reviews (4)</span>
+                                                                                </div>
                                                                             </div>
-                                                                            <div class="star-review">
-                                                                                <span>Reviews (4)</span>
+                                                                            <div class="title-container">
+                                                                                <p class="product-title">
+                                                                                    <?php echo $product->name; ?>
+                                                                                </p>
+                                                                            </div>
+                                                                            <div class="price-container d-flex flex-column align-items-start">
+                                                                                <span class="old-price">$<?php echo $product->price; ?></span>
+                                                                                <span class="new-price">$<?php echo $product->price; ?></span>
                                                                             </div>
                                                                         </div>
-                                                                        <div class="title-container">
-                                                                            <p class="product-title">
-                                                                                EX DISPLAY : MSI Pro 16 Flex-036AU
-                                                                                15.6 MULTITOUCH All-In-On...
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="price-container d-flex flex-column align-items-start">
-                                                                            <span class="old-price">$499.00</span>
-                                                                            <span class="new-price">$499.00</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="card-product-detail">
-                                                                        <div class="item-status d-flex">
-                                                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                                                            <span class="true">&nbsp;in stock</span>
-                                                                        </div>
-                                                                        <div class="image-container">
-                                                                            <img class="object-fit-contain" src="<?php echo APP_URL; ?>/assets/img/custom-build_1.jpg" alt="cpu" />
-                                                                        </div>
-                                                                        <div class="evaluation d-flex align-items-center">
-                                                                            <div class="star-check d-flex">
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star"></span>
-                                                                            </div>
-                                                                            <div class="star-review">
-                                                                                <span>Reviews (4)</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="title-container">
-                                                                            <p class="product-title">
-                                                                                EX DISPLAY : MSI Pro 16 Flex-036AU
-                                                                                15.6 MULTITOUCH All-In-On...
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="price-container d-flex flex-column align-items-start">
-                                                                            <span class="old-price">$499.00</span>
-                                                                            <span class="new-price">$499.00</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
-                                                                <li>
-                                                                    <div class="card-product-detail">
-                                                                        <div class="item-status d-flex">
-                                                                            <img src="<?php echo APP_URL; ?>/assets/img/stock.svg" alt="in-stock" />
-                                                                            <span class="true">&nbsp;in stock</span>
-                                                                        </div>
-                                                                        <div class="image-container">
-                                                                            <img class="object-fit-contain" src="<?php echo APP_URL; ?>/assets/img/desk_3.png" alt="cpu" />
-                                                                        </div>
-                                                                        <div class="evaluation d-flex align-items-center">
-                                                                            <div class="star-check d-flex">
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star checked"></span>
-                                                                                <span class="fa fa-star"></span>
-                                                                            </div>
-                                                                            <div class="star-review">
-                                                                                <span>Reviews (4)</span>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="title-container">
-                                                                            <p class="product-title">
-                                                                                EX DISPLAY : MSI Pro 16 Flex-036AU
-                                                                                15.6 MULTITOUCH All-In-On...
-                                                                            </p>
-                                                                        </div>
-                                                                        <div class="price-container d-flex flex-column align-items-start">
-                                                                            <span class="old-price">$499.00</span>
-                                                                            <span class="new-price">$499.00</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </li>
+                                                                    </li>
+                                                                <?php endforeach; ?>
                                                             </ul>
                                                         </div>
                                                         <div class="list-brand">
@@ -315,111 +308,94 @@ define("APP_URL", "http://localhost/se-php");
                         </div>
                     </div>
                     <div class="col" id="main-header-mechanism">
-                        <div class="main-header__mechanism h-100 d-flex gap-3 align-items-center justify-content-end">
+                        <div class="main-header__mechanism h-100 d-flex gap-4 align-items-center justify-content-end">
                             <div class="search-bar-container flex-grow-1">
-                                <form action="" class="search" id="search-bar">
-                                    <input type="text" placeholder="Type something..." name="search" class="search__input" />
-
-                                    <div class="search__button" id="search-button">
-                                        <i class="fa-solid fa-magnifying-glass search__icon"></i>
-                                        <i class="fa-solid fa-xmark search__close"></i>
-                                    </div>
+                                <form action="" id="form-search" method="GET" class="input-group d-flex">
+                                    <input type="search" name="search" id="input-search" class="form-control" style="border-radius: 0.375rem;">
+                                    <button type="submit" class="btn btn-primary" id="search-submit" style="position: absolute; right: 0; top: 0; z-index: 9999; bottom: 0;">
+                                        <i class="fas fa-search"></i>
+                                    </button>
                                 </form>
+                                <div class="search-box d-none" id="search-box">
+                                </div>
+                                <div class="search-box-layout d-none" id="search-box-layout"></div>
                             </div>
 
-                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-3">
-                                <li class="cart-component-dropdown">
-                                    <div class="dropdown dropdown-cart">
-                                        <button class="btn dropdown-toggle dropdown-cart-btn" id="dropdown-cart-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <ul class="main-header__mechanism--button d-flex list-unstyled m-0 gap-4">
+                                <li class="cart-component">
+                                    <div class="cart-container d-flex flex-column">
+                                        <button class="btn cart-btn" id="cart-btn" type="button">
                                             <img src="<?php echo APP_URL; ?>/assets/img/cart-btn.svg" alt="cart-btn" />
-                                            <span class="dropdown-cart-btn__count"> 0 </span>
+                                            <span class="cart-btn__count"> <?php echo $cartQuantity; ?></span>
                                         </button>
-                                        <ul class="dropdown-menu" id="dropdown-menu-cart">
-                                            <li class="cart-intro-container">
-                                                <div class="cart-intro d-flex flex-column justify-content-center align-items-center">
-                                                    <h6 class="cart-intro__cart-title">My Cart</h6>
-                                                    <p class="cart_intro__cart-info">2 items in cart</p>
-                                                    <button class="cart-intro__cart-view-btn">
-                                                        <span class="cart-intro__cart-view-btn__title">View or Edit Your Cart</span>
-                                                    </button>
-                                                </div>
-                                            </li>
-                                            <!-- Cart Product -->
-                                            <li class="cart-product-container">
-                                                <div class="cart-product d-flex justify-content-center align-items-center">
-                                                    <div class="cart-product__image d-flex">
-                                                        <div class="cart-product-quantity-container d-flex align-items-center">
-                                                            <span class="cart-product__quantity">1</span>
-                                                            <span class="cart-product__sign">x</span>
-                                                        </div>
-                                                        <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="cart-product" class="cart-product__img object-fit-contain" />
-                                                    </div>
-                                                    <p class="cart-product__desc m-0">
-                                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH
-                                                        All-In-On...
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <li class="cart-product-container">
-                                                <div class="cart-product d-flex justify-content-center align-items-center">
-                                                    <div class="cart-product__image d-flex">
-                                                        <div class="cart-product-quantity-container d-flex align-items-center">
-                                                            <span class="cart-product__quantity">1</span>
-                                                            <span class="cart-product__sign">x</span>
-                                                        </div>
-                                                        <img src="<?php echo APP_URL; ?>/assets/img/cpu.png" alt="cart-product" class="cart-product__img object-fit-contain" />
-                                                    </div>
-                                                    <p class="cart-product__desc m-0">
-                                                        EX DISPLAY : MSI Pro 16 Flex-036AU 15.6 MULTITOUCH
-                                                        All-In-On...
-                                                    </p>
-                                                </div>
-                                            </li>
-                                            <!-- End Cart Product -->
-                                            <li class="cart-payment-container">
-                                                <div class="cart-payment d-flex gap-2 flex-column justify-content-center align-items-center">
-                                                    <div class="payment__subtotal">
-                                                        <span class="payment__subtotal__title">Subtotal:</span>
-                                                        <span class="payment__subtotal__number">$499.00</span>
-                                                    </div>
-                                                    <div class="payment__btn">
-                                                        <button class="payment__btn__checkout">
-                                                            <span class="payment__btn__checkout__title">
-                                                                Go to Checkout
-                                                            </span>
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </ul>
+                                        <span class="header-control-desc">Cart</span>
                                     </div>
                                 </li>
-                                <li class="user-component-dropdown">
+                                <li class="user-component-dropdown d-flex align-items-center">
                                     <div class="dropdown dropdown-user">
-                                        <button class="btn dropdown-toggle dropdown-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <?php if (isset($_SESSION['image'])) : ?>
-                                                <img src="<?php echo $_SESSION['image']; ?>" alt="user" class="user__dropdown__image object-fit-contain" />
-                                            <?php else : ?>
-                                                <i class="fa-sharp fa-solid fa-user-secret"></i>
-                                            <?php endif; ?>
-                                        </button>
-                                        <ul class="dropdown-menu" id="dropdown-menu-user">
-                                            <li>
-                                                <a class="dropdown-item" href="#">My Account</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="#">Orders</a>
-                                            </li>
-                                            <li>
-                                                <hr class="dropdown-divider" />
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" href="#">Log out</a>
-                                            </li>
-                                        </ul>
+                                        <?php if (Auth::isLoggedIn()) : ?>
+                                            <button class="btn dropdown-toggle dropdown-user-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <?php if (isset($_SESSION['image'])) : ?>
+                                                    <img src="<?php echo $_SESSION['image']; ?>" alt="user" class="user__dropdown__image object-fit-contain" />
+                                                <?php else : ?>
+                                                    <i class="fa-sharp fa-solid fa-user-secret"></i>
+                                                <?php endif; ?>
+                                            </button>
+                                            <ul class="dropdown-menu" id="dropdown-menu-user">
+                                                <?php if (isset($_SESSION['roleId']) && intval($_SESSION['roleId']) === ADMIN) : ?>
+                                                    <li>
+                                                        <a class="dropdown-item" href="<?php echo APP_URL; ?>/admin/">Go to Admin</a>
+                                                    </li>
+                                                    <li>
+                                                        <hr class="dropdown-divider" />
+                                                    </li>
+                                                <?php endif; ?>
+                                                <li>
+                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user/">My Account</a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item" href="<?php echo APP_URL; ?>/user/order.php">Orders</a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider" />
+                                                </li>
+                                                <li>
+                                                    <button class="dropdown-item" id="logout-btn">Log out</button>
+                                                </li>
+                                            </ul>
+                                        <?php else : ?>
+                                            <a href="<?php echo APP_URL; ?>/auth/" class="login-btn text-decoration-none">
+                                                <i class="fa-regular fa-circle-user"></i>
+                                                <span class="header-control-desc">Login</span>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="logout-form">
+            <!-- Button trigger modal -->
+            <button type="button" class="btn d-none btn-logout-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title text-primary fs-5" id="exampleModalLabel">Logout Confirmation</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body fs-6">
+                            Are you sure want to logout?
+                        </div>
+                        <div class="modal-footer d-flex justify-content-between align-items-center flex-nowrap">
+                            <button type="button" class="btn btn-secondary btn-logout-control btn-logout-cancel" data-bs-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary btn-logout-control btn-logout-confirm">Yes</button>
                         </div>
                     </div>
                 </div>

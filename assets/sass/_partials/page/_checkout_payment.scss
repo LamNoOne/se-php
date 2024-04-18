@@ -1,0 +1,473 @@
+@import "../components/body/payment_btn";
+
+@-webkit-keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+#checkout-container {
+    margin-top: 7.5rem;
+
+    .nav-append-container {
+        display: none;
+    }
+
+    #checkout-progress {
+        height: fit-content;
+
+        .previous-checkout {
+            display         : flex;
+            padding         : 0.5rem 2rem 0.5rem 1.875rem;
+            width           : 12.625rem;
+            border          : 2px solid $primary_color;
+            border-radius   : 3.125rem;
+            justify-content : center;
+            align-items     : center;
+            background-color: $primary_color;
+            cursor          : pointer;
+            color           : #FFF;
+            text-align      : center;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+        }
+
+        .cart-header {
+            color      : rgba(black, 0.85);
+            font-family: Poppins;
+            font-size  : 0.875rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        .cart-item-container {
+            gap            : 1rem;
+            display        : flex;
+            align-items    : center;
+            justify-content: space-between;
+            padding-right  : 1rem;
+
+            p {
+                text-align: justify;
+            }
+        }
+
+        .cart-item {
+            &__img {
+                width : 7.5rem;
+                height: 7.5rem;
+            }
+
+            &__desc {
+                color      : rgba(black, 0.75);
+                font-family: Poppins;
+                font-size  : 0.875rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: normal;
+            }
+
+            &__price {
+                @include item-price();
+            }
+
+            &__input-quantity {
+                @include input-quantity();
+            }
+
+            &__btn-delete-cart {
+                width           : 1.686rem;
+                height          : 1.686rem;
+                border          : none;
+                outline         : none;
+                background-color: transparent;
+                background-image: url("/assets/img/delete-cart.svg");
+            }
+        }
+
+        .cart-item-control {
+            .continue-shopping {
+                display        : inline-flex;
+                padding        : 0.5rem 2rem 0.5rem 1.875rem;
+                justify-content: center;
+                align-items    : center;
+                border-radius  : 3.125rem;
+                border         : 2px solid #A2A6B0;
+
+                color      : #A2A6B0;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 0.875rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            .clear-cart {
+                display        : inline-flex;
+                padding        : 0.5rem 1.75rem 0.5rem 1.6875rem;
+                justify-content: center;
+                align-items    : center;
+                border-radius  : 3.125rem;
+                background     : rgba(black, 0.85);
+
+                color      : #FFF;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 0.875rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            .update-cart {
+                display        : inline-flex;
+                padding        : 0.5rem 1.75rem 0.5rem 1.6875rem;
+                justify-content: center;
+                align-items    : center;
+                border-radius  : 3.125rem;
+                background     : rgba(black, 0.85);
+
+                color      : #FFF;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 0.875rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+        }
+
+        .checkout-summary {
+            background-color: #F5F7FF;
+            margin-top      : 2.4rem;
+            padding         : 1rem 2rem;
+
+            &__header {
+                color      : rgba(black, 0.85);
+                font-family: Poppins;
+                font-size  : 1.5rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: normal;
+            }
+
+            &__title {
+                color      : rgba(black, 0.85);
+                text-align : right;
+                font-family: Poppins;
+                font-size  : 0.8125rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: 1.70625rem;
+            }
+
+            &__note {
+                color      : var(--Color---5, #A2A6B0);
+                font-family: Poppins;
+                font-size  : 0.625rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: 1.125rem;
+            }
+
+            &__value {
+                color      : rgba(black, 0.85);
+                text-align : right;
+                font-family: Poppins;
+                font-size  : 0.8125rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: 1.70625rem
+            }
+
+            &__btn-process {
+                display         : flex;
+                width           : 100%;
+                height          : 3.125rem;
+                align-items     : center;
+                justify-content : center;
+                color           : #FFF;
+                font-family     : Poppins;
+                font-size       : 0.875rem;
+                font-style      : normal;
+                font-weight     : 600;
+                line-height     : normal;
+                border          : none;
+                background-color: $primary_color;
+                border-radius   : 3.125rem;
+            }
+
+            &__zip {
+                display        : flex;
+                justify-content: space-between;
+                align-items    : center;
+
+                &__img {
+                    width : 3.6875rem;
+                    height: 1.3125rem;
+                }
+
+                &__content {
+                    color      : #272560;
+                    font-family: Poppins;
+                    font-size  : 0.75rem;
+                    font-style : normal;
+                    font-weight: 400;
+                    line-height: 120.5%;
+                }
+            }
+        }
+    }
+
+    .progress-container {
+
+        .completed {
+            .progress-bar-container__period {
+                display: none;
+            }
+
+            .progress-bar-container__check {
+                display        : flex !important;
+                justify-content: center;
+                align-items    : center;
+            }
+        }
+
+        .loader {
+            .progress-bar-container__period {
+                display: none;
+            }
+
+            .progress-bar-container__loader {
+                display        : flex !important;
+                justify-content: center;
+                align-items    : center;
+
+                i {
+                    -webkit-animation-name           : spin;
+                    animation-name                   : spin;
+                    -webkit-animation-duration       : 2000ms;
+                    animation-duration               : 2000ms;
+                    -webkit-animation-iteration-count: infinite;
+                    animation-iteration-count        : infinite;
+                    -webkit-animation-timing-function: linear;
+                    animation-timing-function        : linear;
+                }
+            }
+        }
+
+        .active {
+            .progress-bar-container__line {
+                background-color: $primary_color;
+
+            }
+
+            .progress-bar-container__period {
+                border: 0.15rem solid $primary_color;
+            }
+
+            .progress-bar-container__desc {
+                color: #000;
+            }
+        }
+
+        .progress-bar-container {
+
+            &__desc {
+                color      : #ccc;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 1rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: 1.25rem;
+            }
+
+            &__line {
+                width           : 5rem;
+                height          : 0.15rem;
+                background-color: #ccc;
+
+            }
+
+            &__period {
+                width          : 2.5rem;
+                height         : 2.5rem;
+                border-radius  : 50%;
+                border         : 0.15rem solid #ccc;
+                display        : flex;
+                align-items    : center;
+                justify-content: center;
+
+                color      : #000;
+                text-align : center;
+                font-family: Poppins;
+                font-size  : 0.9375rem;
+                font-style : normal;
+                font-weight: 600;
+                line-height: 1.5rem;
+            }
+
+            &__check {
+                display: none;
+            }
+
+            &__loader {
+                display: none;
+            }
+        }
+    }
+
+    .checkout__header {
+        font-family  : Poppins;
+        font-size    : 1.5rem;
+        font-weight  : 600;
+        margin-bottom: 2rem;
+    }
+
+    .checkout__title {
+        font-size  : 0.875rem;
+        font-family: Poppins;
+        font-weight: 600;
+    }
+
+    .checkout-procedure {
+        &__form {
+            &__label {
+                @include form-label();
+            }
+
+            &__input {
+                @include form-input(40rem);
+            }
+        }
+
+        &__btn-next {
+            display         : flex;
+            padding         : 1rem 5rem;
+            flex-direction  : column;
+            justify-content : center;
+            color           : #FFF;
+            text-align      : center;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+            border          : none;
+            border-radius   : 3.125rem;
+            background-color: $primary_color;
+
+        }
+    }
+
+    .order-summary {
+        background-color: #F5F7FF;
+        margin-top      : 2.4rem;
+        margin-right    : 10px;
+        padding         : 1rem 2rem;
+        position        : relative;
+
+        .btn-checkout-payment {
+            position        : absolute;
+            left            : 0;
+            right           : 0;
+            bottom          : -2rem;
+            display         : flex;
+            width           : 100%;
+            padding         : 0.5rem;
+            border          : none;
+            justify-content : center;
+            align-items     : center;
+            background-color: $primary_color;
+            cursor          : pointer;
+            color           : #FFF;
+            text-align      : center;
+            font-family     : Poppins;
+            font-size       : 0.875rem;
+            font-style      : normal;
+            font-weight     : 600;
+            line-height     : normal;
+        }
+
+        &__title {
+            color      : #000;
+            font-family: Poppins;
+            font-size  : 1.5rem;
+            font-style : normal;
+            font-weight: 600;
+            line-height: normal;
+        }
+
+        &__items {
+
+            &__info {
+                color      : #000;
+                font-family: Poppins;
+                font-size  : 0.875rem;
+                font-style : normal;
+                font-weight: 400;
+                line-height: normal;
+            }
+
+            &__list {
+                &__product {
+                    img {
+                        width : 3.875rem;
+                        height: 3.875rem;
+                    }
+                }
+
+                &__desc {
+                    color      : #000;
+                    font-family: Poppins;
+                    font-size  : 0.875rem;
+                    font-style : normal;
+                    font-weight: 400;
+                    line-height: normal;
+                }
+
+                &__quantity {
+                    color      : #A2A6B0;
+                    font-family: Poppins;
+                    font-size  : 0.875rem;
+                    font-style : normal;
+                    font-weight: 400;
+                    line-height: 1.225rem;
+
+                    &__title {
+                        font-weight: 400 !important;
+                    }
+                }
+
+                &__price {
+                    color      : #000;
+                    font-family: Poppins;
+                    font-size  : 0.875rem;
+                    font-style : normal;
+                    font-weight: 600;
+                    line-height: 1.225rem;
+                }
+            }
+        }
+    }
+}

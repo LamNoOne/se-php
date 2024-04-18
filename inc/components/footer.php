@@ -1,4 +1,7 @@
-<footer id="footer" class="mt-5 bg-black pt-5">
+<footer id="footer" class="bg-black pt-5">
+    <?php
+    require_once "loader.php";
+    ?>
     <div class="container">
         <div class="row">
             <div class="col">
@@ -141,6 +144,154 @@
     </div>
     <span class="d-block py-3" id="copy-right">Copyright © 2024 SE.</span>
 </footer>
+<script type="text/javascript" src="<?php echo APP_URL; ?>/js/header/logout.js"></script>
+<script>
+    $(document).ready(async function() {
+        $(".btn-logout-confirm").on("click", async function(e) {
+            e.preventDefault();
+
+            try {
+                // send request to logout php
+                // at logout.php => call auth::logout() to destroy session
+                const statusLogout = await $.ajax({
+                    method: "POST",
+                    url: "<?php echo APP_URL; ?>/auth/logout.php"
+                })
+                // after successfully logged out, navigate back to home page
+                window.location.href = "<?php echo APP_URL; ?>";
+            } catch (error) {
+                // use toast to show error
+                console.log(error);
+            }
+        });
+
+        const logoutBtn = document.querySelector("#logout-btn");
+
+        if (logoutBtn)
+            logoutBtn.addEventListener("click", function(e) {
+                e.preventDefault();
+                const logoutPrimary = document.querySelector(".btn-logout-primary");
+                logoutPrimary.click();
+            });
+    });
+</script>
+<script>
+    const cartBtn = document.querySelector('#cart-btn');
+
+    cartBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        window.location.href = "<?php echo APP_URL; ?>/cart";
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        const searchInput = $("#input-search");
+        const searchBox = $("#search-box");
+        const searchBoxLayout = $("#search-box-layout");
+        const formSearch = $("#form-search");
+
+        function html([first, ...strings], ...values) {
+            return values.reduce(
+                    (acc, cur) => acc.concat(cur, strings.shift()),
+                    [first]
+                )
+                .filter(x => x && x !== true || x === 0)
+                .join('')
+        }
+
+        function searchSuggest({
+            item
+        }) {
+            return html `
+            <li>
+                <div class="d-flex justify-content-start search-item product-container">
+                    <p class="product-name search-item-text m-0">${item?.description}</p>
+                </div>
+            </li>
+        `;
+        }
+
+        function productItem({
+            item
+        }) {
+            return html `
+            <li>
+                <a href="<?php echo APP_URL; ?>/product/product-detail.php?product_id=${item?.id}" class="d-flex justify-content-start product-container">
+                    <img src="${item?.imageUrl}" alt="product" class="product-image" />
+                    <div class="product-info d-flex flex-column justify-content-center">
+                        <p class="product-title m-0">${item?.name}</p>
+                        <div class="product-price d-flex justify-content-start">
+                            <span class="product-new-price">${item?.price} USD</span>
+                            <span class="product-old-price">${item?.price} USD</span>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+        }
+
+        function productSearchItem({
+            products
+        }) {
+            return html`
+            <p class="title-box">Suggested products</p>
+            <ul class="product-box list-unstyled">
+                ${products.map((item) => searchSuggest({ item }))}
+            </ul>
+            <ul class="product-box list-unstyled">
+                ${products.map((item) => productItem({ item }))}
+            </ul>
+        `;
+        }
+
+        searchInput.on("keyup", async function(event) {
+            searchBox.removeClass("d-none");
+            searchBoxLayout.removeClass("d-none");
+            const getData = {
+                search: searchInput.val(),
+                limit: 5
+            };
+
+            const baseUrl = "<?php echo APP_URL; ?>/inc/components/actions/search.php"
+
+            try {
+                const searchResponse = await $.ajax({
+                    method: "POST",
+                    url: baseUrl,
+                    data: getData,
+                })
+
+                searchBox.empty();
+                const searchResult = JSON.parse(searchResponse);
+                if (Array.isArray(searchResult) && searchResult.length > 0) {
+                    searchBox.append(productSearchItem({
+                        products: searchResult
+                    }));
+                }
+
+                $(".search-item").get().forEach((el) => {
+                    el.addEventListener("click", function(e) {
+                        e.preventDefault();
+                        window.location.href = `<?php echo APP_URL; ?>/product?search=${$(el).find(".search-item-text").text()}`;
+                    })
+                })
+
+                formSearch.on("submit", function(e) {
+                    e.preventDefault();
+                    window.location.href = `<?php echo APP_URL; ?>/product?search=${searchInput.val()}`;
+                })
+            } catch (error) {
+                toastr.error(error.message, "Error")
+            }
+        });
+
+        searchBoxLayout.on("click", function(event) {
+            searchBox.toggleClass("d-none");
+            searchBoxLayout.toggleClass("d-none");
+        });
+    })
+</script>
 </body>
 
 </html>

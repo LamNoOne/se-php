@@ -3,6 +3,7 @@
 
         .check-filter {
             border-top: 1px solid rgba(0, 0, 0, 0.1);
+
             .filter-item {
                 &>input[type="checkbox"] {
                     cursor: pointer;
@@ -53,6 +54,7 @@
 
         .price-filter {
             border-top: 1px solid rgba(0, 0, 0, 0.1);
+
             &--min {
                 display      : flex;
                 width        : 4.375rem;
@@ -82,22 +84,23 @@
             }
 
             &__btn-price {
-                width              : 2rem;
-                height             : 1.875rem;
-                display            : flex;
-                justify-content    : center;
-                align-items        : center;
-                border             : none;
-                background-color   : #f79458;
-                border-radius      : 0.25rem;
+                width           : 2rem;
+                height          : 1.875rem;
+                display         : flex;
+                justify-content : center;
+                align-items     : center;
+                border          : none;
+                background-color: #f79458;
+                border-radius   : 0.25rem;
+
                 &:hover {
-                    transition: all 0.3s ease-in-out;
+                    transition      : all 0.3s ease-in-out;
                     background-color: #40a9ff;
                 }
 
                 i {
                     font-size: 0.7rem;
-                    color: white;
+                    color    : white;
                 }
             }
         }

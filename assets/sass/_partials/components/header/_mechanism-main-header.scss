@@ -1,9 +1,19 @@
 #header {
     .main-header {
+
+        min-height : 4.3rem;
+        display    : flex;
+        align-items: center;
+
         .main-header__mechanism {
 
             // ============================Main Header Mechanism============================ //
             .main-header__mechanism--button {
+                .header-control-desc {
+                    font-size: 0.8rem;
+                    color    : black;
+                }
+
                 .user-component-dropdown {
                     .dropdown-user-btn {
                         display        : flex;
@@ -22,6 +32,18 @@
                             height       : 2.5rem;
                             width        : 2.5rem;
                             border-radius: 50%;
+                        }
+                    }
+
+                    .login-btn {
+                        display        : flex;
+                        flex-direction : column;
+                        justify-content: center;
+                        align-items    : center;
+
+                        i {
+                            font-size: 1.25rem;
+                            color    : #000;
                         }
                     }
 
@@ -57,18 +79,21 @@
                     }
                 }
 
-                .cart-component-dropdown {
+                .cart-component {
                     position: relative;
 
-                    .dropdown-cart-btn {
+                    .cart-btn {
                         outline : none;
                         border  : none;
+                        padding : 0;
+                        width   : 1.25rem;
+                        height  : 1.25rem;
                         position: relative;
 
                         &__count {
                             position        : absolute;
-                            top             : 0;
-                            right           : 0.5rem;
+                            top             : -0.5rem;
+                            right           : -0.5rem;
                             width           : 1rem;
                             height          : 1.0625rem;
                             color           : white;

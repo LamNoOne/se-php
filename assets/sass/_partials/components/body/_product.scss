@@ -4,7 +4,7 @@
     .multiple-product-slider {
 
         .product-card-container {
-            padding   : 0.3125rem;
+            padding: 0.3125rem;
             @include card-product();
         }
 
@@ -41,43 +41,6 @@
     }
 }
 
-#outstanding-product {
-    margin-top: 1rem;
-
-    .multiple-product-outstanding {
-        @include card-product();
-    }
-
-    .custom-build {
-        min-height       : 100%;
-        background       : linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("/assets/img/custom-build.jpg");
-        background-repeat: no-repeat;
-        background-size  : cover;
-        border-radius    : 0.5rem;
-        box-shadow       : 0 0 0.5rem 0 rgba(0, 0, 0, 0.1);
-
-        h3 {
-            color      : white;
-            font-family: Poppins;
-            font-size  : 1.375rem;
-            font-style : normal;
-            font-weight: 700;
-            line-height: 1.7875rem;
-        }
-
-        a {
-            color                       : white;
-            font-family                 : Poppins;
-            font-size                   : 0.8125rem;
-            font-style                  : normal;
-            font-weight                 : 400;
-            line-height                 : 0.93438rem;
-            -webkit-text-decoration-line: underline;
-            text-decoration-line        : underline;
-        }
-    }
-}
-
 #brand {
     .item-brand {
         max-width: 9rem;
@@ -87,4 +50,26 @@
 
 #product-card-container {
     @include card-product();
+}
+
+.search-no-result {
+    &__title {
+        font-size     : 2rem;
+        font-weight   : 500;
+        padding-bottom: 1rem;
+    }
+
+    &__desc {
+        font-size     : 1rem;
+        font-weight   : 400;
+        color         : #555;
+        padding-bottom: 1rem;
+    }
+
+    &__icon {
+        font-size  : 5rem;
+        font-weight: 300;
+        color      : #555;
+        padding-top: 2rem;
+    }
 }

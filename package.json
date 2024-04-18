@@ -1,9 +1,0 @@
-{
-    "scripts": {
-        "css": "node-sass assets/sass/main.scss -o assets/css",
-        "css:watch": "npm run css && node-sass assets/sass/main.scss -wo assets/css"
-    },
-    "devDependencies": {
-        "node-sass": "^9.0.0"
-    }
-}

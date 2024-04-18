@@ -1,6 +1,74 @@
 #shopping-cart {
     margin-top: 7.5rem;
 
+    .no-cart {
+        padding-bottom: 5rem;
+
+        &__img {
+            img {
+                width : 12rem;
+                height: 12rem;
+            }
+        }
+
+        &__desc {
+            font-size  : 1rem;
+            font-weight: 500;
+            color      : rgba(black, 0.75);
+        }
+
+        &__btn {
+            padding         : 0.5rem 1rem;
+            font-size       : 1rem;
+            color           : white;
+            cursor          : pointer;
+            background-color: $primary_color;
+        }
+    }
+
+    .round {
+        position: relative;
+
+        label {
+            background-color: #fff;
+            border          : 1px solid #ccc;
+            border-radius   : 50%;
+            cursor          : pointer;
+            height          : 20px;
+            left            : 0;
+            position        : absolute;
+            top             : 0;
+            width           : 20px;
+
+            &::after {
+                border      : 2px solid #fff;
+                border-top  : none;
+                border-right: none;
+                content     : "";
+                height      : 5px;
+                left        : 6px;
+                opacity     : 0;
+                position    : absolute;
+                top         : 6px;
+                transform   : rotate(-45deg);
+                width       : 10px;
+            }
+        }
+
+        input[type="checkbox"] {
+            visibility: hidden;
+        }
+
+        input[type="checkbox"]:checked+label {
+            background-color: #66bb6a;
+            border-color    : #66bb6a;
+        }
+
+        input[type="checkbox"]:checked+label:after {
+            opacity: 1;
+        }
+    }
+
     .shopping-cart__title {
         color      : rgba(black, 0.85);
         font-family: Poppins;
@@ -60,7 +128,14 @@
             border          : none;
             outline         : none;
             background-color: transparent;
-            background-image: url("/assets/img/delete-cart.svg");
+
+            i {
+                font-size: 1.2rem;
+
+                &:hover {
+                    color: red;
+                }
+            }
         }
     }
 
